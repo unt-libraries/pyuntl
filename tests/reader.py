@@ -1,6 +1,6 @@
 import unittest
 from pyuntl.untldoc import untldict2py, untlxml2py
-from pyuntl.tests import UNTL_DICT
+from tests import UNTL_DICT
 import StringIO
 import os
 from pyuntl.untl_structure import Metadata

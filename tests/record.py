@@ -1,6 +1,6 @@
 import unittest
 from pyuntl.untldoc import untldict2py, py2dict
-from pyuntl.tests import UNTL_DICT
+from tests import UNTL_DICT
 from pyuntl.untl_structure import Metadata as Record
 from pyuntl.untl_structure import PYUNTL_DISPATCH, UNTLStructureException, \
 FormGenerator

@@ -2,7 +2,7 @@ from pyuntl.etd_ms_structure import ETD_MSElement, ETD_MS, ETD_MSTitle, \
     ETD_MS_StructureException, contributor_director, description_director, \
     date_director, identifier_director, subject_director
 from pyuntl.untldoc import untlpy2etd_ms, untldict2py
-from pyuntl.tests import UNTL_DICT
+from tests import UNTL_DICT
 import unittest
 
 class TestETD(unittest.TestCase):

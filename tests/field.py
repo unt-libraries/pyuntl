@@ -1,6 +1,6 @@
 import unittest
 from pyuntl.untl_structure import PYUNTL_DISPATCH, UNTLStructureException
-from pyuntl.tests import UNNORMALIZED_DICT, \
+from tests import UNNORMALIZED_DICT, \
 NORMALIZED_DICT, UNNORMALIZED_UNTLBS, UNNORMALIZED_LCSH, \
 NORMALIZED_UNTLBS, NORMALIZED_LCSH
 from pyuntl.util import untldict_normalizer, normalize_UNTL, normalize_LCSH

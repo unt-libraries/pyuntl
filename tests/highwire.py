@@ -2,7 +2,7 @@ from pyuntl.highwire_structure import format_date_string, HighwireElement, \
     CitationTitle, CitationAuthor, CitationPublisher, CitationPublicationDate, \
     CitationOnlineDate, citation_director, identifier_director, \
     CitationOnlineDate
-from pyuntl.tests import UNTL_DICT
+from tests import UNTL_DICT
 from pyuntl.untldoc import untlpy2highwirepy, untldict2py, highwirepy2dict
 import unittest
 

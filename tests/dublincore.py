@@ -4,7 +4,7 @@ from pyuntl.untldoc import untldict2py, py2dict, untlxml2py, untlpy2dcpy, \
     untlpydict2dcformatteddict, generate_dc_xml, generate_dc_json, \
     generate_dc_txt, dcdict2rdfpy
 from pyuntl.metadata_generator import pydict2xmlstring
-from pyuntl.tests import UNTL_DICT, DUBLIN_CORE_XML
+from tests import UNTL_DICT, DUBLIN_CORE_XML
 from pyuntl.dc_structure import DC
 import StringIO
 try:

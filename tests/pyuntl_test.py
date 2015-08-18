@@ -8,7 +8,7 @@ from pyuntl.untldoc import untldict2py, py2dict, untlxml2py, untlxml2pydict, \
 from pyuntl.quality import determine_completeness
 from pyuntl.metadata_generator import pydict2xmlstring
 from pyuntl.form_logic import Title
-from pyuntl.tests import UNTL_DICT, BAD_UNTL_DICT, IGNORE_POST_LIST, \
+from tests import UNTL_DICT, BAD_UNTL_DICT, IGNORE_POST_LIST, \
     EXPECTED_POST_TO_PYDICT
 from pyuntl import UNTL_XML_ORDER
 
