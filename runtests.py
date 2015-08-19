@@ -3,6 +3,7 @@ import unittest
 from tests import record, etd, field, reader, writer, pyuntl_test, dublincore, \
     highwire
 
+
 def suite():
     test_suite = unittest.TestSuite()
     test_suite.addTest(record.suite())

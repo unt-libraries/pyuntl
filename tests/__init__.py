@@ -101,7 +101,7 @@ UNTL_DICT = {
         {'content': 'Sports and Recreation', 'qualifier': 'UNTL-BS'},
         {'content': 'Arts and Crafts', 'qualifier': 'UNTL-BS'},
         {'content': 'louie', 'qualifier': 'KWD'},
-        {'content': 'sarge', 'qualifier': 'KWD'},]
+        {'content': 'sarge', 'qualifier': 'KWD'}, ]
     }
 
 BAD_UNTL_DICT = {
@@ -112,7 +112,7 @@ BAD_UNTL_DICT = {
         {'content': 'Not paginated : ill ; 31 cm.'}]
 }
 
-#Example of UNTL dict that needs normalization
+# Example of UNTL dict that needs normalization
 UNNORMALIZED_DICT = {
     'subject': [
         {'content': 'Simmons College (Abilene, Tex.)--Students--Yearbooks', 'qualifier': 'LCSH'},
@@ -125,7 +125,7 @@ UNNORMALIZED_DICT = {
         ]
     }
 
-#UNTL dict with proper normalization
+# UNTL dict with proper normalization
 NORMALIZED_DICT = {
     'subject': [
         {'content': 'Simmons College (Abilene, Tex.) -- Students -- Yearbooks.', 'qualifier': 'LCSH'},
@@ -138,26 +138,26 @@ NORMALIZED_DICT = {
         ]
     }
 
-#An unnormalized untl-bs string
+# An unnormalized untl-bs string
 UNNORMALIZED_UNTLBS = 'Business, Economics and Finance  - Journalism'
 
-#An unnormalized lcsh string
+# An unnormalized lcsh string
 UNNORMALIZED_LCSH = 'Guitar music--History and criticism'
 
-#A normalized untl-bs string
+# A normalized untl-bs string
 NORMALIZED_UNTLBS = 'Business, Economics and Finance - Journalism'
 
-#A normalized lcsh string
+# A normalized lcsh string
 NORMALIZED_LCSH = 'Guitar music -- History and criticism.'
 
-#Defined for testing post2pydict
+# Defined for testing post2pydict
 IGNORE_POST_LIST = [
     'publish',
     'save',
     'csrfmiddlewaretoken',
     ]
 
-#Defined for testing post2pydict
+# Defined for testing post2pydict
 EXPECTED_POST_TO_PYDICT = {
     'collection': [{'content': u'UNTCVA'}, {'content': u'UNTSW'}],
     'coverage': [{'content': u'2000', 'qualifier': u'date'}],

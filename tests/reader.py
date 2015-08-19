@@ -5,6 +5,7 @@ import StringIO
 import os
 from pyuntl.untl_structure import Metadata
 
+
 class ReaderTest(unittest.TestCase):
     """
     These tests all read in a number of UNTL formats and expect no errors.
@@ -20,7 +21,7 @@ class ReaderTest(unittest.TestCase):
         self.root_element = untlxml2py(
             os.path.join(
                 os.path.dirname(os.path.realpath(__file__)),
-            'metadc_complete.untl.xml'
+                'metadc_complete.untl.xml'
             )
         )
         self.assertTrue(isinstance(self.root_element, Metadata))

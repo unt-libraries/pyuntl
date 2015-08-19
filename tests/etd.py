@@ -5,6 +5,7 @@ from pyuntl.untldoc import untlpy2etd_ms, untldict2py
 from tests import UNTL_DICT
 import unittest
 
+
 class TestETD(unittest.TestCase):
 
     def testETDfromUNTL(self):
@@ -26,12 +27,13 @@ class TestETD(unittest.TestCase):
         etd.add_child(etd_child)
         self.assertTrue('title' in etd.contained_children)
 
-    def testAddChildToETDMS(self):
+    def testAddBadChildToETDMS(self):
         '''test inability to add bad child to etd element'''
 
         etd = ETD_MSTitle(content='title parent')
         etd_bad_child = ETD_MSTitle(content='incompatible child')
-        self.assertRaises(ETD_MS_StructureException, etd.add_child, etd_bad_child)
+        self.assertRaises(ETD_MS_StructureException, etd.add_child,
+                          etd_bad_child)
 
     def testContributorDirector(self):
         '''tests contributor expansion'''
@@ -57,13 +59,15 @@ class TestETD(unittest.TestCase):
 
         etd = identifier_director(ark='ark:/67531/metadc271729')
         self.assertEqual(etd.tag, 'identifier')
-        self.assertEqual(etd.content, 'http://digital.library.unt.edu/ark:/67531/metadc271729')
+        self.assertEqual(etd.content, 'http://digital.library.unt.edu/' +
+                         'ark:/67531/metadc271729')
 
     def testSubjectDirector(self):
         '''tests subject expansion'''
 
         etd = subject_director(qualifier='schemey')
         self.assertEqual(etd.tag, 'subject')
+
 
 def suite():
     test_suite = unittest.makeSuite(TestETD, 'test')

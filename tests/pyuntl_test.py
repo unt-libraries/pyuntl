@@ -2,12 +2,10 @@ import cPickle
 import StringIO
 import unittest
 import os
-from pyuntl.untldoc import untldict2py, py2dict, untlxml2py, untlxml2pydict, \
-    post2pydict, untlpy2dcpy, find_untl_errors, add_empty_fields, \
-    find_untl_errors
+from pyuntl.untldoc import untldict2py, py2dict, untlxml2py, post2pydict, \
+    find_untl_errors, add_empty_fields
 from pyuntl.quality import determine_completeness
 from pyuntl.metadata_generator import pydict2xmlstring
-from pyuntl.form_logic import Title
 from tests import UNTL_DICT, BAD_UNTL_DICT, IGNORE_POST_LIST, \
     EXPECTED_POST_TO_PYDICT
 from pyuntl import UNTL_XML_ORDER
@@ -152,9 +150,8 @@ class TestUNTLDictionaryToPythonObject(unittest.TestCase):
 
     def testCircularEquality(self):
         self.assertEqual(
-            py2dict(untlxml2py(StringIO.StringIO(pydict2xmlstring(UNTL_DICT)))),
-            UNTL_DICT
-        )
+            py2dict(untlxml2py(StringIO.StringIO(
+                    pydict2xmlstring(UNTL_DICT)))), UNTL_DICT)
 
 
 def suite():

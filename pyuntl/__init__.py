@@ -1,6 +1,6 @@
 import re
 
-#Ordered list of UNTL elements
+# Ordered list of UNTL elements
 UNTL_XML_ORDER = [
     'title',
     'creator',
@@ -106,7 +106,7 @@ HIGHWIRE_ORDER = [
     'citation_technical_report_number',
 ]
 
-#Namespaces for the UNTL xml
+# Namespaces for the UNTL xml
 UNTL_NAMESPACES = {
     'untl': 'http://digitalprojects.library.unt.edu/'
 }
@@ -114,10 +114,10 @@ UNTL_NAMESPACES = {
 # All Vocabularies Location
 VOCABULARIES_URL = 'http://digital2.library.unt.edu/vocabularies/all/'
 
-#URL of the UNTL metadata usage page
+# URL of the UNTL metadata usage page
 UNTL_USAGE_LINK = 'http://www.library.unt.edu/digital-projects-unit/'
 
-#Creation Year/Month/Day regexes
+# Creation Year/Month/Day regexes
 CREATION_DATE_REGEX = re.compile(
     r'^(\d\d\d\d)[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$'
 )

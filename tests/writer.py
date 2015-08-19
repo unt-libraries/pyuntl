@@ -3,6 +3,7 @@ import os
 import xml.etree.ElementTree as ET
 from pyuntl.untldoc import untlxml2py
 
+
 class WriterTest(unittest.TestCase):
 
     def setUp(self):
@@ -28,13 +29,14 @@ class WriterTest(unittest.TestCase):
         # compare the two xmls
         self.assertTrue(
             # string output of root of initial xml
-            ET.tostring(cxml1.getroot()) == \
+            ET.tostring(cxml1.getroot()) ==
             # string output of root generated xml
             ET.tostring(cxml2.getroot())
         )
 
     def tearDown(self):
         os.remove("/tmp/xml_test_output.xml")
+
 
 def suite():
     test_suite = unittest.makeSuite(WriterTest, 'test')

@@ -1,10 +1,10 @@
 from pyuntl.highwire_structure import format_date_string, HighwireElement, \
     CitationTitle, CitationAuthor, CitationPublisher, CitationPublicationDate, \
-    CitationOnlineDate, citation_director, identifier_director, \
-    CitationOnlineDate
+    CitationOnlineDate, citation_director, identifier_director
 from tests import UNTL_DICT
 from pyuntl.untldoc import untlpy2highwirepy, untldict2py, highwirepy2dict
 import unittest
+
 
 class TestHighwire(unittest.TestCase):
 
@@ -31,7 +31,9 @@ class TestHighwire(unittest.TestCase):
         self.assertTrue(date == '90')
 
     def testCreateHighwireElement(self):
-        """Test to make sure Highwire elements can be created and content filled"""
+        '''
+        Test to make sure Highwire elements can be created and content filled
+        '''
 
         highwire = HighwireElement(content='test test test')
         self.assertEqual(highwire.content, 'test test test')
@@ -119,6 +121,7 @@ class TestHighwire(unittest.TestCase):
 
         c = CitationTitle(qualifier='test')
         self.assertEqual(c.name, 'citation_title')
+
 
 def suite():
     test_suite = unittest.makeSuite(TestHighwire, 'test')

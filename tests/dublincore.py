@@ -1,12 +1,10 @@
 import unittest
 from rdflib import ConjunctiveGraph
-from pyuntl.untldoc import untldict2py, py2dict, untlxml2py, untlpy2dcpy, \
+from pyuntl.untldoc import untldict2py, untlpy2dcpy, \
     untlpydict2dcformatteddict, generate_dc_xml, generate_dc_json, \
     generate_dc_txt, dcdict2rdfpy
-from pyuntl.metadata_generator import pydict2xmlstring
 from tests import UNTL_DICT, DUBLIN_CORE_XML
 from pyuntl.dc_structure import DC
-import StringIO
 try:
     # the json module was included in the stdlib in python 2.6
     # http://docs.python.org/library/json.html
@@ -30,7 +28,8 @@ class DublinCoreTest(unittest.TestCase):
         j = json.loads(dcjson)
         self.assertTrue(type(j), dict)
         for key, value in j.items():
-            self.assertTrue(key in UNTL_DICT, '%s not in %s' % (key, UNTL_DICT))
+            self.assertTrue(key in UNTL_DICT, '%s not in %s'
+                            % (key, UNTL_DICT))
 
     def testDCtoRDF(self):
         '''test dublin core to RDF function'''
@@ -52,7 +51,8 @@ class DublinCoreTest(unittest.TestCase):
         # make the dictionary
         dcd = untlpydict2dcformatteddict(UNTL_DICT)
         # workaround to make usable in python 2.5
-        self.assertFalse('content' in dcd['publisher'], '%s not in %s' % ('content', dcd['publisher']))
+        self.assertFalse('content' in dcd['publisher'], '%s not in %s'
+                         % ('content', dcd['publisher']))
         self.assertTrue(len(dcd) < len(UNTL_DICT))
 
     def testConversionFromUNTLPY(self):
@@ -83,7 +83,10 @@ class DublinCoreTest(unittest.TestCase):
                 self.assertNotEqual(len(element.children), 0)
 
     def testCreatesType(self):
-        """Test to make sure the the type element is created but not populated"""
+        """
+           Test to make sure the the type element
+           is created but not populated
+        """
         for element in self.root_element.children:
             if element.tag == 'type':
                 self.assertNotEqual(len(element.content), 0)

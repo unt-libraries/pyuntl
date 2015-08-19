@@ -3,9 +3,10 @@ from pyuntl.untldoc import untldict2py, py2dict
 from tests import UNTL_DICT
 from pyuntl.untl_structure import Metadata as Record
 from pyuntl.untl_structure import PYUNTL_DISPATCH, UNTLStructureException, \
-FormGenerator
+    FormGenerator
 from pyuntl import UNTL_PTH_ORDER
 from lxml.etree import _Element
+
 
 class RecordTest(unittest.TestCase):
     def setUp(self):
@@ -16,7 +17,8 @@ class RecordTest(unittest.TestCase):
         self.record.add_child(field)
         xml = self.record.create_xml_string()
         self.assertTrue(
-            xml.strip() == '<?xml version="1.0" encoding="UTF-8"?>\n<metadata>\n  <title/>\n</metadata>\n'.strip()
+            xml.strip() == '<?xml version="1.0" encoding="UTF-8"?>\n' +
+            '<metadata>\n  <title/>\n</metadata>\n'.strip()
         )
 
     def test_field_not_found(self):
@@ -73,8 +75,7 @@ class RecordTest(unittest.TestCase):
         self.record.children[0].content = 'fake content'
         missing_content_dict = py2dict(self.record)
         self.assertTrue(
-            missing_content_dict == \
-            {
+            missing_content_dict == {
                 'title': [
                     {'content': 'fake content', 'qualifier': 'officialtitle'}
                 ]
@@ -96,14 +97,15 @@ class RecordTest(unittest.TestCase):
         )
         py_from_dict = untldict2py(content_dict)
         self.assertTrue(
-            py_from_dict.children[0].qualifier == None
+            py_from_dict.children[0].qualifier is None
         )
 
     def test_add_nonexistant_child(self):
         '''
         should raise a KeyError because we never added a field by that name
         '''
-        self.assertRaises(KeyError, lambda: self.record.add_child(PYUNTL_DISPATCH['geolocation'](content=None)))
+        self.assertRaises(KeyError, lambda: self.record.add_child(
+                          PYUNTL_DISPATCH['geolocation'](content=None)))
 
     def test_add_misplaced_child(self):
         '''
@@ -111,11 +113,9 @@ class RecordTest(unittest.TestCase):
         '''
         field = PYUNTL_DISPATCH['title'](content=None)
         self.record.add_child(field)
-        self.assertRaises(UNTLStructureException, lambda:
-            self.record.children[0].add_child(
-                PYUNTL_DISPATCH['info'](content=None)
-            )
-        )
+        self.assertRaises(UNTLStructureException,
+                          lambda: self.record.children[0].add_child(
+                              PYUNTL_DISPATCH['info'](content=None)))
 
     def test_remove_field(self):
         '''
@@ -159,8 +159,8 @@ class RecordTest(unittest.TestCase):
         c2.sort_untl(UNTL_PTH_ORDER)
         # make sure the sort of the children elements changes
         self.assertTrue(
-            c1.children[0].tag != c2.children[0].tag and \
-            c2.children[0].tag == 'title' and \
+            c1.children[0].tag != c2.children[0].tag and
+            c2.children[0].tag == 'title' and
             c1.children[0].tag == 'publisher'
         )
 
@@ -183,6 +183,7 @@ class RecordTest(unittest.TestCase):
         self.record = untldict2py(UNTL_DICT)
         for c in self.record.children:
             self.assertTrue(c.tag in UNTL_DICT.keys())
+
 
 def suite():
     test_suite = unittest.makeSuite(RecordTest, 'test')
