@@ -3,8 +3,8 @@ import re
 
 def normalize_LCSH(subject):
     """ Function to normalize a LCSH subject heading prior to indexing """
-    #strip then divide on -- which is a delimiter for LCSH,
-    #rejoin after stripping parts
+    # strip then divide on -- which is a delimiter for LCSH,
+    # rejoin after stripping parts
     subject_parts = subject.strip().split("--")
     joined_subject = " -- ".join([part.strip() for part in subject_parts])
 
@@ -48,31 +48,31 @@ def untldict_normalizer(untl_dict, normalizations):
     {'element1': ['qualifier1', 'qualifier2'], 'element2': ['qualifier3']}
     and normalizes the elements with that qualifier
     """
-    #Loop through the element types in the untl metadata
+    # Loop through the element types in the untl metadata
     for element_type, element_list in untl_dict.items():
-        #if a normalization is required for that element type
+        # if a normalization is required for that element type
         if element_type in normalizations:
-            #Get the required normalizations for specific qualifiers list
+            # Get the required normalizations for specific qualifiers list
             norm_qualifier_list = normalizations.get(element_type)
-            #Loop through the element lists within that element type
+            # Loop through the element lists within that element type
             for element in element_list:
-                #Determine the qualifier
+                # Determine the qualifier
                 qualifier = element.get('qualifier', None)
-                #if this qualifier requires normalization
+                # if this qualifier requires normalization
                 if qualifier in norm_qualifier_list:
-                    #Get the content of the element
+                    # Get the content of the element
                     content = element.get('content', None)
-                    #Determine if there is normalizing for the element
+                    # Determine if there is normalizing for the element
                     if element_type in ELEMENT_NORMALIZERS:
                         elem_norms = ELEMENT_NORMALIZERS.get(
                             element_type,
                             None
                         )
-                        #if the qualified element requires a normalization
+                        # if the qualified element requires a normalization
                         if qualifier in elem_norms:
-                            #If the content exists and isn't empty
+                            # If the content exists and isn't empty
                             if content and content != '':
-                                #Replace the content with the normalized
+                                # Replace the content with the normalized
                                 element['content'] = \
                                     elem_norms[qualifier](content)
     return untl_dict

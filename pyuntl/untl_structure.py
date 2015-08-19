@@ -5,7 +5,7 @@ from lxml.etree import Element, SubElement, tostring
 from pyuntl import UNTL_XML_ORDER, VOCABULARIES_URL
 from pyuntl.quality import determine_completeness
 from pyuntl.form_logic import UNTL_FORM_DISPATCH, UNTL_GROUP_DISPATCH
-# from pyuntl.quality import determine_quality
+
 
 class UNTLStructureException(Exception):
     """Base exception for the UNTL python structure"""
@@ -37,11 +37,11 @@ def add_missing_children(required_children, element_children):
             that need to be included as blank elements in the form
         """
         element_tags = [element.tag for element in element_children]
-        #Loop through the elements that should be in the form
+        # Loop through the elements that should be in the form
         for contained_element in required_children:
-            #if the element doesn't exist in the form
-            if not contained_element in element_tags:
-                #Add the element to the children
+            # if the element doesn't exist in the form
+            if contained_element not in element_tags:
+                # Add the element to the children
                 try:
                     added_child = PYUNTL_DISPATCH[contained_element](
                         content=""
@@ -56,27 +56,27 @@ class UNTLElement(object):
     """A class for containing UNTL elements"""
 
     def __init__(self, **kwargs):
-        #Set all the defaults if inheriting class hasn't defined them
-        #set the element's tag to None if it isn't defined
+        # Set all the defaults if inheriting class hasn't defined them
+        # set the element's tag to None if it isn't defined
         self.tag = getattr(self, 'tag', None)
-        #list of allowed child elements
+        # list of allowed child elements
         self.contained_children = getattr(self, 'contained_children', [])
-        #by default, objects have textual content
+        # by default, objects have textual content
         self.allows_content = getattr(self, 'allows_content', True)
-        #by default, objects have qualifiers
+        # by default, objects have qualifiers
         self.allows_qualifier = getattr(self, 'allows_qualifier', True)
-        #element qualier, None by default
+        # element qualier, None by default
         self.qualifier = getattr(self, 'qualifier', None)
-        #child element wrappers go here
+        # child element wrappers go here
         self.children = []
-        #textual content, if any
+        # textual content, if any
         self.content = None
 
-        #Set the content, if it exists, and if it's allowed
+        # Set the content, if it exists, and if it's allowed
         arg_content = kwargs.get('content', None)
         if arg_content is not None:
             self.set_content(arg_content)
-        #Set the qualifier, if it exists, and if it's allowed
+        # Set the qualifier, if it exists, and if it's allowed
         arg_qualifier = kwargs.get('qualifier', None)
         if arg_qualifier is not None:
             self.set_qualifier(arg_qualifier)
@@ -124,9 +124,9 @@ class UNTLElement(object):
         content = kwargs.get('content', None)
         parent_tag = kwargs.get('parent_tag', None)
         superuser = kwargs.get('superuser', False)
-        #if the element has both the qualifier and content
+        # if the element has both the qualifier and content
         if qualifier is not None and content is not None:
-            #create the form attribute
+            # create the form attribute
             self.form = UNTL_FORM_DISPATCH[self.tag](
                 vocabularies=vocabularies,
                 qualifier_value=qualifier,
@@ -134,20 +134,20 @@ class UNTLElement(object):
                 untl_object=self,
                 superuser=superuser,
             )
-        #if the element just has a qualifier
+        # if the element just has a qualifier
         elif qualifier is not None:
-            #create the form attribute
+            # create the form attribute
             self.form = UNTL_FORM_DISPATCH[self.tag](
                 vocabularies=vocabularies,
                 qualifier_value=qualifier,
                 untl_object=self,
                 superuser=superuser,
             )
-        #if the element just has content
+        # if the element just has content
         elif content is not None:
-            #if the element is a child element
+            # if the element is a child element
             if parent_tag is None:
-                #create the form attribute
+                # create the form attribute
                 self.form = UNTL_FORM_DISPATCH[self.tag](
                     vocabularies=vocabularies,
                     input_value=content,
@@ -155,7 +155,7 @@ class UNTLElement(object):
                     superuser=superuser,
                 )
             else:
-                #create the form attribute
+                # create the form attribute
                 self.form = UNTL_FORM_DISPATCH[self.tag](
                     vocabularies=vocabularies,
                     input_value=content,
@@ -163,19 +163,19 @@ class UNTLElement(object):
                     parent_tag=parent_tag,
                     superuser=superuser,
                 )
-        #if the element has children, and no qualifiers or content
-        #or is blank (not originally in the UNTL record)
+        # if the element has children, and no qualifiers or content
+        # or is blank (not originally in the UNTL record)
         else:
-            #if the element is a child element
+            # if the element is a child element
             if parent_tag is None:
-                #create the form attribute
+                # create the form attribute
                 self.form = UNTL_FORM_DISPATCH[self.tag](
                     vocabularies=vocabularies,
                     untl_object=self,
                     superuser=superuser,
                 )
             else:
-                #create the form attribute
+                # create the form attribute
                 self.form = UNTL_FORM_DISPATCH[self.tag](
                     vocabularies=vocabularies,
                     untl_object=self,
@@ -209,44 +209,44 @@ class FormGenerator(object):
 
     def create_form_data(self, **kwargs):
         """Creates groupings of form elements"""
-        #Get the the specified keyword arguments
+        # Get the the specified keyword arguments
         children = kwargs.get('children', [])
         sort_order = kwargs.get('sort_order', None)
         solr_response = kwargs.get('solr_response', None)
         superuser = kwargs.get('superuser', False)
-        #Get the vocabularies to pull the qualifiers from
+        # Get the vocabularies to pull the qualifiers from
         vocabularies = self.get_vocabularies()
-        #Loop through all untl elements in the python object
+        # Loop through all untl elements in the python object
         for element in children:
-            #Add children that are missing from the form
+            # Add children that are missing from the form
             element.children = add_missing_children(
                 element.contained_children,
                 element.children,
             )
-            #Add the form attribute to the element
+            # Add the form attribute to the element
             element.add_form(
                 vocabularies=vocabularies,
                 qualifier=element.qualifier,
                 content=element.content,
                 superuser=superuser,
             )
-            #if the element can contain children
+            # if the element can contain children
             if element.form.has_children:
-                #If the parent has a qualifier
+                # If the parent has a qualifier
                 if getattr(element.form, 'qualifier_name', False):
-                    #Create a representative form element for the parent
+                    # Create a representative form element for the parent
                     add_parent = PARENT_FORM[element.form.qualifier_name](
                         content=element.qualifier,
                     )
-                    #Add the parent to the list of child elements
+                    # Add the parent to the list of child elements
                     element.children.append(add_parent)
-                #sort the elements by the index of child sort
+                # sort the elements by the index of child sort
                 element.children.sort(
                     key=lambda obj: element.form.child_sort.index(obj.tag)
                 )
-                #Loop through the element's children (if it has any)
+                # Loop through the element's children (if it has any)
                 for child in element.children:
-                    #Add the form attribute to the element
+                    # Add the form attribute to the element
                     child.add_form(
                         vocabularies=vocabularies,
                         qualifier=child.qualifier,
@@ -255,18 +255,18 @@ class FormGenerator(object):
                         superuser=superuser,
                     )
         element_group_dict = {}
-        #Group related objects together
+        # Group related objects together
         for element in children:
-            #Make meta-hidden its own group
+            # Make meta-hidden its own group
             if element.form.name == 'meta' and element.qualifier == 'hidden':
                 element_group_dict['hidden'] = [element]
-            #Element is not meta-hidden
+            # Element is not meta-hidden
             else:
-                #Make sure the dictionary key exists
+                # Make sure the dictionary key exists
                 if element.form.name not in element_group_dict:
                     element_group_dict[element.form.name] = []
                 element_group_dict[element.form.name].append(element)
-        #If the hidden meta element doesn't exist, add it to its own group
+        # If the hidden meta element doesn't exist, add it to its own group
         if 'hidden' not in element_group_dict:
             hidden_element = PYUNTL_DISPATCH['meta'](
                 qualifier='hidden',
@@ -278,14 +278,14 @@ class FormGenerator(object):
                 superuser=superuser,
             )
             element_group_dict['hidden'] = [hidden_element]
-        #Create a list of group object elements
+        # Create a list of group object elements
         element_list = self.create_form_groupings(
             vocabularies,
             solr_response,
             element_group_dict,
             sort_order,
         )
-        #Return the list of untl elements with form data added
+        # Return the list of untl elements with form data added
         return element_list
 
     def create_form_groupings(
@@ -297,26 +297,26 @@ class FormGenerator(object):
     ):
         """Creates a group object from groupings of element objects """
         element_list = []
-        #Loop through the group dictionary
+        # Loop through the group dictionary
         for group_name, group_list in element_group_dict.items():
-            #Create the element group
+            # Create the element group
             element_group = UNTL_GROUP_DISPATCH[group_name](
                 vocabularies=vocabularies,
                 solr_response=solr_response,
                 group_name=group_name,
                 group_list=group_list,
             )
-            #Loop through the adjustable forms of the group if they exist
+            # Loop through the adjustable forms of the group if they exist
             if element_group.adjustable_form is not None:
                 for adj_name, form_dict in \
                         element_group.adjustable_form.items():
-                    #if an item has an adjustable form,
-                    #append it to the adjustable list
+                    # if an item has an adjustable form,
+                    # append it to the adjustable list
                     if form_dict['value_py'] is not None:
                         self.adjustable_items.append(adj_name)
-            #Append the group to the element group list
+            # Append the group to the element group list
             element_list.append(element_group)
-        #sort the elements by the index of sort_order pre-ordered list
+        # sort the elements by the index of sort_order pre-ordered list
         element_list.sort(key=lambda obj: sort_order.index(obj.group_name))
         return element_list
 
@@ -325,15 +325,16 @@ class FormGenerator(object):
         # timeout in seconds
         timeout = 15
         socket.setdefaulttimeout(timeout)
-        #Create the ordered vocabulary url
+        # Create the ordered vocabulary url
         vocab_url = VOCABULARIES_URL.replace('all', 'all-verbose')
-        #Request the vocabularies dictionary
+        # Request the vocabularies dictionary
         try:
             vocab_dict = eval(urllib2.urlopen(vocab_url).read())
         except:
             raise UNTLStructureException("Could not retrieve the vocabularies")
         return vocab_dict
-#### Element Definitions ####
+
+# Element Definitions #
 
 
 class Metadata(UNTLElement):
@@ -379,9 +380,9 @@ class Metadata(UNTLElement):
         else:
             root = Element(self.tag)
 
-        #sort the elements by the index of UNTL_XML_ORDER pre-ordered list
+        # sort the elements by the index of UNTL_XML_ORDER pre-ordered list
         self.sort_untl(UNTL_XML_ORDER)
-        #Create an xml structure from field list
+        # Create an xml structure from field list
         for element in self.children:
 
             if useNamespace:
@@ -389,41 +390,41 @@ class Metadata(UNTLElement):
             else:
                 create_untl_xml_subelement(root, element)
 
-        #xml = '<?xml version="1.0" encoding="UTF-8"?>\n'+\
-        #tostring(root, pretty_print=True)
-        #return xml
+        # xml = '<?xml version="1.0" encoding="UTF-8"?>\n'+\
+        # tostring(root, pretty_print=True)
+        # return xml
         return root
 
     def create_element_dict(self):
         """ Converts a untl python object into a untl python dictionary """
         untl_dict = {}
-        #Loop through all untl elements in the python object
+        # Loop through all untl elements in the python object
         for element in self.children:
-            #if an entry for the element list hasn't
-            #been made in the dictionary
-            if not element.tag in untl_dict:
-                #start an empty element list
+            # if an entry for the element list hasn't
+            # been made in the dictionary
+            if element.tag not in untl_dict:
+                # start an empty element list
                 untl_dict[element.tag] = []
-            #Create a dictionary to put the element into
+            # Create a dictionary to put the element into
             element_dict = {}
-            #If the element has a qualifier
+            # If the element has a qualifier
             if element.qualifier is not None:
                 element_dict['qualifier'] = element.qualifier
-            #if the element allows children
+            # if the element allows children
             if len(element.contained_children) > 0:
                 child_dict = {}
-                #Loop through the child elements
+                # Loop through the child elements
                 for child in element.children:
-                    #if the child has content
+                    # if the child has content
                     if child.content is not None:
                         child_dict[child.tag] = child.content
-                #Set the elements content as the dictionary
-                #of children elements
+                # Set the elements content as the dictionary
+                # of children elements
                 element_dict['content'] = child_dict
-            #if the element has content, but no children
+            # if the element has content, but no children
             elif element.content is not None:
                 element_dict['content'] = element.content
-            #append the dictionary element to the element list
+            # append the dictionary element to the element list
             untl_dict[element.tag].append(element_dict)
 
         return untl_dict
@@ -454,14 +455,14 @@ class Metadata(UNTLElement):
         """ Creates a form dictionary with the key being the element name
              and the value being a list of form element objects
         """
-        #Add elements that are missing from the form
+        # Add elements that are missing from the form
         self.children = add_missing_children(
             self.contained_children,
             self.children
         )
-        #Add children to the keyword arguments
+        # Add children to the keyword arguments
         kwargs['children'] = self.children
-        #Create the form object
+        # Create the form object
         return FormGenerator(**kwargs)
 
 

@@ -1,14 +1,4 @@
 import re
-try:
-    # the json module was included in the stdlib in python 2.6
-    # http://docs.python.org/library/json.html
-    import json
-except ImportError:
-    # simplejson 2.0.9 is available for python 2.4+
-    # http://pypi.python.org/pypi/simplejson/2.0.9
-    # simplejson 1.7.3 is available for python 2.3+
-    # http://pypi.python.org/pypi/simplejson/1.7.3
-    import simplejson as json
 
 # these are common legacy values for attributes that do not have data
 COMMON_DEFAULT_ATTRIBUTE_VALUES = [
@@ -39,15 +29,15 @@ def determine_completeness(py_untl):
 
     # the default values for the completeness dictionary
     completeness_dict = {
-        "title": {"present": False, "weight": 10,},
-        "description": {"present": False, "weight": 1,},
-        "language": {"present": False, "weight": 1,},
-        "collection": {"present": False, "weight": 10,},
-        "institution": {"present": False, "weight": 10,},
-        "resourceType": {"present": False, "weight": 5,},
-        "format": {"present": False, "weight": 1,},
-        "subject": {"present": False, "weight": 1,},
-        "meta": {"present": False, "weight": 20,},
+        "title": {"present": False, "weight": 10, },
+        "description": {"present": False, "weight": 1, },
+        "language": {"present": False, "weight": 1, },
+        "collection": {"present": False, "weight": 10, },
+        "institution": {"present": False, "weight": 10, },
+        "resourceType": {"present": False, "weight": 5, },
+        "format": {"present": False, "weight": 1, },
+        "subject": {"present": False, "weight": 1, },
+        "meta": {"present": False, "weight": 20, },
     }
 
     total_points = sum(item['weight'] for item in completeness_dict.values())

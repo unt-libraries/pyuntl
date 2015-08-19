@@ -6,7 +6,7 @@ from pyuntl import CREATION_DATE_REGEX, CREATION_MONTH_REGEX, \
 
 def format_date_string(date_value):
     """Gets the month string from the date"""
-    #if the month value is a single digit number
+    # if the month value is a single digit number
     if date_value < 10:
         return "0%s" % (date_value)
     else:
@@ -20,10 +20,10 @@ class HighwireElement(object):
         self.tag = 'meta'
         content = kwargs.get('content', None)
         self.qualifier = kwargs.get('qualifier', None)
-        #Set the elements content
+        # Set the elements content
         self.content = getattr(self, 'content', content)
         escape = kwargs.get('escape', False)
-        #if the content needs to be escaped
+        # if the content needs to be escaped
         if escape and self.content:
             self.content = cgi.escape(
                 self.content,
@@ -53,15 +53,15 @@ class CitationAuthor(HighwireElement):
         children = kwargs.get('children', [])
         creator_type_per = False
         author_name = None
-        #find the creator type in children
+        # find the creator type in children
         for child in children:
-            #if the child tag is type, and the type is per
+            # if the child tag is type, and the type is per
             if child.tag == 'type' and child.content == 'per':
                 creator_type_per = True
-            #Get the author name
+            # Get the author name
             elif child.tag == 'name':
                 author_name = child.content
-        #if qualifer is aut and the type = per
+        # if qualifer is aut and the type = per
         if qualifier == 'aut' and creator_type_per and author_name:
             return author_name
 
@@ -77,9 +77,9 @@ class CitationPublisher(HighwireElement):
     def get_publisher_name(self, **kwargs):
         """Get the publisher name"""
         children = kwargs.get('children', [])
-        #find the creator type in children
+        # find the creator type in children
         for child in children:
-            #if the child tag is type, and the type is per
+            # if the child tag is type, and the type is per
             if child.tag == 'name':
                 return child.content
         return None
@@ -94,17 +94,17 @@ class CitationPublicationDate(HighwireElement):
     def get_publication_date(self, **kwargs):
         """Determine the creation date for the publication date"""
         date_string = kwargs.get('content', '')
-        #Match the date value
+        # Match the date value
         date_match = CREATION_DATE_REGEX.match(date_string)
-        #Match the month value
+        # Match the month value
         month_match = CREATION_MONTH_REGEX.match(date_string)
-        #Match the year value
+        # Match the year value
         year_match = CREATION_YEAR_REGEX.match(date_string)
-        #check if a date match exists
+        # check if a date match exists
         if date_match:
-            #Get the values from the groups
+            # Get the values from the groups
             (year, month, day) = date_match.groups('')
-            #Create the date
+            # Create the date
             try:
                 creation_date = datetime.date(int(year), int(month), int(day))
             except ValueError:
@@ -115,11 +115,11 @@ class CitationPublicationDate(HighwireElement):
                     format_date_string(creation_date.day),
                     creation_date.year,
                 )
-        #check if a month match exists
+        # check if a month match exists
         elif month_match:
-            #Get the values from the groups
+            # Get the values from the groups
             (year, month) = month_match.groups('')
-            #Create the date
+            # Create the date
             try:
                 creation_date = datetime.date(int(year), int(month), 1)
             except ValueError:
@@ -129,9 +129,9 @@ class CitationPublicationDate(HighwireElement):
                     format_date_string(creation_date.month),
                     creation_date.year,
                 )
-        #check if a year match exists
+        # check if a year match exists
         elif year_match:
-            #Get the values from the groups
+            # Get the values from the groups
             year = year_match.groups('')[0]
             return year
         else:
@@ -148,13 +148,13 @@ class CitationOnlineDate(HighwireElement):
         """Get the online date from the meta creation date"""
         qualifier = kwargs.get('qualifier', '')
         content = kwargs.get('content', '')
-        #if it is a meta-creation-date element
+        # if it is a meta-creation-date element
         if qualifier == 'metadataCreationDate':
-            #Match the date value
+            # Match the date value
             date_match = META_CREATION_DATE_REGEX.match(content)
-            #Get the values from the groups
+            # Get the values from the groups
             (year, month, day) = date_match.groups('')
-            #Create the date
+            # Create the date
             creation_date = datetime.date(int(year), int(month), int(day))
             return "%s/%s/%s" % (
                 format_date_string(creation_date.month),
@@ -228,7 +228,7 @@ class CitationDissertationInstitution(HighwireElement):
         """Get the dissertation institution"""
         qualifier = kwargs.get('qualifier', '')
         content = kwargs.get('content', '')
-        #if it is a grantor element
+        # if it is a grantor element
         if qualifier == 'grantor':
             return content
         return None
@@ -250,19 +250,19 @@ def citation_director(**kwargs):
     """Directs the citation elements based on their qualifier"""
     qualifier = kwargs.get('qualifier', '')
     content = kwargs.get('content', '')
-    #if it is a journal title element
+    # if it is a journal title element
     if qualifier == 'publicationTitle':
         return CitationJournalTitle(content=content)
-    #if it is a volume element
+    # if it is a volume element
     elif qualifier == 'volume':
         return CitationVolume(content=content)
-    #if it is a issue element
+    # if it is a issue element
     elif qualifier == 'issue':
         return CitationIssue(content=content)
-    #if it is a first page element
+    # if it is a first page element
     elif qualifier == 'pageStart':
         return CitationFirstpage(content=content)
-    #if it is a last page element
+    # if it is a last page element
     elif qualifier == 'pageEnd':
         return CitationLastpage(content=content)
     else:
@@ -273,16 +273,16 @@ def identifier_director(**kwargs):
     """Directs the identifier elements based on their qualifier"""
     qualifier = kwargs.get('qualifier', '')
     content = kwargs.get('content', '')
-    #if it is a ISBN element
+    # if it is a ISBN element
     if qualifier == 'ISBN':
         return CitationISBN(content=content)
-    #if it is a ISSN element
+    # if it is a ISSN element
     elif qualifier == 'ISSN':
         return CitationISSN(content=content)
-    #if it is a DOI element
+    # if it is a DOI element
     elif qualifier == 'DOI':
         return CitationDOI(content=content)
-    #if it is a report number element
+    # if it is a report number element
     elif qualifier == 'REP-NO':
         return CitationTechnicalReportNumber(content=content)
     else:

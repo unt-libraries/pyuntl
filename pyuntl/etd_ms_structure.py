@@ -1,4 +1,3 @@
-import string
 from pyuntl import ETD_MS_ORDER
 
 DEGREE_ORDER = [
@@ -8,7 +7,7 @@ DEGREE_ORDER = [
     'grantor',
 ]
 
-#Namespaces for the DC xml
+# Namespaces for the DC xml
 ETD_MS_NAMESPACES = {
     'xsi': 'http://www.ndltd.org/standards/metadata/etdms/1.0/etdms.xsd/',
     None: 'http://www.ndltd.org/standards/metadata/etdms/1.0/',
@@ -36,22 +35,22 @@ class ETD_MSElement(object):
     def __init__(self, **kwargs):
         """Set all the defaults if inheriting class hasn't defined them"""
         content = kwargs.get('content', None)
-        #Set the element's content
+        # Set the element's content
         self.content = getattr(self, 'content', content)
-        #list of allowed child elements
+        # list of allowed child elements
         self.contained_children = getattr(self, 'contained_children', [])
-        #list of child elements
+        # list of child elements
         self.children = getattr(self, 'children', [])
-        #Get the qualifier
+        # Get the qualifier
         self.qualifier = kwargs.get('qualifier', None)
 
     def add_child(self, child):
         """This adds a child object to the current one.  It will check the
         contained_children list to make sure that the object is allowable, and
         throw an exception if not"""
-        #Make sure the child exists before adding it
+        # Make sure the child exists before adding it
         if child:
-            #If the child is allowed to exist under the parent
+            # If the child is allowed to exist under the parent
             if child.tag in self.contained_children:
                 self.children.append(child)
             else:
@@ -62,9 +61,9 @@ class ETD_MSElement(object):
 
     def get_child_content(self, children, element_name):
         """Gets the requested element content from a list of children"""
-        #Loop through the children and get the specified element
+        # Loop through the children and get the specified element
         for child in children:
-            #if the child is the requested element
+            # if the child is the requested element
             if child.tag == element_name:
                 return child.content
         return ''
@@ -207,12 +206,12 @@ def contributor_director(**kwargs):
     Defines the expanded qualifier name
     """
     if kwargs.get('qualifier') in ETD_MS_CONTRIBUTOR_EXPANSION:
-        #return the element object
+        # return the element object
         return ETD_MSContributor(
             role=ETD_MS_CONTRIBUTOR_EXPANSION[kwargs.get('qualifier')],
             **kwargs
         )
-    #Otherwise return nothing
+    # Otherwise return nothing
     else:
         return None
 
@@ -222,9 +221,9 @@ def description_director(**kwargs):
     Directs which class should be used based the description qualifier
     """
     if kwargs.get('qualifier') == 'content':
-        #return the element object
+        # return the element object
         return ETD_MSDescription(content=kwargs.get('content'))
-    #Otherwise return nothing
+    # Otherwise return nothing
     else:
         return None
 
@@ -234,14 +233,14 @@ def date_director(**kwargs):
     Directs which class should be used based on the date qualifier
     or if the date should be converted at all
     """
-    #If the date is a creation date
+    # If the date is a creation date
     if kwargs.get('qualifier') == 'creation':
-        #return the element object
+        # return the element object
         return ETD_MSDate(content=kwargs.get('content').strip())
     elif kwargs.get('qualifier') != 'digitized':
-        #return the element object
+        # return the element object
         return ETD_MSDate(content=kwargs.get('content').strip())
-    #Otherwise return nothing
+    # Otherwise return nothing
     else:
         return None
 
@@ -254,7 +253,7 @@ def identifier_director(**kwargs):
     qualifier = kwargs.get('qualifier', None)
     content = kwargs.get('content', '')
 
-    #See if the ark and domain name were given
+    # See if the ark and domain name were given
     if ark:
         content = 'http://digital.library.unt.edu/%s' % ark
     elif qualifier:

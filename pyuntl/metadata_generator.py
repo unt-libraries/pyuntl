@@ -1,5 +1,3 @@
-import re
-import string
 from pyuntl import UNTL_XML_ORDER, HIGHWIRE_ORDER
 from lxml.etree import Element, SubElement, tostring
 from etd_ms_structure import DEGREE_ORDER
@@ -15,7 +13,7 @@ class MetadataGeneratorException(Exception):
 
 XSI = 'http://www.w3.org/2001/XMLSchema-instance'
 
-#Namespaces for the DC xml
+# Namespaces for the DC xml
 DC_NAMESPACES = {
     'oai_dc': 'http://www.openarchives.org/OAI/2.0/oai_dc/',
     'dc': 'http://purl.org/dc/elements/1.1/',
@@ -26,35 +24,35 @@ DC_NAMESPACES = {
 def py2dict(elements):
     """ Converts a python object into a python dictionary """
     metadata_dict = {}
-    #Loop through all  elements in the python object
+    # Loop through all  elements in the python object
     for element in elements.children:
-        #if an entry for the element list hasn't been made in the dictionary
-        if not element.tag in metadata_dict:
-            #start an empty element list
+        # if an entry for the element list hasn't been made in the dictionary
+        if element.tag not in metadata_dict:
+            # start an empty element list
             metadata_dict[element.tag] = []
-        #Create a dictionary to put the element into
+        # Create a dictionary to put the element into
         element_dict = {}
-        #If the element has a qualifier
+        # If the element has a qualifier
         if hasattr(element, 'qualifier') and element.qualifier is not None:
             element_dict['qualifier'] = element.qualifier
-        #if the element has children
+        # if the element has children
         if len(element.children) > 0:
             child_dict = {}
-            #Loop through the child elements
+            # Loop through the child elements
             for child in element.children:
-                #if the child has content
+                # if the child has content
                 if child.content is not None:
                     child_dict[child.tag] = child.content
-            #Set the elements content as the dictionary of children elements
+            # Set the elements content as the dictionary of children elements
             element_dict['content'] = child_dict
-        #if the element has content, but no children
+        # if the element has content, but no children
         elif element.content is not None:
-            #if the content, stipped of whitespace, isn't an empty string
+            # if the content, stipped of whitespace, isn't an empty string
             if element.content.strip() != '':
                 element_dict['content'] = element.content
-        #if the element has content or children
+        # if the element has content or children
         if element_dict.get('content', False):
-            #append the dictionary element to the element list
+            # append the dictionary element to the element list
             metadata_dict[element.tag].append(element_dict)
 
     return metadata_dict
@@ -67,42 +65,42 @@ def etd_ms_py2dict(elements):
 
     # create metadata dictionary
     metadata_dict = {}
-    #Loop through all  elements in the python object
+    # Loop through all  elements in the python object
     for element in elements.children:
-        #if an entry for the element list hasn't been made in the dictionary
-        if not element.tag in metadata_dict:
-            #start an empty element list
+        # if an entry for the element list hasn't been made in the dictionary
+        if element.tag not in metadata_dict:
+            # start an empty element list
             metadata_dict[element.tag] = []
-        #Create a dictionary to put the element into
+        # Create a dictionary to put the element into
         element_dict = {}
-        #If element has role
+        # If element has role
         if hasattr(element, 'role'):
             element_dict['role'] = element.role
-        #If element has scheme
+        # If element has scheme
         elif hasattr(element, 'scheme'):
             element_dict['scheme'] = element.scheme
-        #If the element has a qualifier
+        # If the element has a qualifier
         elif hasattr(element, 'qualifier') and element.qualifier is not None \
                 and element.tag is 'title':
             element_dict['qualifier'] = element.qualifier
-        #if the element has children
+        # if the element has children
         if element.children:
             child_dict = {}
-            #Loop through the child elements
+            # Loop through the child elements
             for child in element.children:
-                #if the child has content
+                # if the child has content
                 if child.content is not None:
                     child_dict[child.tag] = child.content
-            #Set the elements content as the dictionary of children elements
+            # Set the elements content as the dictionary of children elements
             element_dict['content'] = child_dict
-        #if the element has content, but no children
+        # if the element has content, but no children
         elif element.content is not None:
-            #if the content, stipped of whitespace, isn't an empty string
+            # if the content, stipped of whitespace, isn't an empty string
             if element.content.strip() is not '':
                 element_dict['content'] = element.content
-        #if the element doesn't have content or children
+        # if the element doesn't have content or children
         if element_dict.get('content', False):
-            #append the dictionary element to the element list
+            # append the dictionary element to the element list
             metadata_dict[element.tag].append(element_dict)
 
     return metadata_dict
@@ -128,20 +126,20 @@ def pydict2xmlstring(metadata_dict, **kwargs):
     elements_namespace = kwargs.get('elements_namespace', None)
     namespace_map = kwargs.get('namespace_map', None)
     root_attributes = kwargs.get('root_attributes', None)
-    #if the root's namespace and namespace map are defined
+    # if the root's namespace and namespace map are defined
     if root_namespace and namespace_map:
         root = Element(root_namespace + root_label, nsmap=namespace_map)
-    #if just the namespace map is defined
+    # if just the namespace map is defined
     elif namespace_map:
         root = Element(root_label, nsmap=namespace_map)
     else:
         root = Element(root_label)
-    #If the room element has attributes
+    # If the room element has attributes
     if root_attributes:
-        #Loop through the attributes
+        # Loop through the attributes
         for key, value in root_attributes.items():
             root.attrib[key] = value
-    #Create an xml structure from field list
+    # Create an xml structure from field list
     for metadata_key in ordering:
         if metadata_key in metadata_dict:
             for element in metadata_dict[metadata_key]:
@@ -150,7 +148,7 @@ def pydict2xmlstring(metadata_dict, **kwargs):
                         root,
                         metadata_key,
                         element['content'],
-                        attribs={'qualifier':element['qualifier']},
+                        attribs={'qualifier': element['qualifier']},
                         namespace=elements_namespace,
                         )
                 elif 'content' in element and 'role' in element:
@@ -176,7 +174,7 @@ def pydict2xmlstring(metadata_dict, **kwargs):
                         element['content'],
                         namespace=elements_namespace,
                     )
-    #Create xml tree
+    # Create xml tree
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
         root,
         pretty_print=True
@@ -189,16 +187,16 @@ def create_dict_subelement(root, subelement, content, **kwargs):
     namespace = kwargs.get('namespace', None)
     key = subelement
 
-    #if the element has a namespace and attributes
+    # if the element has a namespace and attributes
     if namespace and attribs:
         subelement = SubElement(root, namespace + subelement, attribs)
-    #if the element has just a namespace
+    # if the element has just a namespace
     elif namespace:
         subelement = SubElement(root, namespace + subelement)
-    #if it just has attributes
+    # if it just has attributes
     elif attribs:
         subelement = SubElement(root, subelement, attribs)
-    #if it doesn't have any extra data
+    # if it doesn't have any extra data
     else:
         subelement = SubElement(root, subelement)
     if not isinstance(content, dict):
@@ -218,13 +216,13 @@ def create_dict_subelement(root, subelement, content, **kwargs):
 
 def highwiredict2xmlstring(highwire_elements, ordering=HIGHWIRE_ORDER):
     """Create an xml string from the highwire data dictionary"""
-    #sort the elements by the ordering list
+    # sort the elements by the ordering list
     highwire_elements.sort(key=lambda obj: ordering.index(obj.name))
     root = Element('metadata')
     for element in highwire_elements:
         attribs = {'name': element.name, 'content': element.content}
         SubElement(root, 'meta', attribs)
-    #Create xml tree
+    # Create xml tree
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
         root,
         pretty_print=True
@@ -243,7 +241,7 @@ def breakString(string, width=79, firstLineOffset=0):
                     not string[index - 1].isspace():
                 stringPart1 = string[0:index]
                 stringPart2 = string[index:]
-                #do not pass firstLineOffset
+                # do not pass firstLineOffset
                 return stringPart1 + "\n" + breakString(
                     stringPart2,
                     originalWidth
@@ -258,13 +256,13 @@ def writeANVLString(ANVLDict, ordering=UNTL_XML_ORDER):
     Take a dictionary and write out they key/value pairs in ANVL format
     """
     lines = []
-    #Loop through the ordering for the data
+    # Loop through the ordering for the data
     for key in ordering:
-        #Make sure the element exists in the data set
+        # Make sure the element exists in the data set
         if key in ANVLDict:
-            #Get the list of elements
+            # Get the list of elements
             element_list = ANVLDict[key]
-            #Loop through the element contents
+            # Loop through the element contents
             for element in element_list:
                 value = element.get('content', '')
                 offset = len(key) + 1

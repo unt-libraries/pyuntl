@@ -1,10 +1,9 @@
 import string
 from pyuntl import DC_ORDER
-from pyuntl.metadata_generator import pydict2xmlstring
 
 XSI = 'http://www.w3.org/2001/XMLSchema-instance'
 
-#Namespaces for the DC xml
+# Namespaces for the DC xml
 DC_NAMESPACES = {
     'oai_dc': 'http://www.openarchives.org/OAI/2.0/oai_dc/',
     'dc': 'http://purl.org/dc/elements/1.1/',
@@ -27,23 +26,32 @@ VOCAB_INDEX = {
 }
 
 
+class DC_StructureException(Exception):
+    """Base exception for the DC python structure"""
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return "%s" % (self.value,)
+
+
 class DCElement(object):
     """A class for containing DC elements"""
     def __init__(self, **kwargs):
         """Set all the defaults if inheriting class hasn't defined them"""
         content = kwargs.get('content', None)
         vocab_data = kwargs.get('vocab_data', None)
-        #Set the elements content
+        # Set the elements content
         self.content = getattr(self, 'content', content)
-        #list of allowed child elements
+        # list of allowed child elements
         self.contained_children = getattr(self, 'contained_children', [])
-        #list of child elements
+        # list of child elements
         self.children = getattr(self, 'children', [])
-        #Get the qualifier
+        # Get the qualifier
         qualifier = kwargs.get('qualifier', None)
-        #Determine the vocab from the qualifier
+        # Determine the vocab from the qualifier
         self.content_vocab = self.determine_vocab(qualifier)
-        #If the value needs to be resolved by accessing the vocabularies
+        # If the value needs to be resolved by accessing the vocabularies
         if kwargs.get('resolve_values', False) and self.content_vocab and \
                 vocab_data:
             self.content = self.resolver(vocab_data, 'label')
@@ -55,22 +63,22 @@ class DCElement(object):
         """This adds a child object to the current one.  It will check the
         contained_children list to make sure that the object is allowable, and
         throw an exception if not"""
-        #Make sure the child exists before adding it
+        # Make sure the child exists before adding it
         if child:
-            #If the child is allowed to exist under the parent
+            # If the child is allowed to exist under the parent
             if child.tag in self.contained_children:
                 self.children.append(child)
             else:
-                raise UNTLStructureException(
+                raise DC_StructureException(
                     "Invalid child \"%s\" for parent \"%s\"" %
                     (child.tag, self.tag)
                 )
 
     def get_child_content(self, children, element_name):
         """Gets the requested element content from a list of children"""
-        #Loop through the children and get the specified element
+        # Loop through the children and get the specified element
         for child in children:
-            #if the child is the requested element
+            # if the child is the requested element
             if child.tag == element_name:
                 return child.content
         return ''
@@ -78,14 +86,14 @@ class DCElement(object):
     def determine_vocab(self, qualifier):
         """Determine the vocab from the qualifier"""
         vocab_value = VOCAB_INDEX.get(self.tag, None)
-        #If the vocab index returns a dictionary
+        # If the vocab index returns a dictionary
         if isinstance(vocab_value, dict):
-            #Change a None qualifier into a string
-            if qualifier == None:
+            # Change a None qualifier into a string
+            if qualifier is None:
                 qualifier = 'None'
-            #Find the value based on the qualifier
+            # Find the value based on the qualifier
             return vocab_value.get(qualifier, None)
-        elif vocab_value != None:
+        elif vocab_value is not None:
             return vocab_value
         else:
             return None
@@ -95,9 +103,9 @@ class DCElement(object):
         Pulls the requested attribute based on the given vocabulary and content
         """
         term_list = vocab_data.get(self.content_vocab, [])
-        #Loop through the terms from the vocabulary
+        # Loop through the terms from the vocabulary
         for term_dict in term_list:
-            #Match the name to the current content
+            # Match the name to the current content
             if term_dict['name'] == self.content:
                 return term_dict[attribute]
         return self.content
@@ -210,9 +218,9 @@ def description_director(**kwargs):
     """Directs which class should be used based the directors qualifier"""
     description_type = {'physical': DCFormat}
     qualifier = kwargs.get('qualifier')
-    #Determine the type of element needed, based on the qualifier
+    # Determine the type of element needed, based on the qualifier
     element_class = description_type.get(qualifier, DCDescription)
-    #Create the element object of that element type
+    # Create the element object of that element type
     element = element_class(
         qualifier=qualifier,
         content=kwargs.get('content'),
@@ -224,11 +232,11 @@ def date_director(**kwargs):
     """Directs which class should be used based on the date qualifier
         or if the date should be converted at all
     """
-    #If the date is a creation date
+    # If the date is a creation date
     if kwargs.get('qualifier') == 'creation':
-        #return the element object
+        # return the element object
         return DCDate(content=kwargs.get('content'))
-    #Otherwise return nothing
+    # Otherwise return nothing
     else:
         return None
 
@@ -239,15 +247,15 @@ def identifier_director(**kwargs):
     domain_name = kwargs.get('domain_name', None)
     qualifier = kwargs.get('qualifier', None)
     content = kwargs.get('content', '')
-    #See if the ark and domain name were given
+    # See if the ark and domain name were given
     if ark and qualifier == 'ark':
         content = "ark: %s" % ark
     if domain_name and ark and qualifier == 'permalink':
-        #Create the permalink URL
+        # Create the permalink URL
         if not domain_name.endswith('/'):
             domain_name += '/'
         permalink_url = 'http://' + domain_name + ark
-        #Make sure it has a trailing slash
+        # Make sure it has a trailing slash
         if not permalink_url.endswith('/'):
             permalink_url += '/'
         content = permalink_url
