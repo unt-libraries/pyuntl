@@ -12,7 +12,7 @@ See LICENSE.txt
 Acknowledgements
 ----------------
 
-The pyuntl was developed at the UNT Libraries and has been worked on by a number of developers over the years including:
+_pyuntl_ was developed at the UNT Libraries and has been worked on by a number of developers over the years including:
 
 Brandon Fredericks  
 
