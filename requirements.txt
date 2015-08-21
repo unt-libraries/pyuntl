@@ -1,2 +1,2 @@
-lxml
-rdflib
+lxml>=3.4.4
+rdflib>=4.2.1
