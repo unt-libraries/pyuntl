@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <title qualifier="officialtitle">What Spins Away</title>
+  <creator qualifier="aut">
+    <type>per</type>
+    <name>Abbott, Albert</name>
+  </creator>
+  <contributor qualifier="cha">
+    <info>Major Professor</info>
+    <type>per</type>
+    <name>Martin, Lee</name>
+  </contributor>
+  <contributor qualifier="cmr">
+    <type>per</type>
+    <name>Rodman, Barbara</name>
+  </contributor>
+  <contributor qualifier="cmr">
+    <type>per</type>
+    <name>May, Brian</name>
+  </contributor>
+  <publisher>
+    <name>University of North Texas</name>
+    <location>Denton, Texas</location>
+  </publisher>
+  <date qualifier="creation">1999-05</date>
+  <date qualifier="digitized">2007-06-09</date>
+  <language>eng</language>
+  <description qualifier="content">What Spins Away is a novel about a man named Caleb who, in the process, of searching for a brother who has been missing for ten years, discovers that his inability to commit to a job or his primary relationships is both the result of his history with that older missing brother, and his own misconceptions about the meaning of that history. On a formal level, the novel explores the ability of traditional narrative structures to carry postmodern themes. The theme, in this case, is the struggle for a stable identity when there is no stable community against which or in relationship to an identity might be defined.</description>
+  <subject qualifier="LCSH">Missing persons -- Fiction.</subject>
+  <subject qualifier="LCSH">Brothers -- Fiction.</subject>
+  <subject qualifier="KWD">novel</subject>
+  <subject qualifier="KWD">history</subject>
+  <subject qualifier="KWD">narrative</subject>
+  <collection>UNTETD</collection>
+  <institution>UNT</institution>
+  <rights qualifier="access">public</rights>
+  <rights qualifier="license">copyright</rights>
+  <rights qualifier="holder">Irwin, Keith</rights>
+  <rights qualifier="statement">Copyright is held by the author, unless otherwise noted. All rights reserved.</rights>
+  <resourceType>text_etd</resourceType>
+  <format>text</format>
+  <identifier qualifier="OCLC">44386685</identifier>
+  <identifier qualifier="UNTCAT">b2206993</identifier>
+  <degree qualifier="name">Doctor of Philosophy</degree>
+  <degree qualifier="level">Doctoral</degree>
+  <degree qualifier="discipline">English</degree>
+  <degree qualifier="department">Department of English</degree>
+  <degree qualifier="grantor">University of North Texas</degree>
+  <note qualifier="nonDisplay">comment: Metadata Created By: mphillips@library.unt.edu 2007-06-09</note>
+  <meta qualifier="numberOfPages">389</meta>
+  <meta qualifier="objectMasterSize">708801</meta>
+  <meta qualifier="ark">ark:/67531/metadc2182</meta>
+  <meta qualifier="meta-id">meta-dc-2182</meta>
+  <meta qualifier="meta-id">meta-pcc-db709bcf-677f-11dc-8e8e-001676dae105</meta>
+  <meta qualifier="objectType">simple</meta>
+  <meta qualifier="metadataCreator">mphillips</meta>
+  <meta qualifier="metadataCreationDate">2007-09-20, 13:46:15</meta>
+  <meta qualifier="metadataModifier">Daniel</meta>
+  <meta qualifier="metadataModificationDate">2009-08-20, 13:12:53</meta>
+  <meta qualifier="system">DC</meta>
+  <meta qualifier="TKLPath">./1999_1/open</meta>
+</metadata>

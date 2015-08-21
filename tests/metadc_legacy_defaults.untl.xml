@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <title qualifier="officialtitle">change template values when appropriate</title>
+  <creator qualifier="aut">
+    <type>per</type>
+    <name>Gillis, Glen S</name>
+  </creator>
+  <contributor qualifier="cha">
+    <info>Major Professor</info>
+    <type>per</type>
+    <name>Norton, Scott J.</name>
+  </contributor>
+  <contributor qualifier="cmr">
+    <type>per</type>
+    <name>Massarachia, Ruth Anne</name>
+  </contributor>
+  <contributor qualifier="cmr">
+    <type>per</type>
+    <name>Donahue, Manus J.</name>
+  </contributor>
+  <contributor qualifier="cmr">
+    <type>per</type>
+    <name>Chapman, Kent D.</name>
+  </contributor>
+  <publisher>
+    <name>University of North Texas</name>
+    <location>Denton, Texas</location>
+  </publisher>
+  <date qualifier="creation">1999-05</date>
+  <date qualifier="digitized">2007-06-09</date>
+  <language>eng</language>
+  <description qualifier="content">change as necessary</description>
+  <subject qualifier="LCSH">Glyoxalase.</subject>
+  <subject qualifier="LCSH">Nucleotides.</subject>
+  <subject qualifier="LCSH">Glutathione.</subject>
+  <subject qualifier="KWD">glyoxalase I</subject>
+  <subject qualifier="KWD">glutathione</subject>
+  <subject qualifier="KWD">ATP</subject>
+  <subject qualifier="KWD">GTP</subject>
+  <subject qualifier="KWD">glyoxalase II</subject>
+  <collection>UNTETD</collection>
+  <institution>UNT</institution>
+  <rights qualifier="access">public</rights>
+  <rights qualifier="license">copyright</rights>
+  <rights qualifier="holder">Gillis, Glen S</rights>
+  <rights qualifier="statement">Copyright is held by the author, unless otherwise noted. All rights reserved.</rights>
+  <resourceType>text_etd</resourceType>
+  <format>text</format>
+  <identifier qualifier="OCLC">45003473</identifier>
+  <identifier qualifier="UNTCAT">b2226120</identifier>
+  <degree qualifier="name">Doctor of Philosophy</degree>
+  <degree qualifier="level">Doctoral</degree>
+  <degree qualifier="discipline">Biochemistry</degree>
+  <degree qualifier="department">Department of Biological Sciences</degree>
+  <degree qualifier="grantor">University of North Texas</degree>
+  <note qualifier="nonDisplay">comment: Metadata created by: mphillips 2007-06-09</note>
+  <meta qualifier="numberOfPages">219</meta>
+  <meta qualifier="objectMasterSize">855475</meta>
+  <meta qualifier="ark">ark:/67531/metadc2183</meta>
+  <meta qualifier="meta-id">meta-dc-2183</meta>
+  <meta qualifier="meta-id">meta-pcc-db434a40-677f-11dc-ba79-001676dae105</meta>
+  <meta qualifier="objectType">simple</meta>
+  <meta qualifier="metadataCreator">mphillips</meta>
+  <meta qualifier="metadataCreationDate">2007-09-20, 13:46:15</meta>
+  <meta qualifier="metadataModifier">Daniel</meta>
+  <meta qualifier="metadataModificationDate">2009-08-20, 13:49:24</meta>
+  <meta qualifier="system">DC</meta>
+  <meta qualifier="TKLPath">./1999_1/open</meta>
+</metadata>
