@@ -8,7 +8,7 @@ setup(
     version='1.0.0',
     author='Mark Phillips',
     author_email='mark.phillips@unt.edu',
-    url='https://github.com/unt-libraries/edtf-validate',
+    url='https://github.com/unt-libraries/pyuntl',
     license='BSD',
     packages=['pyuntl'],
     install_requires=[
