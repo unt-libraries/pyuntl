@@ -16,6 +16,7 @@ setup(
         'rdflib>=4.2.1',
     ],
     description='read, write and modify UNTL metadata records',
+    long_description='See the home page for more information.',
     classifiers=[
         'Natural Language :: English',
         'Programming Language :: Python',
