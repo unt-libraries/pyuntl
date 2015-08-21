@@ -9,6 +9,7 @@ setup(
     author='Mark Phillips',
     author_email='mark.phillips@unt.edu',
     url='https://github.com/unt-libraries/edtf-validate',
+    download_url='https://github.com/unt-libraries/pyuntl/tarball/1.0.0',
     license='BSD',
     packages=['pyuntl'],
     install_requires=[
