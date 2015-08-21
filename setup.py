@@ -12,8 +12,8 @@ setup(
     license='BSD',
     packages=['pyuntl'],
     install_requires=[
-        'lxml',
-        'rdflib'
+        'lxml>=3.4.4',
+        'rdflib>=4.2.1',
     ],
     description='read, write and modify UNTL metadata records',
     classifiers=[
