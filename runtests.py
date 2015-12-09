@@ -1,7 +1,9 @@
 #!/usr/bin/env python
+import sys
 import unittest
-from tests import record, etd, field, reader, writer, pyuntl_test, dublincore, \
-    highwire
+
+from tests import (record, etd, field, reader, writer,
+                   pyuntl_test, dublincore, highwire)
 
 
 def suite():
@@ -16,5 +18,7 @@ def suite():
     test_suite.addTest(dublincore.suite())
     return test_suite
 
-runner = unittest.TextTestRunner()
-runner.run(suite())
+if __name__ == '__main__':
+    runner = unittest.TextTestRunner()
+    exit_code = not runner.run(suite()).wasSuccessful()
+    sys.exit(exit_code)
