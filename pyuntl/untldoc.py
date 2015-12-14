@@ -73,10 +73,8 @@ def untlxml2py(untl_filename):
                 child = parent_stack.pop()
                 if element.text is not None:
                     content = element.text.strip()
-                else:
-                    content = ''
-                if content != '':
-                    child.set_content(element.text)
+                    if content != '':
+                        child.set_content(element.text)
                 if element.get('qualifier', False):
                     child.set_qualifier(element.get('qualifier'))
 
