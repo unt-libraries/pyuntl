@@ -159,7 +159,7 @@ class RecordTest(unittest.TestCase):
         # Get ordered list of children tags.
         tag_list = [UNTL_PTH_ORDER.index(elem.tag) for elem in c2.children]
         # Verify order is in order of UNTL_PTH_ORDER.
-        self.assertTrue(all(tag_list[i] <= tag_list[i+1] for i in xrange(len(tag_list)-1)))
+        self.assertTrue(all(current <= next_ for current, next_ in zip(tag_list, tag_list[1:])))
 
     def test_validate(self):
         # this method was left undeveloped in pyuntl untl_structure
