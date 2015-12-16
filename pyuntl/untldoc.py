@@ -56,53 +56,32 @@ def untlxml2py(untl_filename):
     #Create a stack to hold parents
     parent_stack = []
     #Use iterparse to open the file and loop through elements
-    for event, element in iterparse(untl_filename, events=("start", "end")):
+    for event, element in iterparse(untl_filename, events=('start', 'end')):
         if NAMESPACE_REGEX.search(element.tag, 0):
             element_tag = NAMESPACE_REGEX.search(element.tag, 0).group(1)
         else:
             element_tag = element.tag
-            #If the element exists in untl
+        #If the element exists in untl
         if element_tag in PYUNTL_DISPATCH:
             #If it is the opening tag of the element
             if event == 'start':
-                if element.text != None:
-                    content = element.text.strip()
-                else:
-                    content = ''
-                    #if the element has a qualifier and content
-                if element.get('qualifier', False) and content != '':
-                    #Add the element to the parent stack
-                    parent_stack.append(
-                        PYUNTL_DISPATCH[element_tag](
-                            qualifier=element.get('qualifier'),
-                            content=element.text,
-                        )
-                    )
-                #if the element has a qualifier
-                elif element.get('qualifier', False):
-                    #Add the element to the parent stack
-                    parent_stack.append(
-                        PYUNTL_DISPATCH[element_tag](
-                            qualifier=element.get('qualifier')
-                        )
-                    )
-                #if the element has content
-                elif content != '':
-                    #Add the element to the parent stack
-                    parent_stack.append(
-                        PYUNTL_DISPATCH[element_tag](content=element.text)
-                    )
-                #if the element has no content or attributes
-                else:
-                    #Add the element to the parent stack
-                    parent_stack.append(PYUNTL_DISPATCH[element_tag]())
-            #if it is the closing tag of the element
+                #Add the element to the parent stack
+                parent_stack.append(PYUNTL_DISPATCH[element_tag]())
+            #If it is the closing tag of the element
             elif event == 'end':
-                #Take the element off the parent and add it to its own parent
+                #Remove element from stack. Add qualifier and content.
                 child = parent_stack.pop()
+                if element.text is not None:
+                    content = element.text.strip()
+                    if content != '':
+                        child.set_content(element.text)
+                if element.get('qualifier', False):
+                    child.set_qualifier(element.get('qualifier'))
+
+                #Add element to its parent
                 if len(parent_stack) > 0:
                     parent_stack[-1].add_child(child)
-                #if it doesn't have a parent, it must be the root element
+                #If it doesn't have a parent, it must be the root element
                 else:
                     #Return the root element
                     return child
