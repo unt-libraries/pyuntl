@@ -154,15 +154,12 @@ class RecordTest(unittest.TestCase):
         self.assertTrue(d1 == d2)
 
     def test_sort_untl(self):
-        c1 = untldict2py(UNTL_DICT)
         c2 = untldict2py(UNTL_DICT)
         c2.sort_untl(UNTL_PTH_ORDER)
-        # make sure the sort of the children elements changes
-        self.assertTrue(
-            c1.children[0].tag != c2.children[0].tag and
-            c2.children[0].tag == 'title' and
-            c1.children[0].tag == 'publisher'
-        )
+        # Get ordered list of children tags.
+        tag_list = [UNTL_PTH_ORDER.index(elem.tag) for elem in c2.children]
+        # Verify order is in order of UNTL_PTH_ORDER.
+        self.assertTrue(all(current <= next_ for current, next_ in zip(tag_list, tag_list[1:])))
 
     def test_validate(self):
         # this method was left undeveloped in pyuntl untl_structure
