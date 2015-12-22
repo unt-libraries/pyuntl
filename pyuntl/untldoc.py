@@ -348,7 +348,7 @@ def untlpy2dcpy(untl_elements, **kwargs):
                 # Otherwise, add the coverage element to the structure.
                 else:
                     dc_root.add_child(dc_element)
-            # Add non coverge DC element to the structure.
+            # Add non coverage DC element to the structure.
             elif dc_element:
                 dc_root.add_child(dc_element)
     # If the domain and ark were specified
