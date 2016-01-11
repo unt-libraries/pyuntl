@@ -10,13 +10,13 @@ from pyuntl.untldoc import (untldict2py, untlpy2dcpy,
                             generate_dc_txt, dcdict2rdfpy)
 from tests import UNTL_DICT, DUBLIN_CORE_XML
 try:
-    # the json module was included in the stdlib in python 2.6
+    # The json module was included in the stdlib in Python 2.6
     # http://docs.python.org/library/json.html
     import json
 except ImportError:
-    # simplejson 2.0.9 is available for python 2.4+
+    # simplejson 2.0.9 is available for Python 2.4+
     # http://pypi.python.org/pypi/simplejson/2.0.9
-    # simplejson 1.7.3 is available for python 2.3+
+    # simplejson 1.7.3 is available for Python 2.3+
     # http://pypi.python.org/pypi/simplejson/1.7.3
     import simplejson as json
 
@@ -41,7 +41,7 @@ class DublinCoreTest(unittest.TestCase):
         self.assertEqual(type(rdf), ConjunctiveGraph)
 
     def testDCText(self):
-        """Test that we can generate a dc text."""
+        """Test that we can generate a DC text."""
         dctext = generate_dc_txt(UNTL_DICT)
         self.assertEqual(type(dctext), str)
 
@@ -89,15 +89,15 @@ class DublinCoreTest(unittest.TestCase):
 
     def testDCFormattedDict(self):
         """Verify we can format to dc dict properly."""
-        # make the dictionary
+        # Make the dictionary.
         dcd = untlpydict2dcformatteddict(UNTL_DICT)
-        # workaround to make usable in python 2.5
+        # Workaround to make usable in Python 2.5.
         self.assertFalse('content' in dcd['publisher'], '%s not in %s'
                          % ('content', dcd['publisher']))
         self.assertTrue(len(dcd) < len(UNTL_DICT))
 
     def testConversionFromUNTLPY(self):
-        """Verify the conversion from untl object."""
+        """Verify the conversion from UNTL object."""
         self.assertTrue(type(self.root_element) is DC)
 
     def testDoesNotCreateContributor(self):
