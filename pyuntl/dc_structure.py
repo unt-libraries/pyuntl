@@ -5,14 +5,12 @@ from pyuntl import DC_ORDER
 
 XSI = 'http://www.w3.org/2001/XMLSchema-instance'
 
-
 # Namespaces for the DC XML.
 DC_NAMESPACES = {
     'oai_dc': 'http://www.openarchives.org/OAI/2.0/oai_dc/',
     'dc': 'http://purl.org/dc/elements/1.1/',
     'xsi': XSI,
 }
-
 
 VOCAB_INDEX = {
     'coverage': {
@@ -68,7 +66,8 @@ class DCElement(object):
     def add_child(self, child):
         """This adds a child object to the current one.  It will check
         the contained_children list to make sure that the object is
-        allowable, and throw an exception if not."""
+        allowable, and throw an exception if not.
+        """
         # Make sure the child exists before adding it.
         if child:
             # Append child if it is allowed to exist under the parent.

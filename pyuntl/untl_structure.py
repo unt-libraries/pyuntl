@@ -11,6 +11,7 @@ from pyuntl.quality import determine_completeness
 
 class UNTLStructureException(Exception):
     """Base exception for the UNTL Python structure."""
+
     def __init__(self, value):
         self.value = value
 
@@ -645,6 +646,12 @@ class Location(UNTLElement):
         super(Location, self).__init__(**kwargs)
 
 
+class Role(UNTLElement):
+    def __init__(self, **kwargs):
+        self.tag = 'role'
+        super(Role, self).__init__(**kwargs)
+
+
 PYUNTL_DISPATCH = {
     'metadata': Metadata,
     'title': Title,
@@ -675,11 +682,6 @@ PYUNTL_DISPATCH = {
     'citation': Citation,
 }
 
-
-class Role(UNTLElement):
-    def __init__(self, **kwargs):
-        self.tag = 'role'
-        super(Role, self).__init__(**kwargs)
 
 PARENT_FORM = {
     'role': Role,

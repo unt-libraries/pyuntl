@@ -1,25 +1,6 @@
-try:
-    # The json module was included in the stdlib in Python 2.6
-    # http://docs.python.org/library/json.html
-    import json
-except ImportError:
-    # simplejson 2.0.9 is available for Python 2.4+
-    # http://pypi.python.org/pypi/simplejson/2.0.9
-    # simplejson 1.7.3 is available for Python 2.3+
-    # http://pypi.python.org/pypi/simplejson/1.7.3
-    import simplejson as json
+import json
 
 from pyuntl import UNTL_USAGE_LINK
-
-
-class UNTLFormException(Exception):
-    """Base exception for the UNTL form Python structure."""
-
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return '%s' % (self.value,)
 
 
 REQUIRES_QUALIFIER = [
@@ -34,6 +15,16 @@ REQUIRES_QUALIFIER = [
     'degree',
     'note',
 ]
+
+
+class UNTLFormException(Exception):
+    """Base exception for the UNTL form Python structure."""
+
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return '%s' % (self.value,)
 
 
 def get_qualifier_dict(vocabularies, qualifier_vocab):

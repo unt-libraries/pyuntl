@@ -8,6 +8,7 @@
     root_element.add_child(publisher_element)
 """
 
+import json
 import re
 import urllib2
 
@@ -27,16 +28,8 @@ from pyuntl.metadata_generator import (py2dict, pydict2xml, pydict2xmlstring,
                                        MetadataGeneratorException)
 from pyuntl.untl_structure import PYUNTL_DISPATCH, PARENT_FORM
 
-try:
-    # The json module was included in the stdlib in Python 2.6
-    # http://docs.python.org/library/json.html.
-    import json
-except ImportError:
-    # simplejson 2.0.9 is available for Python 2.4+
-    # http://pypi.python.org/pypi/simplejson/2.0.9
-    # simplejson 1.7.3 is available for Python 2.3+
-    # http://pypi.python.org/pypi/simplejson/1.7.3
-    import simplejson as json
+
+NAMESPACE_REGEX = re.compile(r'^{[^}]+}(.*)')
 
 
 class PyuntlException(Exception):
@@ -47,9 +40,6 @@ class PyuntlException(Exception):
 
     def __str__(self):
         return '%s' % (self.value,)
-
-
-NAMESPACE_REGEX = re.compile(r'^{[^}]+}(.*)')
 
 
 def untlxml2py(untl_filename):

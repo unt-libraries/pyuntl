@@ -7,9 +7,7 @@ COMMON_DEFAULT_ATTRIBUTE_VALUES = [
     "change template values when appropriate",
 ]
 
-
 DEFAULT_VALUE_REGEX = re.compile("{{{.*}}}")
-
 
 # These are the children of a pyuntl record
 # that get scored for completeness.

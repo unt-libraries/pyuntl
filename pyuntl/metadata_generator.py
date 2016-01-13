@@ -4,6 +4,16 @@ from pyuntl import UNTL_XML_ORDER, HIGHWIRE_ORDER
 from pyuntl.etd_ms_structure import DEGREE_ORDER
 
 
+XSI = 'http://www.w3.org/2001/XMLSchema-instance'
+
+# Namespaces for the DC XML.
+DC_NAMESPACES = {
+    'oai_dc': 'http://www.openarchives.org/OAI/2.0/oai_dc/',
+    'dc': 'http://purl.org/dc/elements/1.1/',
+    'xsi': XSI,
+}
+
+
 class MetadataGeneratorException(Exception):
     """Base exception for Metadata Generation."""
 
@@ -12,17 +22,6 @@ class MetadataGeneratorException(Exception):
 
     def __str__(self):
         return '%s' % (self.value,)
-
-
-XSI = 'http://www.w3.org/2001/XMLSchema-instance'
-
-
-# Namespaces for the DC XML.
-DC_NAMESPACES = {
-    'oai_dc': 'http://www.openarchives.org/OAI/2.0/oai_dc/',
-    'dc': 'http://purl.org/dc/elements/1.1/',
-    'xsi': XSI,
-}
 
 
 def py2dict(elements):
