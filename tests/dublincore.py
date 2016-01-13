@@ -1,3 +1,4 @@
+import json
 import unittest
 
 from rdflib import ConjunctiveGraph
@@ -9,16 +10,6 @@ from pyuntl.untldoc import (untldict2py, untlpy2dcpy,
                             generate_dc_xml, generate_dc_json,
                             generate_dc_txt, dcdict2rdfpy)
 from tests import UNTL_DICT, DUBLIN_CORE_XML
-try:
-    # The json module was included in the stdlib in Python 2.6
-    # http://docs.python.org/library/json.html
-    import json
-except ImportError:
-    # simplejson 2.0.9 is available for Python 2.4+
-    # http://pypi.python.org/pypi/simplejson/2.0.9
-    # simplejson 1.7.3 is available for Python 2.3+
-    # http://pypi.python.org/pypi/simplejson/1.7.3
-    import simplejson as json
 
 
 class DublinCoreTest(unittest.TestCase):
