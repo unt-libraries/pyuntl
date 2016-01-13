@@ -1,11 +1,12 @@
 import unittest
-from pyuntl.untldoc import untldict2py, py2dict
-from tests import UNTL_DICT
-from pyuntl.untl_structure import Metadata as Record
-from pyuntl.untl_structure import PYUNTL_DISPATCH, UNTLStructureException, \
-    FormGenerator
-from pyuntl import UNTL_PTH_ORDER
+
 from lxml.etree import _Element
+
+from pyuntl import UNTL_PTH_ORDER
+from pyuntl.untldoc import untldict2py, py2dict
+from pyuntl.untl_structure import (Metadata as Record, PYUNTL_DISPATCH,
+                                   UNTLStructureException, FormGenerator)
+from tests import UNTL_DICT
 
 
 class RecordTest(unittest.TestCase):
@@ -16,39 +17,35 @@ class RecordTest(unittest.TestCase):
         field = PYUNTL_DISPATCH['title'](content=None)
         self.record.add_child(field)
         xml = self.record.create_xml_string()
-        self.assertTrue(
-            xml.strip() == '<?xml version="1.0" encoding="UTF-8"?>\n' +
-            '<metadata>\n  <title/>\n</metadata>\n'.strip()
-        )
+        self.assertTrue(xml.strip() == ('<?xml version="1.0" encoding='
+                                        '"UTF-8"?>\n<metadata>\n'
+                                        '  <title/>\n</metadata>\n').strip())
 
     def test_field_not_found(self):
-        '''
-        If there are no fields, then the children amount should be zero
-        '''
+        """Test there are no children if there are no fields."""
         self.assertEquals(len(self.record.children), 0)
 
     def test_create_xml(self):
-        '''
-        the xml created from a pyuntl object should be of class _Element
-        '''
+        """Test the XML created from a pyuntl object is of
+        class _Element.
+        """
         field = PYUNTL_DISPATCH['title'](content=None)
         self.record.add_child(field)
         xml = self.record.create_xml()
         self.assertTrue(isinstance(xml, _Element))
 
     def test_add_child(self):
-        '''
-        a field should exist in the children array of the record upon adding it
-        '''
+        """Test field exists in the children array of the record
+        upon adding it.
+        """
         field = PYUNTL_DISPATCH['title'](content=None)
         self.record.add_child(field)
         self.assertTrue(field in self.record.children)
 
     def test_add_child_field_where_qualifier_exists_and_content_does_not(self):
-        '''
-        we should be able to add a child that has a qualifier and not content
-        it passes the test if it is included in the children array
-        '''
+        """Test a child added with a qualifier and not content
+        is included in the children array.
+        """
         field = PYUNTL_DISPATCH['title'](
             content=None
         )
@@ -57,10 +54,10 @@ class RecordTest(unittest.TestCase):
         self.assertTrue(field in self.record.children)
 
     def test_convert_none_content_object_to_dict_and_back(self):
-        '''
-        using py2dict, then dict2py, finally back to py2dict on a none content
-        object should yield an equivilent dictionary as the original one.
-        '''
+        """Test for original dictionary equivalent to yielded one
+        using py2dict, then dict2py, then finally back to py2dict
+        on a None content.
+        """
         field = PYUNTL_DISPATCH['title'](
             content=None
         )
@@ -83,10 +80,9 @@ class RecordTest(unittest.TestCase):
         )
 
     def test_convert_content_no_qualifier_roundtrip(self):
-        '''
-        if we add a child without a qualifier, make sure it doesn't create one
-        if we send it on a 'round trip' py > dict > py
-        '''
+        """Test adding a child without a qualifier doesn't create one
+        when converting from py to dict to py.
+        """
         field = PYUNTL_DISPATCH['title'](
             content='Tie Till the Title'
         )
@@ -101,16 +97,18 @@ class RecordTest(unittest.TestCase):
         )
 
     def test_add_nonexistant_child(self):
-        '''
-        should raise a KeyError because we never added a field by that name
-        '''
-        self.assertRaises(KeyError, lambda: self.record.add_child(
-                          PYUNTL_DISPATCH['geolocation'](content=None)))
+        """Test adding a child to a field that shouldn't
+        contain children raises exception.
+        """
+        field = PYUNTL_DISPATCH['subject']()
+        self.assertRaises(UNTLStructureException,
+                          lambda: field.add_child(
+                              PYUNTL_DISPATCH['title'](content=None)))
 
     def test_add_misplaced_child(self):
-        '''
-        should raise a UNTLStructureException because titles cant have infos
-        '''
+        """Test adding an 'info' to a title element raises a
+        UNTLStructureException because it is not an allowed child.
+        """
         field = PYUNTL_DISPATCH['title'](content=None)
         self.record.add_child(field)
         self.assertRaises(UNTLStructureException,
@@ -118,12 +116,10 @@ class RecordTest(unittest.TestCase):
                               PYUNTL_DISPATCH['info'](content=None)))
 
     def test_remove_field(self):
-        '''
-        adding a single field and then removing it should leave us with 0
-        '''
+        """Test adding a single field and then removing it leaves 0."""
         field = PYUNTL_DISPATCH['title'](content=None)
         self.record.add_child(field)
-        # try removing a field that exists
+        # Try removing a field that exists.
         del self.record.children[0]
         self.assertEqual(len(self.record.children), 0)
 
@@ -162,21 +158,17 @@ class RecordTest(unittest.TestCase):
         self.assertTrue(all(current <= next_ for current, next_ in zip(tag_list, tag_list[1:])))
 
     def test_validate(self):
-        # this method was left undeveloped in pyuntl untl_structure
+        # This method was left undeveloped in pyuntl.untl_structure.
         pass
 
     def test_generate_form_data(self):
-        '''
-        We are expecting a instance of a FormGenerator class
-        '''
+        """Test for an instance of a FormGenerator class."""
         self.record = untldict2py(UNTL_DICT)
         form_gen = self.record.generate_form_data(sort_order=UNTL_PTH_ORDER)
         self.assertTrue(isinstance(form_gen, FormGenerator))
 
     def test_complete_record(self):
-        '''
-        we want to make sure each tag appears as created from the dict keys
-        '''
+        """Test each tag appears as created from the dict keys."""
         self.record = untldict2py(UNTL_DICT)
         for c in self.record.children:
             self.assertTrue(c.tag in UNTL_DICT.keys())

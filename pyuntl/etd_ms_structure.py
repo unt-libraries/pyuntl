@@ -1,5 +1,6 @@
 from pyuntl import ETD_MS_ORDER
 
+
 DEGREE_ORDER = [
     'name',
     'level',
@@ -7,63 +8,69 @@ DEGREE_ORDER = [
     'grantor',
 ]
 
-# Namespaces for the DC xml
+# Namespaces for the DC XML.
 ETD_MS_NAMESPACES = {
     'xsi': 'http://www.ndltd.org/standards/metadata/etdms/1.0/etdms.xsd/',
     None: 'http://www.ndltd.org/standards/metadata/etdms/1.0/',
 }
 
 ETD_MS_CONTRIBUTOR_EXPANSION = {
-    "ths": "advisor",
-    "cmr": "committee member",
-    "cha": "chair",
-    "jrr": "juror",
+    'ths': 'advisor',
+    'cmr': 'committee member',
+    'cha': 'chair',
+    'jrr': 'juror',
 }
 
 
 class ETD_MS_StructureException(Exception):
-    """Base exception for the ETD_MS python structure"""
+    """Base exception for the ETD_MS Python structure."""
+
     def __init__(self, value):
         self.value = value
 
     def __str__(self):
-        return "%s" % (self.value,)
+        return '%s' % (self.value,)
 
 
 class ETD_MSElement(object):
-    """A class for containing ETD MS elements"""
+    """A class for containing ETD MS elements."""
+
     def __init__(self, **kwargs):
-        """Set all the defaults if inheriting class hasn't defined them"""
+        """Set all the defaults if inheriting class hasn't
+        defined them.
+        """
         content = kwargs.get('content', None)
-        # Set the element's content
+        # Set the element's content.
         self.content = getattr(self, 'content', content)
-        # list of allowed child elements
+        # Get list of allowed child elements.
         self.contained_children = getattr(self, 'contained_children', [])
-        # list of child elements
+        # Get list of child elements.
         self.children = getattr(self, 'children', [])
-        # Get the qualifier
+        # Get the qualifier.
         self.qualifier = kwargs.get('qualifier', None)
 
     def add_child(self, child):
-        """This adds a child object to the current one.  It will check the
-        contained_children list to make sure that the object is allowable, and
-        throw an exception if not"""
-        # Make sure the child exists before adding it
+        """Add a child object to the current one.
+
+        Checks the contained_children list to make sure that the object
+        is allowable, and throws an exception if not.
+        """
+        # Make sure the child exists before adding it.
         if child:
-            # If the child is allowed to exist under the parent
+            # Add the child if it is allowed to exist under the parent.
             if child.tag in self.contained_children:
                 self.children.append(child)
             else:
                 raise ETD_MS_StructureException(
-                    "Invalid child \"%s\" for parent \"%s\"" %
+                    'Invalid child "%s" for parent "%s"' %
                     (child.tag, self.tag)
                 )
 
     def get_child_content(self, children, element_name):
-        """Gets the requested element content from a list of children"""
-        # Loop through the children and get the specified element
+        """Get the requested element content from a list of children."""
+        # Loop through the children and get the specified element.
         for child in children:
-            # if the child is the requested element
+            # If the child is the requested element, return its content.
             if child.tag == element_name:
                 return child.content
         return ''
@@ -202,58 +209,49 @@ class ETD_MSDegreeGrantor(ETD_MSElement):
 
 
 def contributor_director(**kwargs):
-    """
-    Defines the expanded qualifier name
-    """
+    """Define the expanded qualifier name."""
     if kwargs.get('qualifier') in ETD_MS_CONTRIBUTOR_EXPANSION:
-        # return the element object
+        # Return the element object.
         return ETD_MSContributor(
             role=ETD_MS_CONTRIBUTOR_EXPANSION[kwargs.get('qualifier')],
             **kwargs
         )
-    # Otherwise return nothing
     else:
         return None
 
 
 def description_director(**kwargs):
-    """
-    Directs which class should be used based the description qualifier
+    """Direct which class should be used based on the description
+    qualifier.
     """
     if kwargs.get('qualifier') == 'content':
-        # return the element object
+        # Return the element object.
         return ETD_MSDescription(content=kwargs.get('content'))
-    # Otherwise return nothing
     else:
         return None
 
 
 def date_director(**kwargs):
+    """Direct which class should be used based on the date qualifier
+    or if the date should be converted at all.
     """
-    Directs which class should be used based on the date qualifier
-    or if the date should be converted at all
-    """
-    # If the date is a creation date
+    # If the date is a creation date, return the element object.
     if kwargs.get('qualifier') == 'creation':
-        # return the element object
         return ETD_MSDate(content=kwargs.get('content').strip())
     elif kwargs.get('qualifier') != 'digitized':
-        # return the element object
+        # Return the element object.
         return ETD_MSDate(content=kwargs.get('content').strip())
-    # Otherwise return nothing
     else:
         return None
 
 
 def identifier_director(**kwargs):
-    """
-    Directs how to handle the identifier element
-    """
+    """Direct how to handle the identifier element."""
     ark = kwargs.get('ark', None)
     qualifier = kwargs.get('qualifier', None)
     content = kwargs.get('content', '')
 
-    # See if the ark and domain name were given
+    # See if the ark and domain name were given.
     if ark:
         content = 'http://digital.library.unt.edu/%s' % ark
     elif qualifier:
@@ -262,9 +260,7 @@ def identifier_director(**kwargs):
 
 
 def subject_director(**kwargs):
-    """
-     How to handle a subject element
-    """
+    """Direct how to handle a subject element."""
     if kwargs.get('qualifier') not in ['KWD', '']:
         return ETD_MSSubject(scheme=kwargs.get('qualifier'), **kwargs)
     else:

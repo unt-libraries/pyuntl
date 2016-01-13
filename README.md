@@ -1,6 +1,8 @@
 pyuntl
 =========
 
+[![Build Status](https://travis-ci.org/unt-libraries/pyuntl.svg?branch=master)](https://travis-ci.org/unt-libraries/pyuntl)
+
 Python module for reading and writing UNTL metadata records.
 
 ```python
