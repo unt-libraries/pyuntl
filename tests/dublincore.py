@@ -4,7 +4,7 @@ import unittest
 from rdflib import ConjunctiveGraph
 from lxml import objectify
 
-from pyuntl.dc_structure import DC, DC_NAMESPACES
+from pyuntl.dc_structure import DC, DC_NAMESPACES, identifier_director
 from pyuntl.untldoc import (untldict2py, untlpy2dcpy,
                             untlpydict2dcformatteddict,
                             generate_dc_xml, generate_dc_json,
@@ -86,6 +86,15 @@ class DublinCoreTest(unittest.TestCase):
         self.assertFalse('content' in dcd['publisher'], '%s not in %s'
                          % ('content', dcd['publisher']))
         self.assertTrue(len(dcd) < len(UNTL_DICT))
+
+    def testIdentifierDirectorHttpsScheme(self):
+        """Verify DC Identifier permalink gets https scheme."""
+        dc_element = identifier_director(ark='ark:/67531/test',
+                                         domain_name='example.com',
+                                         qualifier='permalink',
+                                         scheme='https')
+        self.assertEqual(dc_element.content,
+                         'https://example.com/ark:/67531/test/')
 
     def testConversionFromUNTLPY(self):
         """Verify the conversion from UNTL object."""
