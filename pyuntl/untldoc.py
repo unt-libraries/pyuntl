@@ -293,6 +293,7 @@ def untlpy2dcpy(untl_elements, **kwargs):
     eDate = None
     ark = kwargs.get('ark', None)
     domain_name = kwargs.get('domain_name', None)
+    scheme = kwargs.get('scheme', 'http')
     resolve_values = kwargs.get('resolve_values', None)
     resolve_urls = kwargs.get('resolve_urls', None)
     verbose_vocabularies = kwargs.get('verbose_vocabularies', None)
@@ -349,6 +350,7 @@ def untlpy2dcpy(untl_elements, **kwargs):
             qualifier='permalink',
             domain_name=domain_name,
             ark=ark,
+            scheme=scheme
         )
         dc_root.add_child(permalink_identifier)
         # Create and add the ark identifier.
@@ -419,6 +421,7 @@ def untlpydict2dcformatteddict(untl_dict, **kwargs):
     """Convert a UNTL data dictionary to a formatted DC data dictionary."""
     ark = kwargs.get('ark', None)
     domain_name = kwargs.get('domain_name', None)
+    scheme = kwargs.get('scheme', 'http')
     resolve_values = kwargs.get('resolve_values', None)
     resolve_urls = kwargs.get('resolve_urls', None)
     verbose_vocabularies = kwargs.get('verbose_vocabularies', None)
@@ -432,6 +435,7 @@ def untlpydict2dcformatteddict(untl_dict, **kwargs):
         resolve_values=resolve_values,
         resolve_urls=resolve_urls,
         verbose_vocabularies=verbose_vocabularies,
+        scheme=scheme
     )
     # Return a formatted DC dictionary.
     return dcpy2formatteddcdict(dc_py)

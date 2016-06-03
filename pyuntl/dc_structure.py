@@ -248,6 +248,8 @@ def identifier_director(**kwargs):
     """Direct how to handle the identifier element."""
     ark = kwargs.get('ark', None)
     domain_name = kwargs.get('domain_name', None)
+    # Set default scheme if it is None or is not supplied.
+    scheme = kwargs.get('scheme') or 'http'
     qualifier = kwargs.get('qualifier', None)
     content = kwargs.get('content', '')
     # See if the ark and domain name were given.
@@ -257,7 +259,7 @@ def identifier_director(**kwargs):
         # Create the permalink URL.
         if not domain_name.endswith('/'):
             domain_name += '/'
-        permalink_url = 'http://' + domain_name + ark
+        permalink_url = '%s://%s%s' % (scheme, domain_name, ark)
         # Make sure it has a trailing slash.
         if not permalink_url.endswith('/'):
             permalink_url += '/'
