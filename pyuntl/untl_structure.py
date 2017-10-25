@@ -204,7 +204,7 @@ class UNTLElement(object):
     def record_content_length(self):
         """Calculate length of record, excluding metadata."""
         untldict = py2dict(self)
-        del untldict['meta']
+        untldict.pop('meta', None)
         return len(str(untldict))
 
 
