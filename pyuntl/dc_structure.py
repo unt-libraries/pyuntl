@@ -269,6 +269,7 @@ def identifier_director(**kwargs):
             content = '%s: %s' % (string.lower(qualifier), content)
     return DCIdentifier(content=content)
 
+
 DC_CONVERSION_DISPATCH = {
     'dc': DC,
     'coverage': DCCoverage,

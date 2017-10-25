@@ -19,6 +19,7 @@ def suite():
     test_suite.addTest(dublincore.suite())
     return test_suite
 
+
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
     exit_code = not runner.run(suite()).wasSuccessful()

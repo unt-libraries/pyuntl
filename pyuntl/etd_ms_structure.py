@@ -266,6 +266,7 @@ def subject_director(**kwargs):
     else:
         return ETD_MSSubject(content=kwargs.get('content'))
 
+
 ETD_MS_CONVERSION_DISPATCH = {
     'thesis': ETD_MS,
     'title': ETD_MSTitle,

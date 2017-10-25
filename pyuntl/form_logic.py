@@ -873,6 +873,7 @@ class Location(FormElement):
         self.view_type = 'inputbox'
         super(Location, self).__init__(**kwargs)
 
+
 UNTL_GROUP_DISPATCH = {
     'title': FormGroup,
     'identifier': FormGroup,

@@ -228,8 +228,8 @@ def post2pydict(post, ignore_list):
                             child_list.append(
                                 PYUNTL_DISPATCH[attribute_tuple[j][0]](
                                     content=attribute_tuple[j][1][i]
-                                    )
                                 )
+                            )
             # Create the UNTL element.
             if content != '' and qualifier != '':
                 untl_element = PYUNTL_DISPATCH[element_tag](content=content,

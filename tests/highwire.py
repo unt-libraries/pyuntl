@@ -120,5 +120,6 @@ def suite():
     test_suite = unittest.makeSuite(TestHighwire, 'test')
     return test_suite
 
+
 if __name__ == '__main__':
     unittest.main()

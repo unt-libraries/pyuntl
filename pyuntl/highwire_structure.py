@@ -267,6 +267,7 @@ def identifier_director(**kwargs):
     else:
         return None
 
+
 HIGHWIRE_CONVERSION_DISPATCH = {
     'title': CitationTitle,
     'creator': CitationAuthor,
