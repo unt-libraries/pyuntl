@@ -72,6 +72,7 @@ def untldict_normalizer(untl_dict, normalizations):
                                     elem_norms[qualifier](content)
     return untl_dict
 
+
 SUBJECT_NORMALIZERS = {
     'LCSH': normalize_LCSH,
     'UNTL-BS': normalize_UNTL,

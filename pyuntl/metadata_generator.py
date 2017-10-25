@@ -139,7 +139,7 @@ def pydict2xmlstring(metadata_dict, **kwargs):
                         element['content'],
                         attribs={'qualifier': element['qualifier']},
                         namespace=elements_namespace,
-                        )
+                    )
                 elif 'content' in element and 'role' in element:
                     create_dict_subelement(
                         root,
