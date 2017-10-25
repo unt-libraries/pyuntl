@@ -59,7 +59,7 @@ class FieldTest(unittest.TestCase):
         """Test normalizing LCSH UNTL data."""
         normalize_required = {
             'subject': ['LCSH'],
-            }
+        }
         norm = untldict_normalizer(untl_dict, normalize_required)
         self.assertEqual(norm, normalized_dict)
 
@@ -68,7 +68,7 @@ class FieldTest(unittest.TestCase):
         """Test all the normalizations for UNTL."""
         normalize_required = {
             'subject': ['LCSH', 'UNTL-BS'],
-            }
+        }
         norm = untldict_normalizer(untl_dict, normalize_required)
         self.assertEqual(norm, normalized_dict)
 
@@ -76,6 +76,7 @@ class FieldTest(unittest.TestCase):
 def suite():
     test_suite = unittest.makeSuite(FieldTest, 'test')
     return test_suite
+
 
 if __name__ == '__main__':
     unittest.main()

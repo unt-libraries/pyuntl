@@ -59,5 +59,6 @@ def suite():
     test_suite = unittest.makeSuite(ReaderTest, 'test')
     return test_suite
 
+
 if __name__ == '__main__':
     unittest.main()

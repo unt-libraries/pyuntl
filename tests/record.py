@@ -136,8 +136,6 @@ class RecordTest(unittest.TestCase):
     def test_record_content_length(self):
         field = PYUNTL_DISPATCH['title'](content='fake title')
         self.record.add_child(field)
-        field = PYUNTL_DISPATCH['meta'](content=None)
-        self.record.add_child(field)
         self.assertEquals(self.record.record_content_length, 38)
 
     def test_create_element_dict(self):
@@ -177,6 +175,7 @@ class RecordTest(unittest.TestCase):
 def suite():
     test_suite = unittest.makeSuite(RecordTest, 'test')
     return test_suite
+
 
 if __name__ == '__main__':
     unittest.main()
