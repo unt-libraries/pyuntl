@@ -24,8 +24,7 @@ class WriterTest(unittest.TestCase):
         cxml1 = self.well_formed_record
         cxml2 = self.written_record
         # Compare initial XML to generated XML.
-        self.assertTrue(ET.tostring(cxml1.getroot()) ==
-                        ET.tostring(cxml2.getroot()))
+        self.assertTrue(ET.tostring(cxml1.getroot()) == ET.tostring(cxml2.getroot()))
 
     def tearDown(self):
         os.remove('/tmp/xml_test_output.xml')

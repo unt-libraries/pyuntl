@@ -224,8 +224,7 @@ def breakString(string, width=79, firstLineOffset=0):
     index = width
     while index > 0:
         if ' ' == string[index]:
-            if (not string[index + 1].isspace() and
-                    not string[index - 1].isspace()):
+            if (not string[index + 1].isspace() and not string[index - 1].isspace()):
                 stringPart1 = string[0:index]
                 stringPart2 = string[index:]
                 # Do not pass firstLineOffset.
