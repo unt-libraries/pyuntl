@@ -142,9 +142,9 @@ class CoverageGroup(FormGroup):
 
     def set_coverage_placeName(self):
         """Determine the properties for the placeName coverage field."""
-        if (self.solr_response and
-                self.solr_response != 'error' and
-                self.solr_response.response != 'error'):
+        if (self.solr_response
+                and self.solr_response != 'error'
+                and self.solr_response.response != 'error'):
             location_list = self.solr_response.get_location_list_facet().facet_list
         else:
             location_list = []
@@ -746,8 +746,8 @@ class Meta(FormElement):
     def get_meta_attributes(self, **kwargs):
         """Determine the form attributes for the meta field."""
         superuser = kwargs.get('superuser', False)
-        if (self.untl_object.qualifier == 'recordStatus' or
-                self.untl_object.qualifier == 'system'):
+        if (self.untl_object.qualifier == 'recordStatus'
+                or self.untl_object.qualifier == 'system'):
             if superuser:
                 self.editable = True
                 self.repeatable = True

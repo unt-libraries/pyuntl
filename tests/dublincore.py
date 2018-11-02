@@ -68,10 +68,10 @@ class DublinCoreTest(unittest.TestCase):
             child_children = len(child.getchildren())
             # Check if any of the possible elements are a match.
             for current in same_tag_list:
-                if (current.text == child.text and
-                        current.tail == child.tail and
-                        current.attrib == child.attrib and
-                        len(current.getchildren()) == child_children):
+                if (current.text == child.text
+                        and current.tail == child.tail
+                        and current.attrib == child.attrib
+                        and len(current.getchildren()) == child_children):
                     element_found = True
                     break
             results.append(element_found)
