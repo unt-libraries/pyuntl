@@ -116,7 +116,7 @@ UNTL_NAMESPACES = {
 VOCABULARIES_URL = 'http://digital2.library.unt.edu/vocabularies/all/'
 
 # URL of the UNTL metadata usage page
-UNTL_USAGE_LINK = 'http://www.library.unt.edu/digital-projects-unit/'
+UNTL_USAGE_LINK = 'http://www.library.unt.edu/digital-projects-unit/metadata/fields/'
 
 # Creation Year/Month/Day regexes
 CREATION_DATE_REGEX = re.compile(
