@@ -2,6 +2,12 @@ Change Log
 ==========
 
 
+x.x.x
+-----
+
+* Updates UNTL_USAGE_LINK setting to point to current help pages.
+
+
 1.0.1
 -----
 
