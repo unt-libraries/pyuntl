@@ -71,7 +71,7 @@ def etd_ms_py2dict(elements):
         elif hasattr(element, 'scheme'):
             element_dict['scheme'] = element.scheme
         elif hasattr(element, 'qualifier') and element.qualifier is not None \
-                and element.tag is 'title':
+                and element.tag == 'title':
             element_dict['qualifier'] = element.qualifier
         # Set the element's content as a dictionary
         # of children elements.
@@ -83,7 +83,7 @@ def etd_ms_py2dict(elements):
             element_dict['content'] = child_dict
         # Set element content that is not children.
         elif element.content is not None:
-            if element.content.strip() is not '':
+            if element.content.strip() != '':
                 element_dict['content'] = element.content
         # Append the dictionary to the element list
         # if the element has content or children.
@@ -189,7 +189,7 @@ def create_dict_subelement(root, subelement, content, **kwargs):
     if not isinstance(content, dict):
         subelement.text = content
     # Do special case ordering for degree children on etd_ms.
-    elif key is 'degree':
+    elif key == 'degree':
         for degree_order_key in DEGREE_ORDER:
             for descriptor, value in content.items():
                 if descriptor == degree_order_key:
