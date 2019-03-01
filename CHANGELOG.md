@@ -6,6 +6,7 @@ x.x.x
 -----
 
 * Updates UNTL_USAGE_LINK setting to point to current help pages.
+* Fixes a couple flake8 issues relating to string comparisons.
 
 
 1.0.1
