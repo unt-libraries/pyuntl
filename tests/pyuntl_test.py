@@ -1,6 +1,8 @@
-import cPickle
+from future import standard_library
+standard_library.install_aliases()
+import pickle
 import os
-import StringIO
+import io
 import unittest
 
 from pyuntl import UNTL_XML_ORDER
@@ -22,7 +24,7 @@ class TestUNTLDictionaryToPythonObject(unittest.TestCase):
         rff = open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                 'post.pkl'),
                    'rb')
-        post = cPickle.load(rff)
+        post = pickle.load(rff)
         rff.close()
         untl_dict = post2pydict(post, IGNORE_POST_LIST)
         self.assertEqual(untl_dict, EXPECTED_POST_TO_PYDICT)
@@ -148,7 +150,7 @@ class TestUNTLDictionaryToPythonObject(unittest.TestCase):
 
     def testCircularEquality(self):
         self.assertEqual(
-            py2dict(untlxml2py(StringIO.StringIO(
+            py2dict(untlxml2py(io.StringIO(
                     pydict2xmlstring(UNTL_DICT)))), UNTL_DICT)
 
 

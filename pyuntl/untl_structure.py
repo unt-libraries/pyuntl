@@ -1,5 +1,9 @@
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import object
 import socket
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 from lxml.etree import Element, SubElement, tostring
 
@@ -302,7 +306,7 @@ class FormGenerator(object):
         """Create a group object from groupings of element objects."""
         element_list = []
         # Loop through the group dictionary.
-        for group_name, group_list in element_group_dict.items():
+        for group_name, group_list in list(element_group_dict.items()):
             # Create the element group.
             element_group = UNTL_GROUP_DISPATCH[group_name](
                 vocabularies=vocabularies,
@@ -312,7 +316,7 @@ class FormGenerator(object):
             )
             # Loop through the adjustable forms of the group if they exist.
             if element_group.adjustable_form is not None:
-                for adj_name, form_dict in element_group.adjustable_form.items():
+                for adj_name, form_dict in list(element_group.adjustable_form.items()):
                     # If an item has an adjustable form,
                     # append it to the adjustable list.
                     if form_dict['value_py'] is not None:
@@ -332,7 +336,7 @@ class FormGenerator(object):
         vocab_url = VOCABULARIES_URL.replace('all', 'all-verbose')
         # Request the vocabularies dictionary.
         try:
-            vocab_dict = eval(urllib2.urlopen(vocab_url).read())
+            vocab_dict = eval(urllib.request.urlopen(vocab_url).read())
         except:
             raise UNTLStructureException('Could not retrieve the vocabularies')
         return vocab_dict
