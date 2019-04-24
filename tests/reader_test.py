@@ -1,11 +1,12 @@
-from future import standard_library
-standard_library.install_aliases()
 import unittest
 from pyuntl.untldoc import untldict2py, untlxml2py
 from tests import UNTL_DICT
 import io
 import os
 from pyuntl.untl_structure import Metadata
+
+from future import standard_library
+standard_library.install_aliases()
 
 
 class ReaderTest(unittest.TestCase):
