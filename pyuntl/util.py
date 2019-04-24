@@ -48,7 +48,7 @@ def untldict_normalizer(untl_dict, normalizations):
     and normalizes the elements with that qualifier.
     """
     # Loop through the element types in the UNTL metadata.
-    for element_type, element_list in untl_dict.items():
+    for element_type, element_list in list(untl_dict.items()):
         # A normalization is required for that element type.
         if element_type in normalizations:
             # Get the required normalizations for specific qualifiers list.

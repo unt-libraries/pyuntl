@@ -22,7 +22,7 @@ class DublinCoreTest(unittest.TestCase):
         dcjson = generate_dc_json(UNTL_DICT.copy())
         j = json.loads(dcjson)
         self.assertTrue(type(j), dict)
-        for key, value in j.items():
+        for key, value in list(j.items()):
             self.assertTrue(key in UNTL_DICT, '%s not in %s'
                             % (key, UNTL_DICT))
 
@@ -47,7 +47,7 @@ class DublinCoreTest(unittest.TestCase):
                            'http://www.openarchives.org/OAI/2.0/oai_dc.xsd')
         expected_tag = '{http://www.openarchives.org/OAI/2.0/oai_dc/}dc'
 
-        self.assertTrue(schema_location in generated_dxml_root.attrib.values())
+        self.assertTrue(schema_location in list(generated_dxml_root.attrib.values()))
         self.assertEqual(generated_dxml_root.nsmap, DC_NAMESPACES)
         self.assertEqual(generated_dxml_root.tag, expected_tag)
 
