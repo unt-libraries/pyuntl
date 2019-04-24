@@ -1,5 +1,3 @@
-from future import standard_library
-standard_library.install_aliases()
 import pickle
 import os
 import io
@@ -12,6 +10,9 @@ from pyuntl.untldoc import (untldict2py, py2dict, untlxml2py, post2pydict,
                             find_untl_errors, add_empty_fields)
 from tests import (UNTL_DICT, BAD_UNTL_DICT, IGNORE_POST_LIST,
                    EXPECTED_POST_TO_PYDICT)
+
+from future import standard_library
+standard_library.install_aliases()
 
 
 class TestUNTLDictionaryToPythonObject(unittest.TestCase):

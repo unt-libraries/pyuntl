@@ -8,14 +8,13 @@
     root_element.add_child(publisher_element)
 """
 
-from future import standard_library
-standard_library.install_aliases()
 from builtins import str
 from builtins import range
 import json
 import re
-import urllib.request, urllib.error, urllib.parse
-
+import urllib.request
+import urllib.error
+import urllib.parse
 from lxml.etree import iterparse
 from rdflib import Namespace, Literal, URIRef, ConjunctiveGraph
 
@@ -31,6 +30,9 @@ from pyuntl.metadata_generator import (py2dict, pydict2xml, pydict2xmlstring,
                                        writeANVLString, highwiredict2xmlstring,
                                        MetadataGeneratorException)
 from pyuntl.untl_structure import PYUNTL_DISPATCH, PARENT_FORM
+
+from future import standard_library
+standard_library.install_aliases()
 
 
 NAMESPACE_REGEX = re.compile(r'^{[^}]+}(.*)')
