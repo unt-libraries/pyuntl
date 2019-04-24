@@ -1,6 +1,5 @@
 from __future__ import print_function
 from __future__ import division
-from past.utils import old_div
 import re
 
 
@@ -72,7 +71,7 @@ def determine_completeness(py_untl):
         if v['present']:
             py_untl_object_score += completeness_dict[k]['weight']
     # Calculate the float score completeness.
-    completeness = old_div(py_untl_object_score, total_points)
+    completeness = py_untl_object_score//total_points
     return completeness
 
 
