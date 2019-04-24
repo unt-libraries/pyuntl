@@ -11,9 +11,6 @@ from pyuntl.form_logic import UNTL_FORM_DISPATCH, UNTL_GROUP_DISPATCH
 from pyuntl.metadata_generator import py2dict
 from pyuntl.quality import determine_completeness
 
-from future import standard_library
-standard_library.install_aliases()
-
 
 class UNTLStructureException(Exception):
     """Base exception for the UNTL Python structure."""

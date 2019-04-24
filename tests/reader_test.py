@@ -5,9 +5,6 @@ import io
 import os
 from pyuntl.untl_structure import Metadata
 
-from future import standard_library
-standard_library.install_aliases()
-
 
 class ReaderTest(unittest.TestCase):
     """Tests that read in a number of UNTL formats and expect no errors.
