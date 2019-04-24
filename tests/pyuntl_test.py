@@ -11,9 +11,6 @@ from pyuntl.untldoc import (untldict2py, py2dict, untlxml2py, post2pydict,
 from tests import (UNTL_DICT, BAD_UNTL_DICT, IGNORE_POST_LIST,
                    EXPECTED_POST_TO_PYDICT)
 
-from future import standard_library
-standard_library.install_aliases()
-
 
 class TestUNTLDictionaryToPythonObject(unittest.TestCase):
     def setUp(self):

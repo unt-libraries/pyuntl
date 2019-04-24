@@ -31,9 +31,6 @@ from pyuntl.metadata_generator import (py2dict, pydict2xml, pydict2xmlstring,
                                        MetadataGeneratorException)
 from pyuntl.untl_structure import PYUNTL_DISPATCH, PARENT_FORM
 
-from future import standard_library
-standard_library.install_aliases()
-
 
 NAMESPACE_REGEX = re.compile(r'^{[^}]+}(.*)')
 
