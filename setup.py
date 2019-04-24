@@ -20,7 +20,7 @@ setup(
     classifiers=[
         'Natural Language :: English',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.7',
     ],
     keywords=['untl', 'metadata', 'digital libraries', 'records'],
     test_suite='tests'
