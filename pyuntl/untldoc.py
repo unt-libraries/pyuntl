@@ -7,7 +7,7 @@
     publisher_element.add_child(PYUNTL_DISPATCH['name'](content=content))
     root_element.add_child(publisher_element)
 """
-
+from io import StringIO
 from builtins import str
 from builtins import range
 import json
@@ -53,6 +53,7 @@ def untlxml2py(untl_filename):
     untlxml2py(StringIO.StringIO(untl_string))
     """
     # Create a stack to hold parents.
+    # untl_filename = StringIO.StringIO(untl_filename.encode('utf-8'))
     parent_stack = []
     # Use iterparse to open the file and loop through elements.
     for event, element in iterparse(untl_filename, events=('start', 'end')):
@@ -601,7 +602,7 @@ def retrieve_vocab():
     """
     url = VOCABULARIES_URL.replace('all', 'all-verbose')
     try:
-        return eval(urllib.request.urlopen(url).read())
+        return urllib.request.urlopen(url).read()
     except:
         return None
 
