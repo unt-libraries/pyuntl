@@ -101,7 +101,7 @@ def pydict2xml(filename, metadata_dict, **kwargs):
     """
     try:
         f = open(filename, 'w')
-        f.write(pydict2xmlstring(metadata_dict, **kwargs).encode('utf-8'))
+        f.write(pydict2xmlstring(metadata_dict, **kwargs).decode('utf-8'))
         f.close()
     except:
         raise MetadataGeneratorException(
@@ -164,7 +164,7 @@ def pydict2xmlstring(metadata_dict, **kwargs):
                         namespace=elements_namespace,
                     )
     # Create the XML tree.
-    return '<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
+    return '<?xml version="1.0" encoding="UTF-8"?>\n'.encode() + tostring(
         root,
         pretty_print=True
     )
