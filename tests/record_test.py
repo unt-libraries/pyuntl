@@ -20,7 +20,7 @@ class RecordTest(unittest.TestCase):
         xml = self.record.create_xml_string()
         self.assertTrue(xml.strip() == ('<?xml version="1.0" encoding='
                                         '"UTF-8"?>\n<metadata>\n'
-                                        '  <title/>\n</metadata>\n').strip())
+                                        '  <title/>\n</metadata>\n').encode().strip())
 
     def test_field_not_found(self):
         """Test there are no children if there are no fields."""
