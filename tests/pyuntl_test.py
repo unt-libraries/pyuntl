@@ -148,7 +148,7 @@ class TestUNTLDictionaryToPythonObject(unittest.TestCase):
 
     def testCircularEquality(self):
         self.assertEqual(
-            py2dict(untlxml2py(io.StringIO(
+            py2dict(untlxml2py(io.BytesIO(
                     pydict2xmlstring(UNTL_DICT)))), UNTL_DICT)
 
 
