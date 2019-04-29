@@ -71,7 +71,7 @@ def determine_completeness(py_untl):
         if v['present']:
             py_untl_object_score += completeness_dict[k]['weight']
     # Calculate the float score completeness.
-    completeness = py_untl_object_score//total_points
+    completeness = py_untl_object_score // total_points
     return completeness
 
 
