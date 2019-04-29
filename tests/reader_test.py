@@ -25,10 +25,9 @@ class ReaderTest(unittest.TestCase):
 
     def test_create_pyuntl_from_xml_string(self):
         self.root_element = untlxml2py(
-            io.StringIO(
+            io.BytesIO(
                 open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                  'metadc_complete.untl.xml'),
-                     'r').read()
+                                  'metadc_complete.untl.xml'), 'r').read().encode()
             )
         )
         self.assertTrue(isinstance(self.root_element, Metadata))
