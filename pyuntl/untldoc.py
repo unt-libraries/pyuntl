@@ -7,9 +7,6 @@
     publisher_element.add_child(PYUNTL_DISPATCH['name'](content=content))
     root_element.add_child(publisher_element)
 """
-from io import StringIO
-from builtins import str
-from builtins import range
 import json
 import re
 import urllib.request
@@ -53,7 +50,6 @@ def untlxml2py(untl_filename):
     untlxml2py(StringIO.StringIO(untl_string))
     """
     # Create a stack to hold parents.
-    # untl_filename = StringIO.StringIO(untl_filename.encode('utf-8'))
     parent_stack = []
     # Use iterparse to open the file and loop through elements.
     for event, element in iterparse(untl_filename, events=('start', 'end')):
@@ -216,7 +212,7 @@ def post2pydict(post, ignore_list):
             # current attribute/content value.
             for j in range(0, attribute_count):
                 if attribute_tuple[j][0] == 'content':
-                    content = str(attribute_tuple[j][1][i])
+                    content = attribute_tuple[j][1][i]
                 elif attribute_tuple[j][0] == 'qualifier':
                     qualifier = attribute_tuple[j][1][i]
                 # Create a child UNTL element from the data.
