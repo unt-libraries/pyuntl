@@ -113,7 +113,7 @@ UNTL_NAMESPACES = {
 }
 
 # All Vocabularies Location
-VOCABULARIES_URL = 'http://digital2.library.unt.edu/vocabularies/all/'
+VOCABULARIES_URL = 'http://libdigidev02.library.unt.edu:92/vocabularies/all.json'
 
 # URL of the UNTL metadata usage page
 UNTL_USAGE_LINK = 'http://www.library.unt.edu/digital-projects-unit/metadata/fields/'
