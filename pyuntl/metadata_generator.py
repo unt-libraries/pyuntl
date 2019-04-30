@@ -126,7 +126,7 @@ def pydict2xmlstring(metadata_dict, **kwargs):
         root = Element(root_label)
     # Set any root element attributes.
     if root_attributes:
-        for key, value in list(root_attributes.items()):
+        for key, value in root_attributes.items():
             root.attrib[key] = value
     # Create an XML structure from field list.
     for metadata_key in ordering:
@@ -191,12 +191,12 @@ def create_dict_subelement(root, subelement, content, **kwargs):
     # Do special case ordering for degree children on etd_ms.
     elif key == 'degree':
         for degree_order_key in DEGREE_ORDER:
-            for descriptor, value in list(content.items()):
+            for descriptor, value in content.items():
                 if descriptor == degree_order_key:
                     sub_descriptors = SubElement(subelement, descriptor)
                     sub_descriptors.text = value
     else:
-        for descriptor, value in list(content.items()):
+        for descriptor, value in content.items():
             sub_descriptors = SubElement(subelement, descriptor)
             sub_descriptors.text = value
 
