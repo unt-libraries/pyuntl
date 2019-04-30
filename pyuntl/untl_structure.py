@@ -335,7 +335,7 @@ class FormGenerator(object):
         vocab_url = VOCABULARIES_URL.replace('all', 'all-verbose')
         # Request the vocabularies dictionary.
         try:
-                vocab_dict = urllib.request.urlopen(vocab_url).read()
+            vocab_dict = urllib.request.urlopen(vocab_url).read()
         except:
             raise UNTLStructureException('Could not retrieve the vocabularies')
         return vocab_dict
@@ -366,9 +366,9 @@ class Metadata(UNTLElement):
         """
         root = self.create_xml()
 
-        xml = ('<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
-            root, pretty_print=True
-        ).decode()).encode('utf-8')
+        xml = '<?xml version="1.0" encoding="UTF-8"?>\n'.encode() + tostring(
+            root, pretty_print=True)
+
         return xml
 
     def create_xml(self, useNamespace=False):

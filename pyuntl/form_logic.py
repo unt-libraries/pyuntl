@@ -1,6 +1,7 @@
 from builtins import object
 import json
-
+import ast
+# import unicodedata
 from pyuntl import UNTL_USAGE_LINK
 
 
@@ -33,14 +34,20 @@ def get_qualifier_dict(vocabularies, qualifier_vocab):
     vocabulary.
     """
     # Raise exception if the vocabulary can't be found.
-    if vocabularies.get(qualifier_vocab, None) is None:
+
+    # print("VOCABULARIE TYPE: ", type(vocabularies))
+    # vocabularies = unicodedata.normalize('NFKD', vocabularies).encode('ascii')
+    # print("VOCABULARIE TYPE AGAIN: ", type(vocabularies))
+    new_vocabularies = ast.literal_eval(vocabularies)
+    print("USING REPR() ON VOCAB: ", type(new_vocabularies))
+    if new_vocabularies.get(qualifier_vocab, None) is None:
         raise UNTLFormException(
             'Could not retrieve qualifier vocabulary "%s" for the form.'
             % (qualifier_vocab)
         )
     else:
         # Return the sorted vocabulary.
-        return vocabularies.get(qualifier_vocab)
+        return new_vocabularies.get(qualifier_vocab)
 
 
 def get_content_dict(vocabularies, content_vocab):
