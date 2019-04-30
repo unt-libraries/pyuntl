@@ -1,4 +1,3 @@
-from builtins import object
 import json
 from pyuntl import UNTL_USAGE_LINK
 
@@ -108,7 +107,7 @@ class FormGroup(object):
         """Create an adjustable form from an element dispatch table."""
         adjustable_form = {}
         # Loop through the qualifiers to create the adjustable form.
-        for key in list(element_dispatch.keys()):
+        for key in element_dispatch.keys():
             adjustable_form[key] = element_dispatch[key]()
         return adjustable_form
 
