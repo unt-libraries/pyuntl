@@ -123,7 +123,7 @@ def untldict2py(untl_dict):
     # Create the root element.
     untl_root = PYUNTL_DISPATCH['metadata']()
     untl_py_list = []
-    for element_name, element_list in list(untl_dict.items()):
+    for element_name, element_list in untl_dict.items():
         # Loop through the element dictionaries in the element list.
         for element_dict in element_list:
             qualifier = element_dict.get('qualifier', None)
@@ -131,7 +131,7 @@ def untldict2py(untl_dict):
             child_list = []
             # Handle content that is children elements.
             if isinstance(content, dict):
-                for key, value in list(content.items()):
+                for key, value in content.items():
                     child_list.append(
                         PYUNTL_DISPATCH[key](content=value),
                     )
@@ -180,7 +180,7 @@ def post2pydict(post, ignore_list):
     # (otherwise the value lists get messed up).
     form_post = dict(post.copy())
     # Loop through all the field lists.
-    for key, value_list in list(form_post.items()):
+    for key, value_list in form_post.items():
         if key not in ignore_list:
             # Split the key into the element_tag (ex. title)
             # and element attribute (ex. qualifier, content).
@@ -190,7 +190,7 @@ def post2pydict(post, ignore_list):
             # Add the value list to the dictionary.
             untl_form_dict[element_tag] += (element_attribute, value_list),
 
-    for element_tag, attribute_tuple in list(untl_form_dict.items()):
+    for element_tag, attribute_tuple in untl_form_dict.items():
         # Get the count of attributes/content in the element tuple.
         attribute_count = len(attribute_tuple)
         # Get the count of the first attribute's values.
@@ -461,7 +461,7 @@ def formatted_dc_dict(dc_dict):
     with a list of values for each element.
     i.e. {'publisher': ['someone', 'someone else'], 'title': ['a title'],}
     """
-    for key, element_list in list(dc_dict.items()):
+    for key, element_list in dc_dict.items():
         new_element_list = []
         # Add the content for each element to the new element list.
         for element in element_list:
