@@ -1,11 +1,11 @@
 from builtins import str
 from builtins import object
 import socket
+import json
 import urllib.request
 import urllib.error
 import urllib.parse
 from lxml.etree import Element, SubElement, tostring
-
 from pyuntl import UNTL_XML_ORDER, VOCABULARIES_URL
 from pyuntl.form_logic import UNTL_FORM_DISPATCH, UNTL_GROUP_DISPATCH
 from pyuntl.metadata_generator import py2dict
@@ -333,9 +333,11 @@ class FormGenerator(object):
         socket.setdefaulttimeout(timeout)
         # Create the ordered vocabulary URL.
         vocab_url = VOCABULARIES_URL.replace('all', 'all-verbose')
+        # vocab_url = 'http://libdigidev02.library.unt.edu:92/vocabularies/all-verbose.json'
         # Request the vocabularies dictionary.
         try:
-            vocab_dict = urllib.request.urlopen(vocab_url).read()
+            vocab_data = (urllib.request.urlopen(vocab_url).read()).decode('utf-8')
+            vocab_dict = json.loads(vocab_data)
         except:
             raise UNTLStructureException('Could not retrieve the vocabularies')
         return vocab_dict
