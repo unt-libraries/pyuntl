@@ -170,7 +170,7 @@ class RecordTest(unittest.TestCase):
         """Test each tag appears as created from the dict keys."""
         self.record = untldict2py(UNTL_DICT)
         for c in self.record.children:
-            self.assertTrue(c.tag in list(UNTL_DICT.keys()))
+            self.assertTrue(c.tag in UNTL_DICT.keys())
 
 
 def suite():

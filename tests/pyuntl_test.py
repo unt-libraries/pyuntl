@@ -1,6 +1,6 @@
 import pickle
 import os
-import io
+from io import BytesIO
 import unittest
 
 from pyuntl import UNTL_XML_ORDER
@@ -148,7 +148,7 @@ class TestUNTLDictionaryToPythonObject(unittest.TestCase):
 
     def testCircularEquality(self):
         self.assertEqual(
-            py2dict(untlxml2py(io.BytesIO(
+            py2dict(untlxml2py(BytesIO(
                     pydict2xmlstring(UNTL_DICT)))), UNTL_DICT)
 
 
