@@ -1,5 +1,3 @@
-from __future__ import print_function
-from __future__ import division
 import re
 
 
@@ -45,7 +43,7 @@ def determine_completeness(py_untl):
         'meta': {'present': False, 'weight': 20, },
     }
 
-    total_points = sum(item['weight'] for item in list(completeness_dict.values()))
+    total_points = sum(item['weight'] for item in completeness_dict.values())
     py_untl_object_score = 0.0
 
     # Iterate through the attributes of the pyuntl record.
