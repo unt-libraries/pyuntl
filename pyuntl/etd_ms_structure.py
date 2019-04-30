@@ -1,4 +1,3 @@
-from builtins import object
 from pyuntl import ETD_MS_ORDER
 
 
