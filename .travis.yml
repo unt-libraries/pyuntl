@@ -1,8 +1,10 @@
+dist: xenial
 language: python
 sudo: false
 python: 3.7
 env:
     - TOX_ENV=py37
+    - TOX_ENV=py36
     - TOX_ENV=py37-flake8
 install:
     - pip install tox
