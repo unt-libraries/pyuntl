@@ -101,11 +101,11 @@ def pydict2xml(filename, metadata_dict, **kwargs):
     """
     try:
         f = open(filename, 'w')
-        f.write(pydict2xmlstring(metadata_dict, **kwargs).decode('utf-8'))
+        f.write(pydict2xmlstring(metadata_dict, **kwargs))
         f.close()
     except:
         raise MetadataGeneratorException(
-            'Failed to create an XML file. Filename: %s' % (filename)
+            'Failed to create an XML file. Filename: %s' % filename
         )
 
 
