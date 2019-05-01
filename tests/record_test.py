@@ -1,4 +1,3 @@
-from builtins import zip
 import unittest
 
 from lxml.etree import _Element
