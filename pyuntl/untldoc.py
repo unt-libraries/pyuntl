@@ -566,7 +566,7 @@ def dcdict2rdfpy(dc_dict):
         # Add the values to the RDF object.
         for element_value in element_value_list:
             # Handle URL values differently.
-            if ('http' in element_value['content'] and ' ' not in element_value['content']):
+            if 'http' in element_value['content'] and ' ' not in element_value['content']:
                 rdf_py.add((
                     uri,
                     DC[element_name],
