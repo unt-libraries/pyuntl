@@ -435,7 +435,7 @@ class Metadata(UNTLElement):
             f.close()
         except:
             raise UNTLStructureException(
-                'Failed to create UNTL XML file. File: %s' % (untl_filename)
+                'Failed to create UNTL XML file. File: %s' % untl_filename
             )
 
     def sort_untl(self, sort_structure):
