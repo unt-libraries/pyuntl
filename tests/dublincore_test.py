@@ -56,7 +56,7 @@ class DublinCoreTest(unittest.TestCase):
         generated_dxml = generate_dc_xml(UNTL_DICT)
 
         generated_dxml_root = objectify.fromstring(generated_dxml)
-        constant_dxml_root = objectify.fromstring(DUBLIN_CORE_XML)
+        constant_dxml_root = objectify.fromstring(DUBLIN_CORE_XML.encode('utf-8'))
         results = []
         # Check if each of the root's children from the generated XML
         # has a match in the string constant's XML.
