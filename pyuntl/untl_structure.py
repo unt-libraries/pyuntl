@@ -1,8 +1,6 @@
 import socket
 import json
 import urllib.request
-import urllib.error
-import urllib.parse
 from lxml.etree import Element, SubElement, tostring
 from pyuntl import UNTL_XML_ORDER, VOCABULARIES_URL
 from pyuntl.form_logic import UNTL_FORM_DISPATCH, UNTL_GROUP_DISPATCH
@@ -27,7 +25,7 @@ def create_untl_xml_subelement(parent, element, prefix=''):
         subelement.text = element.content
     if element.qualifier is not None:
         subelement.attrib["qualifier"] = element.qualifier
-    if len(element.children) > 0:
+    if element.children:
         for child in element.children:
             SubElement(subelement, prefix + child.tag).text = child.content
     else:
@@ -333,11 +331,10 @@ class FormGenerator(object):
         vocab_url = VOCABULARIES_URL.replace('all', 'all-verbose')
         # Request the vocabularies dictionary.
         try:
-            vocab_data = (urllib.request.urlopen(vocab_url).read()).decode('utf-8')
-            vocab_dict = json.loads(vocab_data)
+            vocab_data = (urllib.request.urlopen(vocab_url).read())
         except:
             raise UNTLStructureException('Could not retrieve the vocabularies')
-        return vocab_dict
+        return json.loads(vocab_data)
 
 
 # Element Definitions #

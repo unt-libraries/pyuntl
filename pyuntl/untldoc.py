@@ -10,8 +10,6 @@
 import json
 import re
 import urllib.request
-import urllib.error
-import urllib.parse
 from lxml.etree import iterparse
 from rdflib import Namespace, Literal, URIRef, ConjunctiveGraph
 
@@ -598,7 +596,8 @@ def retrieve_vocab():
     """
     url = VOCABULARIES_URL.replace('all', 'all-verbose')
     try:
-        return urllib.request.urlopen(url).read()
+        vocab_data = urllib.request.urlopen(url).read()
+        return json.loads(vocab_data)
     except:
         return None
 
