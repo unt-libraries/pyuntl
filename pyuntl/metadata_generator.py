@@ -38,7 +38,7 @@ def py2dict(elements):
             element_dict['qualifier'] = element.qualifier
         # Set the element's content as a dictionary
         # of children elements.
-        if len(element.children) > 0:
+        if element.children:
             child_dict = {}
             for child in element.children:
                 if child.content is not None:
