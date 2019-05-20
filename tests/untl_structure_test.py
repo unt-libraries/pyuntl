@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import pytest
+from mock import patch
 from lxml.etree import Element
 from pyuntl import untl_structure as us
+from pyuntl.form_logic import FormGroup, HiddenGroup
 
 
 def test_UNTLStructureException():
@@ -35,6 +37,22 @@ def test_create_untl_xml_subelement_children():
     assert subelement.attrib['qualifier'] == contributor.qualifier
     # Check that the first child's text is the name.
     assert subelement[0].text == name.content
+
+
+def test_add_missing_children():
+    """Test adding expected children that don't exist for a form."""
+    required = ['title', 'format', 'publisher']
+    parent = us.UNTLElement()
+    parent.contained_children = required
+    title_child = us.Title(content='A title',
+                           qualifier='officialtitle')
+    children = [title_child]
+    parent.children = children
+    padded_children = us.add_missing_children(required, children)
+    # Now there are Format and Publisher elements after Title.
+    assert len(padded_children) == 3
+    assert isinstance(padded_children[1], us.Format)
+    assert isinstance(padded_children[2], us.Publisher)
 
 
 def test_UNTLElement_init():
@@ -88,8 +106,8 @@ def test_UNTLElement_add_child_exception():
 def test_UNTLElement_set_content():
     """Test setting and stripping of content value."""
     element = us.UNTLElement()
-    element.set_content('  содержани ')
-    assert element.content == 'содержани'
+    element.set_content(u'  содержани ')
+    assert element.content == u'содержани'
 
 
 def test_UNTLElement_set_content_exception():
@@ -172,7 +190,7 @@ def test_UNTLElement_record_length():
     root = us.UNTLElement()
     root.tag = 'metadata'
     root.contained_children = ['collection', 'meta']
-    collection = us.UNTLElement(content='Colección')
+    collection = us.UNTLElement(content=u'Colección')
     collection.tag = 'collection'
     root.add_child(collection)
     meta = us.UNTLElement(content='fake',
@@ -181,9 +199,9 @@ def test_UNTLElement_record_length():
     root.add_child(meta)
     # NOTE: in utf-8 length is 94:
     # "{'meta': [{'qualifier': 'ark', 'content': 'fake'}], 'collection': [{'content': 'Colección'}]}"  # noqa 
-    # We are getting that it is length 100 for:
-    # "{'meta': [{'qualifier': 'ark', 'content': 'fake'}], 'collection': [{'content': 'Colecci\xc3\xb3n'}]}"  # noqa
-    assert root.record_length == 100
+    # We are getting that it is length 97 for:
+    # "{'meta': [{'content': 'fake', 'qualifier': 'ark'}], 'collection': [{'content': u'Colecci\xf3n'}]}"  # noqa
+    assert root.record_length == 97
 
 
 def test_UNTLElement_record_content_length():
@@ -192,15 +210,141 @@ def test_UNTLElement_record_content_length():
     root = us.UNTLElement()
     root.tag = 'metadata'
     root.contained_children = ['collection', 'meta']
-    collection = us.UNTLElement(content='Colección')
+    collection = us.UNTLElement(content=u'Colección')
     collection.tag = 'collection'
     root.add_child(collection)
     meta = us.UNTLElement(content='fake',
                           qualifier='ark')
     meta.tag = 'meta'
     root.add_child(meta)
-    # NOTE: in utf-8 length is 43:
+    # NOTE: in utf-8 length is 42:
     # "{'collection': [{'content': 'Colección'}]}"
-    # We are getting that it is length 49 for:
-    # "{'collection': [{'content': 'Colecci\xc3\xb3n'}]}"
-    assert root.record_content_length == 49
+    # We are getting that it is length 46 for:
+    # "{'collection': [{'content': u'Colecci\xf3n'}]}"
+    assert root.record_content_length == 46
+
+
+def test_FormGenerator():
+    """Test same UNTLElement subclasses are grouped together.
+
+    Official and series titles should be in same group. A hidden
+    group should be created if it doesn't exist.
+    """
+    creator = us.Creator(qualifier='')
+    official_title = us.Title(content='A Title', qualifier='officialtitle')
+    series_title = us.Title(content='Series', qualifier='seriestitle')
+    children = [official_title, series_title, creator]
+    form_elements = us.FormGenerator(children=children,
+                                     sort_order=['title', 'creator', 'hidden'])
+    # Check there is a title group with both official and series elements
+    # a group for the creator, and a separate hidden group was created.
+    assert len(form_elements.element_groups) == 3
+    title_group = form_elements.element_groups[0].group_list
+    assert len(title_group) == 2
+    for title in title_group:
+        assert isinstance(title, us.Title)
+    creator_group = form_elements.element_groups[1].group_list
+    assert len(creator_group) == 1
+    assert isinstance(creator_group[0], us.Creator)
+    hidden_group = form_elements.element_groups[2].group_list
+    assert len(hidden_group) == 1
+    assert isinstance(hidden_group[0], us.Meta)
+
+
+def test_FormGenerator_hidden_is_alone():
+    """Test Meta with Hidden qualifier is handled.
+
+     A Meta element with qualifier of "hidden" gets a separate group
+     from other Meta elements.
+    """
+    system = us.Meta(content='DC', qualifier='system')
+    hidden = us.Meta(content='True', qualifier='hidden')
+    children = [system, hidden]
+    form_elements = us.FormGenerator(children=children,
+                                     sort_order=['meta', 'hidden'])
+    assert len(form_elements.element_groups) == 2
+    assert isinstance(form_elements.element_groups[0], FormGroup)
+    assert isinstance(form_elements.element_groups[1], HiddenGroup)
+    assert not form_elements.adjustable_items
+
+
+def test_FormGenerator_adjustable_items():
+    """FormGroup types with data for adjusting form with JS are handled."""
+    access = us.Rights(content='public', qualifier='access')
+    hidden = us.Meta(content='True', qualifier='hidden')
+    children = [access, hidden]
+    sort_order = ['rights', 'hidden']
+    fg = us.FormGenerator(children=children,
+                          sort_order=sort_order)
+    assert 'access' in fg.adjustable_items
+
+
+@patch('urllib2.urlopen', side_effect=Exception)
+def test_FormGenerator_fails_without_vocab_service(mock_urlopen):
+    """If vocabularies URL can't be reached, exception is raised.
+
+    With urlopen patched, the vocabularies can't be reached, so trying
+    to generate the form elements will raise an exception.
+    """
+    with pytest.raises(us.UNTLStructureException):
+        us.FormGenerator(children=[],
+                         sort_order=[])
+    mock_urlopen.assert_called_once()
+
+
+def test_Metadata_create_xml_string():
+    """Test our metadata xml is written as expected string."""
+    metadata = us.Metadata()
+    title = us.Title(content=u'Colección', qualifier=u'seriestitle')
+    description = us.Description(content=u'Adaption of "Fortuna te dé Dios, hijo"',
+                                 qualifier=u'content')
+    metadata.children = [title, description]
+    expected_text = """<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <title qualifier="seriestitle">Colecci&#243;n</title>
+  <description qualifier="content">Adaption of "Fortuna te d&#233; Dios, hijo"</description>
+</metadata>\n"""
+    assert metadata.create_xml_string() == expected_text
+
+
+def test_Metadata_create_xml():
+    """Test the metadata ElementTree representation."""
+    metadata = us.Metadata()
+    title_text = u'Colección'
+    description_text = u'Adaption of "Fortuna te dé Dios, hijo"'
+    name_text = u'Oudrid, C. (Cristóbal), 1825-1877.'
+    title = us.Title(content=title_text, qualifier=u'seriestitle')
+    description = us.Description(content=description_text,
+                                 qualifier=u'content')
+    contributor = us.Contributor(qualifier=u'cmp')
+    type_ = us.Type(content=u'per')
+    name = us.Name(content=name_text)
+    contributor.add_child(type_)
+    contributor.add_child(name)
+    metadata.add_child(title)
+    metadata.add_child(description)
+    metadata.add_child(contributor)
+    root = metadata.create_xml(useNamespace=False)
+    assert root.tag == 'metadata'
+    # Check are children are there in sorted order.
+    assert root[0].tag == u'title'
+    assert root[0].text == title_text
+    assert root[0].get('qualifier') == u'seriestitle'
+    assert root[1].tag == u'contributor'
+    assert root[1].get('qualifier') == u'cmp'
+    assert root[2].tag == u'description'
+    assert root[2].text == description_text
+    assert root[2].get('qualifier') == u'content'
+    # Check that the contributor children are there.
+    assert root[1][0].tag == 'type'
+    assert root[1][1].tag == 'name'
+    assert root[1][1].text == name_text
+
+
+def test_Metadata_create_xml_use_namespace():
+    """Check tag can include the namespace."""
+    metadata = us.Metadata()
+    metadata.add_child(us.Institution(content='UNT'))
+    root = metadata.create_xml(useNamespace=True)
+    assert root.tag == '{http://digital2.library.unt.edu/untl/}metadata'
+    assert root[0].tag == '{http://digital2.library.unt.edu/untl/}institution'
