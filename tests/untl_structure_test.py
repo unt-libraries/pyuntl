@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+"""Unit tests for untl_structure."""
+
 import pytest
 from mock import patch
 from lxml.etree import Element
-from pyuntl import untl_structure as us
+from pyuntl import untl_structure as us, UNTL_PTH_ORDER
 from pyuntl.form_logic import FormGroup, HiddenGroup
 
 
@@ -324,6 +326,7 @@ def test_Metadata_create_xml():
     metadata.add_child(title)
     metadata.add_child(description)
     metadata.add_child(contributor)
+
     root = metadata.create_xml(useNamespace=False)
     assert root.tag == 'metadata'
     # Check are children are there in sorted order.
@@ -348,3 +351,140 @@ def test_Metadata_create_xml_use_namespace():
     root = metadata.create_xml(useNamespace=True)
     assert root.tag == '{http://digital2.library.unt.edu/untl/}metadata'
     assert root[0].tag == '{http://digital2.library.unt.edu/untl/}institution'
+
+
+def test_Metadata_create_element_dict():
+    """Test a UNTL Python object converts to dictionary."""
+    metadata = us.Metadata()
+    title_text = u'An Official Title'
+    series_text = u'The Series Title'
+    name_text = u'Oudrid, C. (Cristóbal), 1825-1877.'
+    title = us.Title(content=title_text, qualifier=u'officialtitle')
+    series_title = us.Title(content=series_text, qualifier=u'seriestitle')
+    contributor = us.Contributor(qualifier=u'cmp')
+    type_ = us.Type(content=u'per')
+    name = us.Name(content=name_text)
+    contributor.add_child(type_)
+    contributor.add_child(name)
+    metadata.add_child(title)
+    metadata.add_child(series_title)
+    metadata.add_child(contributor)
+
+    untl_dict = metadata.create_element_dict()
+    assert untl_dict == {
+        'contributor': [
+            {'content': {'name': name_text, 'type': u'per'}, 'qualifier': u'cmp'}
+        ],
+        'title': [
+            {'content': title_text, 'qualifier': u'officialtitle'},
+            {'content': series_text, 'qualifier': u'seriestitle'}
+        ]
+    }
+
+
+def test_Metadata_create_xml_file(tmpdir):
+    """Test the UNTL XML file is created correctly.
+
+    Uses pytest tmdir fixture for temporary file.
+    """
+    metadata = us.Metadata()
+    title = us.Title(content=u'Colección', qualifier=u'seriestitle')
+    description = us.Description(content=u'"Fortuna te dé Dios, hijo"',
+                                 qualifier=u'content')
+    contributor = us.Contributor(qualifier=u'cmp')
+    type_ = us.Type(content=u'per')
+    name = us.Name(content=u'Oudrid, C. (Cristóbal), 1825-1877.')
+    contributor.add_child(type_)
+    contributor.add_child(name)
+    metadata.add_child(title)
+    metadata.add_child(description)
+    metadata.add_child(contributor)
+
+    xml_file = tmpdir.join('untl.xml')
+    metadata.create_xml_file(xml_file.strpath)
+    assert xml_file.read() == (
+        u'<?xml version="1.0" encoding="UTF-8"?>\n'
+        u'<metadata>\n'
+        u'  <title qualifier="seriestitle">Colecci&#243;n</title>\n'
+        u'  <contributor qualifier="cmp">\n'
+        u'    <type>per</type>\n'
+        u'    <name>Oudrid, C. (Crist&#243;bal), 1825-1877.</name>\n'
+        u'  </contributor>\n'
+        u'  <description qualifier="content">"Fortuna te d&#233; Dios, hijo"</description>\n'
+        u'</metadata>\n'
+    )
+
+
+def test_Metadata_create_xml_file_ascii_hex(tmpdir):
+    """Test the UNTL XML file is created correctly.
+
+    Uses pytest tmdir fixture for temporary file.
+    """
+    metadata = us.Metadata()
+    title = us.Title(content=u'Colecci\xf3n', qualifier=u'seriestitle')
+    description = us.Description(content=u'"Fortuna te d\xe9 Dios, hijo"',
+                                 qualifier=u'content')
+    contributor = us.Contributor(qualifier=u'cmp')
+    type_ = us.Type(content=u'per')
+    name = us.Name(content=u'Oudrid, C. (Crist\xf3bal), 1825-1877.')
+    contributor.add_child(type_)
+    contributor.add_child(name)
+    metadata.add_child(title)
+    metadata.add_child(description)
+    metadata.add_child(contributor)
+
+    xml_file = tmpdir.join('untl.xml')
+    metadata.create_xml_file(xml_file.strpath)
+    assert xml_file.read() == (
+        u'<?xml version="1.0" encoding="UTF-8"?>\n'
+        u'<metadata>\n'
+        u'  <title qualifier="seriestitle">Colecci&#243;n</title>\n'
+        u'  <contributor qualifier="cmp">\n'
+        u'    <type>per</type>\n'
+        u'    <name>Oudrid, C. (Crist&#243;bal), 1825-1877.</name>\n'
+        u'  </contributor>\n'
+        u'  <description qualifier="content">"Fortuna te d&#233; Dios, hijo"</description>\n'
+        u'</metadata>\n'
+    )
+
+
+def test_Metadata_create_xml_file_exception_raised():
+    """Test exception when XML file can't be written."""
+    metadata = us.Metadata()
+    with pytest.raises(us.UNTLStructureException):
+        metadata.create_xml_file('/slkfjsldfjsdf/not/real')
+
+
+def test_Metadata_sort_untl():
+    """Test that elements are sorted correctly."""
+    metadata = us.Metadata()
+    child1 = us.UNTLElement()
+    child1.tag = 'ziggy'
+    child2 = us.UNTLElement()
+    child2.tag = 'apple'
+    child3 = us.UNTLElement()
+    child3.tag = 'dash'
+    metadata.children = [child1, child2, child3]
+    # Sort by the tags in this order.
+    metadata.sort_untl(['dash', 'ziggy', 'apple'])
+    assert metadata.children == [child3, child1, child2]
+
+
+def test_Metadata_validate():
+    """Nothing is implemented in validate().
+
+    This is here for coverage.
+    """
+    metadata = us.Metadata()
+    assert metadata.validate() is None
+
+
+def test_generate_form_data():
+    """Test this returns a FormGenerator object."""
+    metadata = us.Metadata()
+    assert not metadata.children
+    fg = metadata.generate_form_data(sort_order=UNTL_PTH_ORDER)
+    assert isinstance(fg, us.FormGenerator)
+    # Check missing children were added.
+    print metadata.children
+    assert len(metadata.children) == len(metadata.contained_children)
