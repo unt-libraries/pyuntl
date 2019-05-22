@@ -5,7 +5,7 @@ import pytest
 from mock import patch
 from lxml.etree import Element
 from pyuntl import untl_structure as us, UNTL_PTH_ORDER
-from pyuntl.form_logic import FormGroup, HiddenGroup
+from pyuntl.form_logic import FormGroup, HiddenGroup, FormElement
 
 
 def test_UNTLStructureException():
@@ -128,8 +128,27 @@ def test_UNTLElement_add_form_qualifier_and_content():
     element.add_form(vocabularies={'title-qualifiers': qualifiers},
                      qualifier='test_qualifier',
                      content='test_content')
+    assert isinstance(element.form, FormElement)
     assert element.form.untl_object == element
     assert element.form.qualifier_dd == qualifiers
+
+
+@patch('pyuntl.form_logic.Title.__init__', return_value=None)
+def test_UNTLElement_add_form_qualifier_and_content_mocked(mock_title):
+    """Verify FormElement subclass call with qualifier and content passed."""
+    element = us.UNTLElement()
+    element.tag = 'title'
+    vocabularies = {'title-qualifiers': ['test']}
+    qualifier = 'test_qualifier'
+    content = 'test_content'
+    element.add_form(vocabularies=vocabularies,
+                     qualifier=qualifier,
+                     content=content)
+    mock_title.assert_called_once_with(vocabularies=vocabularies,
+                                       qualifier_value=qualifier,
+                                       input_value=content,
+                                       untl_object=element,
+                                       superuser=False)
 
 
 def test_UNTLElement_add_form_qualifier_only():
@@ -137,7 +156,21 @@ def test_UNTLElement_add_form_qualifier_only():
     element = us.UNTLElement()
     element.tag = 'creator'
     element.add_form(qualifier='test_qualifier')
+    assert isinstance(element.form, FormElement)
     assert element.form.untl_object == element
+
+
+@patch('pyuntl.form_logic.Creator.__init__', return_value=None)
+def test_UNTLElement_add_form_qualifier_only_mocked(mock_creator):
+    """Verify FormElement subclass call with qualifier but not content passed."""
+    element = us.UNTLElement()
+    element.tag = 'creator'
+    qualifier = 'test_qualifier'
+    element.add_form(qualifier=qualifier)
+    mock_creator.assert_called_once_with(vocabularies=None,
+                                         qualifier_value=qualifier,
+                                         untl_object=element,
+                                         superuser=False)
 
 
 def test_UNTLElement_add_form_content_only_no_parent_tag():
@@ -145,7 +178,21 @@ def test_UNTLElement_add_form_content_only_no_parent_tag():
     element = us.UNTLElement()
     element.tag = 'primarySource'
     element.add_form(content='test_content')
+    assert isinstance(element.form, FormElement)
     assert element.form.untl_object == element
+
+
+@patch('pyuntl.form_logic.PrimarySource.__init__', return_value=None)
+def test_UNTLElement_add_form_content_only_no_parent_tag_mocked(mock_ps):
+    """Verify FormElement subclass call with content but no qualifier nor parent tag."""
+    element = us.UNTLElement()
+    element.tag = 'primarySource'
+    content = 'test_content'
+    element.add_form(content=content)
+    mock_ps.assert_called_once_with(vocabularies=None,
+                                    input_value=content,
+                                    untl_object=element,
+                                    superuser=False)
 
 
 def test_UNTLElement_add_form_content_and_parent_tag():
@@ -156,9 +203,28 @@ def test_UNTLElement_add_form_content_and_parent_tag():
     element.add_form(vocabularies={'agent-type': qualifiers},
                      content='test_content',
                      parent_tag='test_parent')
+    assert isinstance(element.form, FormElement)
     assert element.form.untl_object == element
     assert element.form.qualifier_dd == qualifiers
     assert 'designate if a test_parent' in element.form.help_text
+
+
+@patch('pyuntl.form_logic.Type.__init__', return_value=None)
+def test_UNTLElement_add_form_content_and_parent_tag_mocked(mock_type):
+    """Verify FormElement subclass call with content and parent tag passed."""
+    element = us.UNTLElement()
+    element.tag = 'type'
+    vocabularies = {'agent-type': ['test']}
+    content = 'test_content'
+    parent_tag = 'test_parent'
+    element.add_form(vocabularies=vocabularies,
+                     content=content,
+                     parent_tag=parent_tag)
+    mock_type.assert_called_once_with(vocabularies=vocabularies,
+                                      input_value=content,
+                                      untl_object=element,
+                                      parent_tag='test_parent',
+                                      superuser=False)
 
 
 def test_UNTLElement_add_form_no_qualifier_no_content_no_parent_tag():
@@ -166,7 +232,19 @@ def test_UNTLElement_add_form_no_qualifier_no_content_no_parent_tag():
     element = us.UNTLElement()
     element.tag = 'publisher'
     element.add_form()
+    assert isinstance(element.form, FormElement)
     assert element.form.untl_object == element
+
+
+@patch('pyuntl.form_logic.Publisher.__init__', return_value=None)
+def test_UNTLElement_add_form_no_qualifier_no_content_no_parent_tag_mocked(mock_pub):
+    """Verify FormElement subclass call with no parent tag, no content, no qualifier."""
+    element = us.UNTLElement()
+    element.tag = 'publisher'
+    element.add_form()
+    mock_pub.assert_called_once_with(vocabularies=None,
+                                     untl_object=element,
+                                     superuser=False)
 
 
 def test_UNTLElement_add_form_no_qualifier_no_content_parent_tag():
@@ -176,8 +254,24 @@ def test_UNTLElement_add_form_no_qualifier_no_content_parent_tag():
     qualifiers = ['test']
     element.add_form(vocabularies={'agent-type': qualifiers},
                      parent_tag='test_parent')
+    assert isinstance(element.form, FormElement)
     assert element.form.untl_object == element
     assert element.form.qualifier_dd == qualifiers
+
+
+@patch('pyuntl.form_logic.Type.__init__', return_value=None)
+def test_UNTLElement_add_form_no_qualifier_no_content_parent_tag_mocked(mock_type):
+    """Verify FormElement subclass call with parent tag, no content nor qualifier."""
+    element = us.UNTLElement()
+    element.tag = 'type'
+    vocabularies = {'agent-type': ['test']}
+    parent_tag = 'test_parent'
+    element.add_form(vocabularies=vocabularies,
+                     parent_tag=parent_tag)
+    mock_type.assert_called_once_with(vocabularies=vocabularies,
+                                      untl_object=element,
+                                      parent_tag=parent_tag,
+                                      superuser=False)
 
 
 def test_UNTLElement_completeness():
