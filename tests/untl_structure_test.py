@@ -486,5 +486,4 @@ def test_generate_form_data():
     fg = metadata.generate_form_data(sort_order=UNTL_PTH_ORDER)
     assert isinstance(fg, us.FormGenerator)
     # Check missing children were added.
-    print metadata.children
     assert len(metadata.children) == len(metadata.contained_children)
