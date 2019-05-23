@@ -322,7 +322,7 @@ def test_UNTLElement_record_content_length():
 
 
 @patch('pyuntl.untl_structure.FormGenerator.get_vocabularies', return_value=VOCAB)
-def test_FormGenerator(mock_vocab):
+def test_FormGenerator(_):
     """Test same UNTLElement subclasses are grouped together.
 
     Official and series titles should be in same group. A hidden
@@ -347,11 +347,10 @@ def test_FormGenerator(mock_vocab):
     hidden_group = form_elements.element_groups[2].group_list
     assert len(hidden_group) == 1
     assert isinstance(hidden_group[0], us.Meta)
-    mock_vocab.assert_called_once_with()
 
 
 @patch('pyuntl.untl_structure.FormGenerator.get_vocabularies', return_value=VOCAB)
-def test_FormGenerator_hidden_is_alone(mock_vocab):
+def test_FormGenerator_hidden_is_alone(_):
     """Test Meta with Hidden qualifier is handled.
 
      A Meta element with qualifier of "hidden" gets a separate group
@@ -366,11 +365,10 @@ def test_FormGenerator_hidden_is_alone(mock_vocab):
     assert isinstance(form_elements.element_groups[0], FormGroup)
     assert isinstance(form_elements.element_groups[1], HiddenGroup)
     assert not form_elements.adjustable_items
-    mock_vocab.assert_called_once_with()
 
 
 @patch('pyuntl.untl_structure.FormGenerator.get_vocabularies', return_value=VOCAB)
-def test_FormGenerator_adjustable_items(mock_vocab):
+def test_FormGenerator_adjustable_items(_):
     """FormGroup types with data for adjusting form with JS are handled."""
     access = us.Rights(content='public', qualifier='access')
     hidden = us.Meta(content='True', qualifier='hidden')
@@ -379,7 +377,6 @@ def test_FormGenerator_adjustable_items(mock_vocab):
     fg = us.FormGenerator(children=children,
                           sort_order=sort_order)
     assert 'access' in fg.adjustable_items
-    mock_vocab.assert_called_once_with()
 
 
 @patch('urllib2.urlopen')
@@ -590,7 +587,7 @@ def test_Metadata_validate():
 
 
 @patch('pyuntl.untl_structure.FormGenerator.get_vocabularies', return_value=VOCAB)
-def test_generate_form_data(mock_vocab):
+def test_generate_form_data(_):
     """Test this returns a FormGenerator object."""
     metadata = us.Metadata()
     assert not metadata.children
@@ -598,4 +595,3 @@ def test_generate_form_data(mock_vocab):
     assert isinstance(fg, us.FormGenerator)
     # Check missing children were added.
     assert len(metadata.children) == len(metadata.contained_children)
-    mock_vocab.assert_called_once_with()
