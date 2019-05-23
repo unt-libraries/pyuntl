@@ -6,6 +6,7 @@ from mock import patch
 from lxml.etree import Element
 from pyuntl import untl_structure as us, UNTL_PTH_ORDER
 from pyuntl.form_logic import FormGroup, HiddenGroup, FormElement
+from tests import VOCAB
 
 
 def test_UNTLStructureException():
@@ -320,7 +321,8 @@ def test_UNTLElement_record_content_length():
     assert root.record_content_length == 46
 
 
-def test_FormGenerator():
+@patch('pyuntl.untl_structure.FormGenerator.get_vocabularies', return_value=VOCAB)
+def test_FormGenerator(mock_vocab):
     """Test same UNTLElement subclasses are grouped together.
 
     Official and series titles should be in same group. A hidden
@@ -345,9 +347,11 @@ def test_FormGenerator():
     hidden_group = form_elements.element_groups[2].group_list
     assert len(hidden_group) == 1
     assert isinstance(hidden_group[0], us.Meta)
+    mock_vocab.assert_called_once_with()
 
 
-def test_FormGenerator_hidden_is_alone():
+@patch('pyuntl.untl_structure.FormGenerator.get_vocabularies', return_value=VOCAB)
+def test_FormGenerator_hidden_is_alone(mock_vocab):
     """Test Meta with Hidden qualifier is handled.
 
      A Meta element with qualifier of "hidden" gets a separate group
@@ -362,9 +366,11 @@ def test_FormGenerator_hidden_is_alone():
     assert isinstance(form_elements.element_groups[0], FormGroup)
     assert isinstance(form_elements.element_groups[1], HiddenGroup)
     assert not form_elements.adjustable_items
+    mock_vocab.assert_called_once_with()
 
 
-def test_FormGenerator_adjustable_items():
+@patch('pyuntl.untl_structure.FormGenerator.get_vocabularies', return_value=VOCAB)
+def test_FormGenerator_adjustable_items(mock_vocab):
     """FormGroup types with data for adjusting form with JS are handled."""
     access = us.Rights(content='public', qualifier='access')
     hidden = us.Meta(content='True', qualifier='hidden')
@@ -373,6 +379,16 @@ def test_FormGenerator_adjustable_items():
     fg = us.FormGenerator(children=children,
                           sort_order=sort_order)
     assert 'access' in fg.adjustable_items
+    mock_vocab.assert_called_once_with()
+
+
+@patch('urllib2.urlopen')
+def test_FormGenerator_get_vocabularies(mock_urlopen):
+    """Tests the vocabularies are returned."""
+    mock_urlopen.return_value.read.return_value = str(VOCAB)
+    vocabularies = us.FormGenerator(children=[], sort_order=['hidden'])
+    vocabularies == VOCAB
+    mock_urlopen.assert_called_once()
 
 
 @patch('urllib2.urlopen', side_effect=Exception)
@@ -573,7 +589,8 @@ def test_Metadata_validate():
     assert metadata.validate() is None
 
 
-def test_generate_form_data():
+@patch('pyuntl.untl_structure.FormGenerator.get_vocabularies', return_value=VOCAB)
+def test_generate_form_data(mock_vocab):
     """Test this returns a FormGenerator object."""
     metadata = us.Metadata()
     assert not metadata.children
@@ -581,3 +598,4 @@ def test_generate_form_data():
     assert isinstance(fg, us.FormGenerator)
     # Check missing children were added.
     assert len(metadata.children) == len(metadata.contained_children)
+    mock_vocab.assert_called_once_with()

@@ -204,3 +204,29 @@ EXPECTED_POST_TO_PYDICT = {
                 {'content': u'oil paint (paint)', 'qualifier': u'AAT'}],
     'title': [{'content': u'AL 00-3.', 'qualifier': u'officialtitle'}]
     }
+
+# Skeleton vocabulary for mock return value.
+VOCAB = {'title-qualifiers': [],
+         'identifier-qualifiers': [],
+         'note-qualifiers': [],
+         'subject-qualifiers': [],
+         'description-qualifiers': [],
+         'date-qualifiers': [],
+         'sourceQualifiers': [],
+         'coverage-qualifiers': [],
+         'relation-qualifiers': [],
+         'rights-qualifiers': [],
+         'degree-information': [],
+         'meta-qualifiers': [],
+         'citationQualifiers': [],
+         'agent-type': [],
+         'agent-qualifiers': [],
+         'institutions': [],
+         'collections': [],
+         'languages': [],
+         'resource-types': [],
+         'formats': [],
+         'coverage-eras': [],
+         'rights-access': [],
+         'rights-licenses': [],
+         'publication-types': []}
