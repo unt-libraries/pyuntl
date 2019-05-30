@@ -2,6 +2,7 @@
 """Unit tests for untl_structure."""
 
 import pytest
+import json
 from mock import patch
 from lxml.etree import Element
 from pyuntl import untl_structure as us, UNTL_PTH_ORDER
@@ -298,7 +299,7 @@ def test_UNTLElement_record_length():
     # "{'meta': [{'qualifier': 'ark', 'content': 'fake'}], 'collection': [{'content': 'Colección'}]}"  # noqa 
     # We are getting that it is length 97 for:
     # "{'meta': [{'content': 'fake', 'qualifier': 'ark'}], 'collection': [{'content': u'Colecci\xf3n'}]}"  # noqa
-    assert root.record_length == 97
+    assert root.record_length == 93
 
 
 def test_UNTLElement_record_content_length():
@@ -318,7 +319,7 @@ def test_UNTLElement_record_content_length():
     # "{'collection': [{'content': 'Colección'}]}"
     # We are getting that it is length 46 for:
     # "{'collection': [{'content': u'Colecci\xf3n'}]}"
-    assert root.record_content_length == 46
+    assert root.record_content_length == 42
 
 
 @patch('pyuntl.untl_structure.FormGenerator.get_vocabularies', return_value=VOCAB)
@@ -379,16 +380,16 @@ def test_FormGenerator_adjustable_items(_):
     assert 'access' in fg.adjustable_items
 
 
-@patch('urllib2.urlopen')
+@patch('urllib.request.urlopen')
 def test_FormGenerator_get_vocabularies(mock_urlopen):
     """Tests the vocabularies are returned."""
-    mock_urlopen.return_value.read.return_value = str(VOCAB)
+    mock_urlopen.return_value.read.return_value = (json.dumps(VOCAB))
     vocabularies = us.FormGenerator(children=[], sort_order=['hidden'])
     vocabularies == VOCAB
     mock_urlopen.assert_called_once()
 
 
-@patch('urllib2.urlopen', side_effect=Exception)
+@patch('urllib.request.urlopen', side_effect=Exception)
 def test_FormGenerator_fails_without_vocab_service(mock_urlopen):
     """If vocabularies URL can't be reached, exception is raised.
 
@@ -413,7 +414,7 @@ def test_Metadata_create_xml_string():
   <title qualifier="seriestitle">Colecci&#243;n</title>
   <description qualifier="content">Adaption of "Fortuna te d&#233; Dios, hijo"</description>
 </metadata>\n"""
-    assert metadata.create_xml_string() == expected_text
+    assert metadata.create_xml_string() == expected_text.encode()
 
 
 def test_Metadata_create_xml():
