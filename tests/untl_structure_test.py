@@ -295,10 +295,6 @@ def test_UNTLElement_record_length():
                           qualifier='ark')
     meta.tag = 'meta'
     root.add_child(meta)
-    # NOTE: in utf-8 length is 94:
-    # "{'meta': [{'qualifier': 'ark', 'content': 'fake'}], 'collection': [{'content': 'Colección'}]}"  # noqa 
-    # We are getting that it is length 97 for:
-    # "{'meta': [{'content': 'fake', 'qualifier': 'ark'}], 'collection': [{'content': u'Colecci\xf3n'}]}"  # noqa
     assert root.record_length == 93
 
 
@@ -315,10 +311,6 @@ def test_UNTLElement_record_content_length():
                           qualifier='ark')
     meta.tag = 'meta'
     root.add_child(meta)
-    # NOTE: in utf-8 length is 42:
-    # "{'collection': [{'content': 'Colección'}]}"
-    # We are getting that it is length 46 for:
-    # "{'collection': [{'content': u'Colecci\xf3n'}]}"
     assert root.record_content_length == 42
 
 
@@ -383,7 +375,7 @@ def test_FormGenerator_adjustable_items(_):
 @patch('urllib.request.urlopen')
 def test_FormGenerator_get_vocabularies(mock_urlopen):
     """Tests the vocabularies are returned."""
-    mock_urlopen.return_value.read.return_value = (json.dumps(VOCAB))
+    mock_urlopen.return_value.read.return_value = json.dumps(VOCAB)
     vocabularies = us.FormGenerator(children=[], sort_order=['hidden'])
     vocabularies == VOCAB
     mock_urlopen.assert_called_once()
@@ -409,12 +401,12 @@ def test_Metadata_create_xml_string():
     description = us.Description(content=u'Adaption of "Fortuna te dé Dios, hijo"',
                                  qualifier=u'content')
     metadata.children = [title, description]
-    expected_text = """<?xml version="1.0" encoding="UTF-8"?>
+    exp_text = """<?xml version=\'1.0\' encoding=\'utf-8\'?>
 <metadata>
-  <title qualifier="seriestitle">Colecci&#243;n</title>
-  <description qualifier="content">Adaption of "Fortuna te d&#233; Dios, hijo"</description>
+  <title qualifier="seriestitle">Colección</title>
+  <description qualifier="content">Adaption of "Fortuna te dé Dios, hijo"</description>
 </metadata>\n"""
-    assert metadata.create_xml_string() == expected_text.encode()
+    assert metadata.create_xml_string() == (exp_text.encode())
 
 
 def test_Metadata_create_xml():
@@ -511,15 +503,16 @@ def test_Metadata_create_xml_file(tmpdir):
     xml_file = tmpdir.join('untl.xml')
     metadata.create_xml_file(xml_file.strpath)
     assert xml_file.read() == (
-        u'<?xml version="1.0" encoding="UTF-8"?>\n'
-        u'<metadata>\n'
-        u'  <title qualifier="seriestitle">Colecci&#243;n</title>\n'
-        u'  <contributor qualifier="cmp">\n'
-        u'    <type>per</type>\n'
-        u'    <name>Oudrid, C. (Crist&#243;bal), 1825-1877.</name>\n'
-        u'  </contributor>\n'
-        u'  <description qualifier="content">"Fortuna te d&#233; Dios, hijo"</description>\n'
-        u'</metadata>\n'
+        """<?xml version='1.0' encoding='utf-8'?>
+<metadata>
+  <title qualifier="seriestitle">Colección</title>
+  <contributor qualifier="cmp">
+    <type>per</type>
+    <name>Oudrid, C. (Cristóbal), 1825-1877.</name>
+  </contributor>
+  <description qualifier="content">"Fortuna te dé Dios, hijo"</description>
+</metadata>
+"""
     )
 
 
@@ -544,15 +537,16 @@ def test_Metadata_create_xml_file_ascii_hex(tmpdir):
     xml_file = tmpdir.join('untl.xml')
     metadata.create_xml_file(xml_file.strpath)
     assert xml_file.read() == (
-        u'<?xml version="1.0" encoding="UTF-8"?>\n'
-        u'<metadata>\n'
-        u'  <title qualifier="seriestitle">Colecci&#243;n</title>\n'
-        u'  <contributor qualifier="cmp">\n'
-        u'    <type>per</type>\n'
-        u'    <name>Oudrid, C. (Crist&#243;bal), 1825-1877.</name>\n'
-        u'  </contributor>\n'
-        u'  <description qualifier="content">"Fortuna te d&#233; Dios, hijo"</description>\n'
-        u'</metadata>\n'
+        """<?xml version='1.0' encoding='utf-8'?>
+<metadata>
+  <title qualifier="seriestitle">Colección</title>
+  <contributor qualifier="cmp">
+    <type>per</type>
+    <name>Oudrid, C. (Cristóbal), 1825-1877.</name>
+  </contributor>
+  <description qualifier="content">"Fortuna te dé Dios, hijo"</description>
+</metadata>
+"""
     )
 
 

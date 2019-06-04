@@ -27,7 +27,7 @@ class ReaderTest(unittest.TestCase):
         self.root_element = untlxml2py(
             BytesIO(
                 open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                  'metadc_complete.untl.xml'), 'r').read().encode()
+                                  'metadc_complete.untl.xml'), 'rb').read()
             )
         )
         self.assertTrue(isinstance(self.root_element, Metadata))
