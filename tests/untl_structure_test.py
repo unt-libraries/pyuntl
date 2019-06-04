@@ -401,12 +401,12 @@ def test_Metadata_create_xml_string():
     description = us.Description(content=u'Adaption of "Fortuna te dé Dios, hijo"',
                                  qualifier=u'content')
     metadata.children = [title, description]
-    exp_text = """<?xml version=\'1.0\' encoding=\'utf-8\'?>
+    expected_text = """<?xml version='1.0' encoding='utf-8'?>
 <metadata>
   <title qualifier="seriestitle">Colección</title>
   <description qualifier="content">Adaption of "Fortuna te dé Dios, hijo"</description>
 </metadata>\n"""
-    assert metadata.create_xml_string() == (exp_text.encode())
+    assert metadata.create_xml_string() == expected_text.encode()
 
 
 def test_Metadata_create_xml():
@@ -502,8 +502,7 @@ def test_Metadata_create_xml_file(tmpdir):
 
     xml_file = tmpdir.join('untl.xml')
     metadata.create_xml_file(xml_file.strpath)
-    assert xml_file.read() == (
-        """<?xml version='1.0' encoding='utf-8'?>
+    assert xml_file.read() == """<?xml version='1.0' encoding='utf-8'?>
 <metadata>
   <title qualifier="seriestitle">Colección</title>
   <contributor qualifier="cmp">
@@ -513,7 +512,6 @@ def test_Metadata_create_xml_file(tmpdir):
   <description qualifier="content">"Fortuna te dé Dios, hijo"</description>
 </metadata>
 """
-    )
 
 
 def test_Metadata_create_xml_file_ascii_hex(tmpdir):
@@ -536,8 +534,7 @@ def test_Metadata_create_xml_file_ascii_hex(tmpdir):
 
     xml_file = tmpdir.join('untl.xml')
     metadata.create_xml_file(xml_file.strpath)
-    assert xml_file.read() == (
-        """<?xml version='1.0' encoding='utf-8'?>
+    assert xml_file.read() == """<?xml version='1.0' encoding='utf-8'?>
 <metadata>
   <title qualifier="seriestitle">Colección</title>
   <contributor qualifier="cmp">
@@ -547,7 +544,6 @@ def test_Metadata_create_xml_file_ascii_hex(tmpdir):
   <description qualifier="content">"Fortuna te dé Dios, hijo"</description>
 </metadata>
 """
-    )
 
 
 def test_Metadata_create_xml_file_exception_raised():
