@@ -240,7 +240,7 @@ def post2pydict(post, ignore_list):
             elif len(child_list) > 0:
                 untl_element = PYUNTL_DISPATCH[element_tag]()
             # If the element has children, add them.
-            if child_list and untl_element is not None:
+            if child_list and untl_element:
                 for child in child_list:
                     untl_element.add_child(child)
             # Add the UNTL element to the root element.

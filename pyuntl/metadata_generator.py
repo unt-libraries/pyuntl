@@ -100,7 +100,7 @@ def pydict2xml(filename, metadata_dict, **kwargs):
     and a metadata dictionary.
     """
     try:
-        f = open(filename, 'w')
+        f = open(filename, 'w', encoding='utf-8')
         f.write(pydict2xmlstring(metadata_dict, **kwargs))
         f.close()
     except:
@@ -164,10 +164,7 @@ def pydict2xmlstring(metadata_dict, **kwargs):
                         namespace=elements_namespace,
                     )
     # Create the XML tree.
-    return '<?xml version="1.0" encoding="UTF-8"?>\n'.encode() + tostring(
-        root,
-        pretty_print=True
-    )
+    return tostring(root, encoding='utf-8', xml_declaration=True, pretty_print=True)
 
 
 def create_dict_subelement(root, subelement, content, **kwargs):
