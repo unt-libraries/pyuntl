@@ -534,16 +534,17 @@ def test_Metadata_create_xml_file_ascii_hex(tmpdir):
 
     xml_file = tmpdir.join('untl.xml')
     metadata.create_xml_file(xml_file.strpath)
-    assert xml_file.read() == """<?xml version='1.0' encoding='utf-8'?>
-<metadata>
-  <title qualifier="seriestitle">Colección</title>
-  <contributor qualifier="cmp">
-    <type>per</type>
-    <name>Oudrid, C. (Cristóbal), 1825-1877.</name>
-  </contributor>
-  <description qualifier="content">"Fortuna te dé Dios, hijo"</description>
-</metadata>
-"""
+    assert xml_file.read() == (
+        '<?xml version=\'1.0\' encoding=\'utf-8\'?>\n'
+        '<metadata>\n'
+        '  <title qualifier="seriestitle">Colección</title>\n'
+        '  <contributor qualifier="cmp">\n'
+        '    <type>per</type>\n'
+        '    <name>Oudrid, C. (Cristóbal), 1825-1877.</name>\n'
+        '  </contributor>\n'
+        '  <description qualifier="content">"Fortuna te dé Dios, hijo"</description>\n'
+        '</metadata>\n'
+    )
 
 
 def test_Metadata_create_xml_file_exception_raised():
