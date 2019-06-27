@@ -401,7 +401,7 @@ def test_Metadata_create_xml_string():
     description = us.Description(content=u'Adaption of "Fortuna te dé Dios, hijo"',
                                  qualifier=u'content')
     metadata.children = [title, description]
-    expected_text = """<?xml version='1.0' encoding='utf-8'?>
+    expected_text = """<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <title qualifier="seriestitle">Colección</title>
   <description qualifier="content">Adaption of "Fortuna te dé Dios, hijo"</description>
@@ -502,7 +502,7 @@ def test_Metadata_create_xml_file(tmpdir):
 
     xml_file = tmpdir.join('untl.xml')
     metadata.create_xml_file(xml_file.strpath)
-    assert xml_file.read() == """<?xml version='1.0' encoding='utf-8'?>
+    assert xml_file.read() == """<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <title qualifier="seriestitle">Colección</title>
   <contributor qualifier="cmp">
@@ -535,7 +535,7 @@ def test_Metadata_create_xml_file_ascii_hex(tmpdir):
     xml_file = tmpdir.join('untl.xml')
     metadata.create_xml_file(xml_file.strpath)
     assert xml_file.read() == (
-        '<?xml version=\'1.0\' encoding=\'utf-8\'?>\n'
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<metadata>\n'
         '  <title qualifier="seriestitle">Colección</title>\n'
         '  <contributor qualifier="cmp">\n'

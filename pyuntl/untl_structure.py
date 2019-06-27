@@ -358,8 +358,12 @@ class Metadata(UNTLElement):
         untl_xml_string = metadata_root_object.create_xml_string()
         """
         root = self.create_xml()
-        xml = tostring(root, encoding='utf-8', xml_declaration=True, pretty_print=True)
-        return xml
+        return b'<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
+            root,
+            encoding='UTF-8',
+            xml_declaration=False,
+            pretty_print=True
+        )
 
     def create_xml(self, useNamespace=False):
         """Create an ElementTree representation of the object."""
