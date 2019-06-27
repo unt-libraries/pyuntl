@@ -164,7 +164,12 @@ def pydict2xmlstring(metadata_dict, **kwargs):
                         namespace=elements_namespace,
                     )
     # Create the XML tree.
-    return tostring(root, encoding='utf-8', xml_declaration=True, pretty_print=True)
+    return b'<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
+        root,
+        encoding='UTF-8',
+        xml_declaration=False,
+        pretty_print=True
+    )
 
 
 def create_dict_subelement(root, subelement, content, **kwargs):
