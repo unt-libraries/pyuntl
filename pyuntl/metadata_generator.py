@@ -212,8 +212,10 @@ def highwiredict2xmlstring(highwire_elements, ordering=HIGHWIRE_ORDER):
         attribs = {'name': element.name, 'content': element.content}
         SubElement(root, 'meta', attribs)
     # Create the XML tree.
-    return '<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
+    return b'<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
         root,
+        encoding='UTF-8',
+        xml_declaration=False,
         pretty_print=True
     )
 

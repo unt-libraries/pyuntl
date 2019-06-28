@@ -6,8 +6,48 @@ from pyuntl.highwire_structure import (format_date_string, HighwireElement,
                                        CitationPublicationDate,
                                        CitationOnlineDate, citation_director,
                                        identifier_director)
-from pyuntl.untldoc import untlpy2highwirepy, untldict2py, highwirepy2dict
+from pyuntl.untldoc import (untlpy2highwirepy, untldict2py, highwirepy2dict,
+                            generate_highwire_xml, generate_highwire_json,
+                            generate_highwire_text)
 from tests import UNTL_DICT
+
+
+HIGHWIRE_XML = b"""<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <meta content="The Bronco, Yearbook of Hardin-Simmons University, 1944" name="citation_title"/>
+  <meta content="Hardin-Simmons University" name="citation_publisher"/>
+  <meta content="1944" name="citation_publication_date"/>
+  <meta content="06/29/2008" name="citation_online_date"/>
+</metadata>
+"""
+
+HIGHWIRE_JSON = """{
+    "citation_online_date": [
+        {
+            "content": "06/29/2008"
+        }
+    ],
+    "citation_publication_date": [
+        {
+            "content": "1944"
+        }
+    ],
+    "citation_publisher": [
+        {
+            "content": "Hardin-Simmons University"
+        }
+    ],
+    "citation_title": [
+        {
+            "content": "The Bronco, Yearbook of Hardin-Simmons University, 1944"
+        }
+    ]
+}"""
+
+HIGHWIRE_TEXT = """citation_title: The Bronco, Yearbook of Hardin-Simmons University, 1944
+citation_publisher: Hardin-Simmons University
+citation_publication_date: 1944
+citation_online_date: 06/29/2008"""
 
 
 class TestHighwire(unittest.TestCase):
@@ -17,6 +57,27 @@ class TestHighwire(unittest.TestCase):
         highwi = untlpy2highwirepy(untlpy)
         hidict = highwirepy2dict(highwi)
         self.assertEqual(type(hidict), dict)
+
+    def testXml(self):
+        """Test highwire elements are converted to an XML string."""
+        untlpy = untldict2py(UNTL_DICT)
+        highwire_elements = untlpy2highwirepy(untlpy)
+        highwire_xml = generate_highwire_xml(highwire_elements)
+        self.assertEqual(highwire_xml, HIGHWIRE_XML)
+
+    def testJson(self):
+        """Test highwire elements are converted to a JSON string."""
+        untlpy = untldict2py(UNTL_DICT)
+        highwire_elements = untlpy2highwirepy(untlpy)
+        highwire_json = generate_highwire_json(highwire_elements)
+        self.assertEqual(highwire_json, HIGHWIRE_JSON)
+
+    def testText(self):
+        """Test highwire elements are converted to ANVL text."""
+        untlpy = untldict2py(UNTL_DICT)
+        highwire_elements = untlpy2highwirepy(untlpy)
+        highwire_text = generate_highwire_text(highwire_elements)
+        self.assertEqual(highwire_text, HIGHWIRE_TEXT)
 
     def testUNTL2HIGHWIRE(self):
         """Test conversion from UNTL to Highwire."""
