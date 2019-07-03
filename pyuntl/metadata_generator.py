@@ -101,7 +101,7 @@ def pydict2xml(filename, metadata_dict, **kwargs):
     """
     try:
         f = open(filename, 'w', encoding='utf-8')
-        f.write(pydict2xmlstring(metadata_dict, **kwargs))
+        f.write(pydict2xmlstring(metadata_dict, **kwargs).decode('utf-8'))
         f.close()
     except:
         raise MetadataGeneratorException(
