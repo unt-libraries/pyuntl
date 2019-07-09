@@ -5,7 +5,15 @@ import pytest
 from lxml.etree import Element, tostring
 
 from pyuntl import (metadata_generator as mg, untl_structure as us,
-                    etd_ms_structure as es)
+                    etd_ms_structure as es, highwire_structure as hs)
+
+
+def test_MetadataGeneratorException():
+    msg = 'Throw this'
+    try:
+        raise mg.MetadataGeneratorException(msg)
+    except mg.MetadataGeneratorException as err:
+        assert str(err) == msg
 
 
 def test_py2dict():
@@ -143,3 +151,108 @@ def test_create_dict_subelement():
     assert xml.decode('utf-8') == ('<root xmlns:animal="http://example.com/animal">\n'
                                    '  <animal:dog role="pet">Harold</animal:dog>\n'
                                    '</root>\n')
+
+
+def test_create_dict_subelement_no_attribs():
+    root = Element('root', nsmap={'animal': 'http://example.com/animal'})
+    mg.create_dict_subelement(root,
+                              'dog',
+                              'Harold',
+                              namespace='{http://example.com/animal}')
+    xml = tostring(root, pretty_print=True)
+    assert xml.decode('utf-8') == ('<root xmlns:animal="http://example.com/animal">\n'
+                                   '  <animal:dog>Harold</animal:dog>\n'
+                                   '</root>\n')
+
+
+def test_create_dict_subelement_no_namespace():
+    root = Element('root')
+    mg.create_dict_subelement(root, 'dog', 'Harold', attribs={'role': 'pet'})
+    xml = tostring(root, pretty_print=True)
+    assert xml.decode('utf-8') == ('<root>\n'
+                                   '  <dog role="pet">Harold</dog>\n'
+                                   '</root>\n')
+
+
+def test_create_dict_subelement_no_extra_data():
+    root = Element('root')
+    mg.create_dict_subelement(root, 'dog', 'Harold')
+    xml = tostring(root, pretty_print=True)
+    assert xml.decode('utf-8') == ('<root>\n'
+                                   '  <dog>Harold</dog>\n'
+                                   '</root>\n')
+
+
+def test_create_dict_subelement_degree_order_handling():
+    # Order should be name, level, discipline, grantor.
+    root = Element('root')
+    mg.create_dict_subelement(root,
+                              'degree',
+                              content={'discipline': 'Chemistry',
+                                       'level': 'Masters',
+                                       'grantor': 'UNT',
+                                       'name': 'foo'})
+    xml = tostring(root, pretty_print=True)
+    assert xml.decode('utf-8') == ('<root>\n'
+                                   '  <degree>\n'
+                                   '    <name>foo</name>\n'
+                                   '    <level>Masters</level>\n'
+                                   '    <discipline>Chemistry</discipline>\n'
+                                   '    <grantor>UNT</grantor>\n'
+                                   '  </degree>\n'
+                                   '</root>\n')
+
+
+def test_create_dict_subelement_content_dict_not_degree():
+    root = Element('root')
+    content = {'foo': 'one', 'bar': 'two'}
+    mg.create_dict_subelement(root, 'stuff', content=content)
+    # Check the content keys are children of the stuff element.
+    assert root[0].tag == 'stuff'
+    assert len(list(root[0])) == 2
+    for key, value in content.items():
+        assert root[0].find(key).text == value
+
+
+def test_highwiredict2xmlstring():
+    issue = hs.CitationIssue(content='1')
+    title = hs.CitationTitle(content='Important paper')
+    elements = [issue, title]
+    xml = mg.highwiredict2xmlstring(elements, ordering=['citation_title',
+                                                        'citation_issue'])
+    print(xml.decode('utf-8'))
+    assert xml.decode('utf-8') == ('<?xml version="1.0" encoding="UTF-8"?>\n'
+                                   '<metadata>\n'
+                                   '  <meta content="Important paper"'
+                                   ' name="citation_title"/>\n'
+                                   '  <meta content="1" name="citation_issue"/>\n'
+                                   '</metadata>\n')
+
+
+def test_breakString_shorter_than_width_with_offset():
+    line = mg.breakString('Hello world', width=79, firstLineOffset=0)
+    assert line == 'Hello world'
+
+
+def test_breakString_longer_than_width_with_offset():
+    line = mg.breakString('Hello world', width=10, firstLineOffset=4)
+    # Check line has been split to prevent surpassing width + offset length.
+    assert line == 'Hello\n world'
+
+
+def test_breakString_longer_than_width_with_offset_no_space():
+    line = mg.breakString('antidisestablishmentarianism',
+                          width=10,
+                          firstLineOffset=4)
+    # No space to split on, so line is returned over the specified width.
+    assert line == 'antidisestablishmentarianism'
+
+
+def test_writeANVLString():
+    elements = {'issue': [{'content': '1'}],
+                'title': [{'content': 'Important Paper'},
+                          {'content': 'Another Paper'}]}
+    anvl = mg.writeANVLString(elements, ordering=['title', 'issue'])
+    assert anvl == ('title: Important Paper\n'
+                    'title: Another Paper\n'
+                    'issue: 1')
