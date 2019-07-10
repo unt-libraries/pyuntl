@@ -220,7 +220,6 @@ def test_highwiredict2xmlstring():
     elements = [issue, title]
     xml = mg.highwiredict2xmlstring(elements, ordering=['citation_title',
                                                         'citation_issue'])
-    print(xml.decode('utf-8'))
     assert xml.decode('utf-8') == ('<?xml version="1.0" encoding="UTF-8"?>\n'
                                    '<metadata>\n'
                                    '  <meta content="Important paper"'
@@ -235,8 +234,9 @@ def test_breakString_shorter_than_width_with_offset():
 
 
 def test_breakString_longer_than_width_with_offset():
-    line = mg.breakString('Hello world', width=10, firstLineOffset=4)
-    # Check line has been split to prevent surpassing width + offset length.
+    # String is shorter than width but longer than width - firstLineOffset.
+    line = mg.breakString('Hello world', width=12, firstLineOffset=4)
+    # Line has been split to prevent surpassing width - firstLineOffset length.
     assert line == 'Hello\n world'
 
 
@@ -246,6 +246,15 @@ def test_breakString_longer_than_width_with_offset_no_space():
                           firstLineOffset=4)
     # No space to split on, so line is returned over the specified width.
     assert line == 'antidisestablishmentarianism'
+
+
+@pytest.mark.xfail(reason='We may want to split on consecutive space chars')
+def test_breakString_multiple_consecutive_space_chars():
+    line = mg.breakString('Hello  world', width=12, firstLineOffset=4)
+    # Currently breakString doesn't split if there are consecutive space chars.
+    # Is this to not double split if one space char is an endline?
+    # Should we eliminate consecutive spaces before processing the string?
+    assert line == 'Hello\n  world'
 
 
 def test_writeANVLString():
