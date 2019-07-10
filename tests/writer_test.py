@@ -16,12 +16,8 @@ def test_write_xml_file_from_pyuntl_is_identical(original_file, tmpdir):
     # Write the loaded data back to a new XML file.
     new_path = os.path.join(tmpdir, 'xml_test_output.xml')
     well_formed_record.create_xml_file(new_path)
-    # Read back the new file and original files into ElementTrees.
-    new_record = ET.parse(new_path)
-    well_formed_record = ET.parse(original_path)
 
     # Compare initial XML to generated XML.
-    assert ET.tostring(well_formed_record.getroot()) == ET.tostring(new_record.getroot())
     with open(original_path) as original_f, open(new_path) as new_f:
         assert original_f.read() == new_f.read()
 
@@ -45,6 +41,7 @@ def test_write_xml_file_from_pyuntl_ascii_is_now_utf8(tmpdir):
     ascii_record = ET.parse(ascii_path)
 
     # Compare initial XML to generated XML.
+    # In ElementTree form the data is equal, but on disk it is different.
     assert ET.tostring(ascii_record.getroot()) == ET.tostring(new_record.getroot())
     with open(ascii_path) as ascii_f, open(new_path) as new_f:
         ascii_text = ascii_f.read()
