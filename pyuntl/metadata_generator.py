@@ -221,9 +221,18 @@ def highwiredict2xmlstring(highwire_elements, ordering=HIGHWIRE_ORDER):
 
 
 def breakString(string, width=79, firstLineOffset=0):
+    """Break up a string into multiple lines.
+
+    Lines should each be of length no greater than width.
+    If externally additional text will be added to the first line,
+    such as an ANVL key, use firstLineOffset to reduce the allowed
+    width we have available for the line.
+    """
     originalWidth = width
+    # Use firstLineOffset to adjust width allowed for this line.
     width = width - firstLineOffset
     if len(string) < width + 1:
+        # string all fits on one line, so return it as is.
         return string
     index = width
     while index > 0:
@@ -238,6 +247,8 @@ def breakString(string, width=79, firstLineOffset=0):
                 )
 
         index = index - 1
+    # There was insufficient whitespace to break the string in a way that keeps
+    # all lines under the desired width. Exceed the width.
     return string
 
 
