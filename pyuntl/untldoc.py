@@ -159,9 +159,6 @@ def untldict2py(untl_dict):
                 untl_element = PYUNTL_DISPATCH[element_name](
                     content=content,
                 )
-            # Create element that only has children.
-            elif child_list:
-                untl_element = PYUNTL_DISPATCH[element_name]()
             # Add the UNTL element to the Python element list.
             untl_py_list.append(untl_element)
     # Add the UNTL elements to the root element.
