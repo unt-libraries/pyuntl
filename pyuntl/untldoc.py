@@ -44,8 +44,8 @@ def untlxml2py(untl_filename):
     """Parse a UNTL XML file object into a pyuntl element tree.
 
     You can also pass this a string as file input like so:
-    import StringIO
-    untlxml2py(StringIO.StringIO(untl_string))
+    from io import BytesIO
+    untlxml2py(BytesIO(untl_string))
     """
     # Create a stack to hold parents.
     parent_stack = []
@@ -89,8 +89,8 @@ def untlxml2pydict(untl_filename):
     """Convert a UNTL XML file to a Python dictionary.
 
     You can also pass this a string as file input like so:
-    import StringIO
-    untlxml2pydict(StringIO.StringIO(untl_string))
+    from io import BytesIO
+    untlxml2pydict(BytesIO(untl_string))
     """
     # Create a UNTL Python object from the XML file.
     untl_elements = untlxml2py(untl_filename)
