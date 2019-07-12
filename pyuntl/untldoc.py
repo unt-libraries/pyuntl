@@ -10,6 +10,7 @@
 import json
 import re
 import urllib.request
+from copy import deepcopy
 from lxml.etree import iterparse
 from rdflib import Namespace, Literal, URIRef, ConjunctiveGraph
 
@@ -406,7 +407,7 @@ def untlpy2highwirepy(untl_elements, **kwargs):
                 # Otherwise, add the element to the list if it has content.
                 elif highwire_element.content:
                     highwire_list.append(highwire_element)
-        # If the title was found, add it to the list.
+    # If the title was found, add it to the list.
     if title:
         highwire_list.append(title)
     return highwire_list
@@ -456,6 +457,8 @@ def formatted_dc_dict(dc_dict):
     with a list of values for each element.
     i.e. {'publisher': ['someone', 'someone else'], 'title': ['a title'],}
     """
+    # Don't modify the unformatted dictionary in place.
+    dc_dict = deepcopy(dc_dict)
     for key, element_list in dc_dict.items():
         new_element_list = []
         # Add the content for each element to the new element list.
