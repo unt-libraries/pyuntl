@@ -4,6 +4,7 @@ from io import BytesIO
 from unittest.mock import patch
 
 import pytest
+from rdflib import ConjunctiveGraph
 
 from pyuntl import untldoc, untl_structure as us, dc_structure as dc
 
@@ -32,6 +33,11 @@ UNTL_STRING = ('<?xml version="1.0" encoding="UTF-8"?>\n'
                '  <date qualifier="creation">1944</date>\n'
                '  <collection>UNT</collection>\n'
                '</metadata>\n')
+
+DC_DICTIONARY = {'title': [{'content': 'Tres Actos'}],
+                 'creator': [{'content': 'Enhorn, Blair'}],
+                 'publisher': [{'content': 'Fake Publishing'}],
+                 'date': [{'content': '1944'}]}
 
 
 def test_PyuntlException():
@@ -297,3 +303,194 @@ def test_untlpy2highwirepy():
     assert highwire_list[3].qualifier == 'officialtitle'
     assert highwire_list[3].name == 'citation_title'
     assert highwire_list[3].content == 'Tres Actos'
+
+
+def test_untlpy2highwirepy_not_official_title():
+    untl_dict = {'title': [{'qualifier': 'alternatetitle',
+                            'content': 'Tres Actos'}]}
+    untl_elements = untldoc.untldict2py(untl_dict)
+    highwire_list = untldoc.untlpy2highwirepy(untl_elements)
+    assert len(highwire_list) == 1
+    assert highwire_list[0].qualifier == 'alternatetitle'
+    assert highwire_list[0].name == 'citation_title'
+    assert highwire_list[0].content == 'Tres Actos'
+
+
+def test_untlpydict2dcformatteddict():
+    dc_dict = untldoc.untlpydict2dcformatteddict(UNTL_DICTIONARY,
+                                                 resolve_values=True,
+                                                 ark='ark:/67531/metatest1',
+                                                 domain_name='example.com',
+                                                 scheme='https')
+    assert dc_dict == {'title': ['Tres Actos'],
+                       'creator': ['Last, Furston, 1807-1865.'],
+                       'publisher': ['Fake Publishing'],
+                       'date': ['1944'],
+                       'identifier': ['https://example.com/ark:/67531/metatest1/',
+                                      'ark: ark:/67531/metatest1']}
+
+
+def test_dcpy2formatteddcdict():
+    root = dc.DC()
+    name = us.Name(content='Case, Justin')
+    creator = dc.DCCreator(children=[name])
+    root.add_child(creator)
+    dc_dict = untldoc.dcpy2formatteddcdict(root)
+    assert dc_dict == {'creator': ['Case, Justin']}
+
+
+def test_dcpy2dict():
+    root = dc.DC()
+    name = us.Name(content='Case, Justin')
+    creator = dc.DCCreator(children=[name])
+    root.add_child(creator)
+    dc_dict = untldoc.dcpy2dict(root)
+    assert dc_dict == {'creator': [{'content': 'Case, Justin'}]}
+
+
+def test_formatted_dc_dict():
+    unformatted_dict = {'creator': [{'content': 'Case, Justin'}]}
+    dc_dict = untldoc.formatted_dc_dict(unformatted_dict)
+    assert dc_dict == {'creator': ['Case, Justin']}
+
+
+def test_generate_dc_xml():
+    xml = untldoc.generate_dc_xml(DC_DICTIONARY)
+    assert xml == (b'<?xml version="1.0" encoding="UTF-8"?>\n'
+                   b'<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"'
+                   b' xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"'
+                   b' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+                   b' xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/'
+                   b' http://www.openarchives.org/OAI/2.0/oai_dc.xsd">\n'
+                   b'  <dc:title>Tres Actos</dc:title>\n'
+                   b'  <dc:creator>Enhorn, Blair</dc:creator>\n'
+                   b'  <dc:publisher>Fake Publishing</dc:publisher>\n'
+                   b'  <dc:date>1944</dc:date>\n'
+                   b'</oai_dc:dc>\n')
+
+
+def test_generate_dc_json():
+    dc_json = untldoc.generate_dc_json(DC_DICTIONARY)
+    assert dc_json == ('{\n'
+                       '    "creator": [\n'
+                       '        "Enhorn, Blair"\n'
+                       '    ],\n'
+                       '    "date": [\n'
+                       '        "1944"\n'
+                       '    ],\n'
+                       '    "publisher": [\n'
+                       '        "Fake Publishing"\n'
+                       '    ],\n'
+                       '    "title": [\n'
+                       '        "Tres Actos"\n'
+                       '    ]\n'
+                       '}')
+
+
+def test_generate_dc_txt():
+    dc_txt = untldoc.generate_dc_txt(DC_DICTIONARY)
+    assert dc_txt == ('title: Tres Actos\n'
+                      'creator: Enhorn, Blair\n'
+                      'publisher: Fake Publishing\n'
+                      'date: 1944')
+
+
+def test_highwirepy2dict():
+    untl_elements = untldoc.untldict2py(UNTL_DICTIONARY)
+    highwire_list = untldoc.untlpy2highwirepy(untl_elements)
+    highwire_dict = untldoc.highwirepy2dict(highwire_list)
+    assert highwire_dict == {'citation_author': [{'content': 'Last, Furston, 1807-1865.'}],
+                             'citation_publisher': [{'content': 'Fake Publishing'}],
+                             'citation_publication_date': [{'content': '1944'}],
+                             'citation_title': [{'content': 'Tres Actos'}]}
+
+
+def test_generate_highwire_xml():
+    untl_elements = untldoc.untldict2py(UNTL_DICTIONARY)
+    highwire_list = untldoc.untlpy2highwirepy(untl_elements)
+    xml = untldoc.generate_highwire_xml(highwire_list)
+    assert xml == (b'<?xml version="1.0" encoding="UTF-8"?>\n'
+                   b'<metadata>\n'
+                   b'  <meta content="Tres Actos" name="citation_title"/>\n'
+                   b'  <meta content="Last, Furston, 1807-1865." name="citation_author"/>\n'
+                   b'  <meta content="Fake Publishing" name="citation_publisher"/>\n'
+                   b'  <meta content="1944" name="citation_publication_date"/>\n'
+                   b'</metadata>\n')
+
+
+def test_generate_highwire_json():
+    untl_elements = untldoc.untldict2py(UNTL_DICTIONARY)
+    highwire_list = untldoc.untlpy2highwirepy(untl_elements)
+    highwire_json = untldoc.generate_highwire_json(highwire_list)
+    assert highwire_json == ('{\n'
+                             '    "citation_author": [\n'
+                             '        {\n'
+                             '            "content": "Last, Furston, 1807-1865."\n'
+                             '        }\n'
+                             '    ],\n'
+                             '    "citation_publication_date": [\n'
+                             '        {\n'
+                             '            "content": "1944"\n'
+                             '        }\n'
+                             '    ],\n'
+                             '    "citation_publisher": [\n'
+                             '        {\n'
+                             '            "content": "Fake Publishing"\n'
+                             '        }\n'
+                             '    ],\n'
+                             '    "citation_title": [\n'
+                             '        {\n'
+                             '            "content": "Tres Actos"\n'
+                             '        }\n'
+                             '    ]\n'
+                             '}')
+
+
+def test_generate_highwire_text():
+    untl_elements = untldoc.untldict2py(UNTL_DICTIONARY)
+    highwire_list = untldoc.untlpy2highwirepy(untl_elements)
+    text = untldoc.generate_highwire_text(highwire_list)
+    assert text == ('citation_title: Tres Actos\n'
+                    'citation_author: Last, Furston, 1807-1865.\n'
+                    'citation_publisher: Fake Publishing\n'
+                    'citation_publication_date: 1944')
+
+
+def test_dcdict2rdfpy():
+    dc_dict = {'title': [{'content': 'The Alwaysending Story'}],
+               'creator': [{'content': 'Ding, Bill'}],
+               'publisher': [{'content': 'Mock Publishing'}],
+               'date': [{'content': '2019'}],
+               'identifier': [{'content': 'ark: ark:/67531/metatest2'},
+                              {'content': 'http://example.com/ark:/67531/metatest1/'}]}
+    rdf_py = untldoc.dcdict2rdfpy(dc_dict)
+    assert isinstance(rdf_py, ConjunctiveGraph)
+    # Check the length of the graph matches the number of 'content' keys.
+    assert len(rdf_py) == 6
+
+
+def test_generate_rdf_xml():
+    dc_dict = {'title': [{'content': 'عنوان'}],
+               'creator': [{'content': 'الاخير, أول'}],
+               'publisher': [{'content': 'الناشر'}],
+               'date': [{'content': '2019'}],
+               'identifier': [{'content': 'ark: ark:/67531/metatest2'},
+                              {'content': 'http://example.com/ark:/67531/metatest1/'}]}
+    rdf_xml = untldoc.generate_rdf_xml(dc_dict)
+    # sort lines because rdf_xml is not always generated in the same order.
+    rdf_lines = sorted(rdf_xml.decode('utf-8').split())
+    assert rdf_lines == sorted(('<?xml version="1.0" encoding="utf-8"?>\n'
+                                '<rdf:RDF\n'
+                                '  xmlns:dc="http://purl.org/dc/elements/1.1/"\n'
+                                '  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"\n'
+                                '>\n'
+                                '  <rdf:Description rdf:about="info:ark/67531/metatest2">\n'
+                                '    <dc:date>2019</dc:date>\n'
+                                '    <dc:creator>الاخير, أول</dc:creator>\n'
+                                '    <dc:identifier'
+                                ' rdf:resource="http://example.com/ark:/67531/metatest1/"/>\n'
+                                '    <dc:publisher>الناشر</dc:publisher>\n'
+                                '    <dc:title>عنوان</dc:title>\n'
+                                '    <dc:identifier>ark: ark:/67531/metatest2</dc:identifier>\n'
+                                '  </rdf:Description>\n'
+                                '</rdf:RDF>\n').split())
