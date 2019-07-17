@@ -36,8 +36,6 @@ This application can be installed by following the steps below:
     
     $ cd pyuntl
 
-Install the dependencies for this project from root of project using:
-
     $ python setup.py install
     
 
