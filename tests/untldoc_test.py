@@ -494,3 +494,196 @@ def test_generate_rdf_xml():
                                 '    <dc:identifier>ark: ark:/67531/metatest2</dc:identifier>\n'
                                 '  </rdf:Description>\n'
                                 '</rdf:RDF>\n').split())
+
+
+@patch('urllib.request.urlopen')
+def test_retrieve_vocab(mock_urlopen):
+    mock_urlopen.return_value.read.return_value = '{"some": "data"}'
+    vocab = untldoc.retrieve_vocab()
+    assert vocab == {'some': 'data'}
+
+
+@patch('urllib.request.urlopen', side_effect=Exception)
+def test_retrieve_vocab_getting_data_errors(mock_urlopen):
+    vocab = untldoc.retrieve_vocab()
+    assert vocab is None
+
+
+def test_add_empty_fields():
+    """Check empty fields are added if not supplied in the dictionary."""
+    untl_dict = untldoc.add_empty_fields(UNTL_DICTIONARY)
+    assert untl_dict == {'title': [{'qualifier': 'officialtitle', 'content': 'Tres Actos'}],
+                         'creator': [{'qualifier': 'aut',
+                                      'content': {'name': 'Last, Furston, 1807-1865.',
+                                                  'type': 'per'}}],
+                         'publisher': [{'content': {'name': 'Fake Publishing'}}],
+                         'collection': [{'content': 'UNT'}],
+                         'date': [{'content': '1944', 'qualifier': 'creation'}],
+                         'contributor': [{'content': {'info': '', 'type': '', 'name': ''}}],
+                         'language': [{'content': ''}],
+                         'description': [{'content': '', 'qualifier': ''}],
+                         'subject': [{'content': '', 'qualifier': ''}],
+                         'primarySource': [{'content': ''}],
+                         'coverage': [{'content': '', 'qualifier': ''}],
+                         'source': [{'content': '', 'qualifier': ''}],
+                         'citation': [{'content': '', 'qualifier': ''}],
+                         'relation': [{'content': '', 'qualifier': ''}],
+                         'institution': [{'content': ''}],
+                         'rights': [{'content': '', 'qualifier': ''}],
+                         'resourceType': [{'content': ''}],
+                         'format': [{'content': ''}],
+                         'identifier': [{'content': '', 'qualifier': ''}],
+                         'degree': [{'content': '', 'qualifier': ''}],
+                         'note': [{'content': '', 'qualifier': ''}],
+                         'meta': [{'content': '', 'qualifier': ''}]}
+
+
+@patch('pyuntl.untl_structure.Title', side_effect=Exception)
+def test_add_empty_fields_raise_PyuntlException(mock_title):
+    with pytest.raises(untldoc.PyuntlException) as err:
+        untldoc.add_empty_fields({})
+    assert 'Could not add empty element field.' == err.value.args[0]
+
+
+@patch('pyuntl.untl_structure.getattr')
+def test_add_empty_fields_allows_content_no_qualifier_has_children(mock_getattr):
+    # In practice we don't have a case where the element has a content
+    # value and children (though the code allows it), as the children
+    # are represented in the dict as the content value and would
+    # overwrite an initial content value.
+    # Pretend Collection element contains a child to trigger the targeted code.
+
+    def side_effect(*args, **kwargs):
+        if args[0].tag == 'collection' and args[1] == 'contained_children':
+            return ['fake child']
+        else:
+            return getattr(*args, **kwargs)
+
+    mock_getattr.side_effect = side_effect
+    untl_dict = untldoc.add_empty_fields({})
+    assert untl_dict['collection'] == [{'content': {'fake child': ''}}]
+
+
+@patch('pyuntl.untl_structure.getattr')
+def test_add_empty_fields_allows_content_and_qualifier_has_children(mock_getattr):
+    untl_dict = untldoc.add_empty_fields({})
+    # In practice we don't have a case where the element has a content
+    # value, qualifier, and children (though the code allows it), as the
+    # children are represented in the dict as the content value and would
+    # overwrite an initial content value.
+    # Pretend Subject element contains a child to trigger the targeted code.
+
+    def side_effect(*args, **kwargs):
+        if args[0].tag == 'subject' and args[1] == 'contained_children':
+            return ['fake child']
+        else:
+            return getattr(*args, **kwargs)
+
+    mock_getattr.side_effect = side_effect
+    untl_dict = untldoc.add_empty_fields({})
+    assert untl_dict['subject'] == [{'content': {'fake child': ''}, 'qualifier': ''}]
+
+
+def test_add_empty_etd_ms_fields():
+    # Check all missing fields are added to etd_ms_dict.
+    # NOTE: pyuntl etd-ms stuff is currently unused and will be cut out
+    # in the near future.
+    metadata_dict = {'title': [{'qualifier': 'officialtitle',
+                                'content': 'A Good Dissertation'}],
+                     'degree': [{'content': {'grantor': 'UNT'}}],
+                     'contributor': [{'role': 'chair', 'content': 'Case, J.'}],
+                     'subject': [{'scheme': 'LC',
+                                  'content': 'dog'}],
+                     'type': [{'content': 'Thesis or Dissertation'}]}
+    etd_ms_dict = untldoc.add_empty_etd_ms_fields(metadata_dict)
+    assert etd_ms_dict == {'title': [{'qualifier': 'officialtitle',
+                           'content': 'A Good Dissertation'}],
+                           'degree': [{'content': {'grantor': 'UNT'}}],
+                           'contributor': [{'role': 'chair', 'content': 'Case, J.'}],
+                           'subject': [{'scheme': 'LC', 'content': 'dog'}],
+                           'type': [{'content': 'Thesis or Dissertation'}],
+                           'creator': [{'content': '', 'qualifier': ''}],
+                           'description': [{'content': {}, 'qualifier': ''}],
+                           'publisher': [{'content': '', 'qualifier': ''}],
+                           'date': [{'content': '', 'qualifier': ''}],
+                           'identifier': [{'content': '', 'qualifier': ''}],
+                           'language': [{'content': '', 'qualifier': ''}],
+                           'coverage': [{'content': '', 'qualifier': ''}],
+                           'rights': [{'content': '', 'qualifier': ''}]}
+
+
+@pytest.mark.xfail(reason=('`type` is in ETD_MS_ORDER but is not a key in'
+                           ' ETD_MS_CONVERSION_DISPATCH, so trying to fill'
+                           ' an empty field for `type` raises an exception.'
+                           ' Should this align with `resourceType`? If so,'
+                           ' the element tag may also be in question as that'
+                           ' is used to include ETD_MSType as an acceptable '
+                           ' child for the root "thesis" tag.'))
+def test_add_empty_etd_ms_fields_raises_PyuntlException():
+    metadata_dict = {'title': [{'qualifier': 'officialtitle',
+                                'content': 'A Good Dissertation'}],
+                     'degree': [{'content': {'grantor': 'UNT'}}],
+                     'contributor': [{'role': 'chair', 'content': 'Case, J.'}],
+                     'subject': [{'scheme': 'LC',
+                                  'content': 'dog'}]}
+    # Not having `type` in metadata_dict throws an exception.
+    with pytest.raises(untldoc.PyuntlException) as err:
+        untldoc.add_empty_etd_ms_fields(metadata_dict)
+    assert 'Could not add empty element field.' == err.value.args[0]
+
+
+def test_find_untl_errors():
+    untl_dict = {'title': [{'content': 'Tres Actos'},
+                           {'content': 'Three Acts',
+                            'qualifier': 'alternatetitle'}],
+                 'creator': [{'content': {'name': 'Barney, Dino', 'type': 'per'}}],
+                 'date': [{'content': '1944',
+                           'qualifier': 'creation'}]}
+    error_dict = untldoc.find_untl_errors(untl_dict)
+    assert error_dict == {'untl_dict': {'title': [{'content': 'Tres Actos'},
+                                                  {'content': 'Three Acts',
+                                                   'qualifier': 'alternatetitle'}],
+                                        'creator': [{'content': {'name': 'Barney, Dino',
+                                                     'type': 'per'}}],
+                                        'date': [{'content': '1944',
+                                                  'qualifier': 'creation'}]},
+                          'error_dict': {'title': 'no_qualifier'}}
+
+
+def test_find_untl_errors_fix_errors():
+    untl_dict = {'title': [{'content': 'Tres Actos'},
+                           {'content': 'Three Acts',
+                            'qualifier': 'alternatetitle'}],
+                 'creator': [{'content': {'name': 'Barney, Dino', 'type': 'per'}}],
+                 'date': [{'content': '1944',
+                           'qualifier': 'creation'}]}
+    error_dict = untldoc.find_untl_errors(untl_dict, fix_errors=True)
+    assert error_dict == {'untl_dict': {'title': [{'content': 'Tres Actos',
+                                                   'qualifier': ''},
+                                                  {'content': 'Three Acts',
+                                                   'qualifier': 'alternatetitle'}],
+                                        'creator': [{'content': {'name': 'Barney, Dino',
+                                                     'type': 'per'}}],
+                                        'date': [{'content': '1944',
+                                                  'qualifier': 'creation'}]},
+                          'error_dict': {'title': 'no_qualifier'}}
+
+
+def test_find_untl_errors_fix_errors_no_errors():
+    untl_dict = {'title': [{'content': 'Tres Actos',
+                            'qualifier': 'officialtitle'},
+                           {'content': 'Three Acts',
+                            'qualifier': 'alternatetitle'}],
+                 'creator': [{'content': {'name': 'Barney, Dino', 'type': 'per'}}],
+                 'date': [{'content': '1944',
+                           'qualifier': 'creation'}]}
+    error_dict = untldoc.find_untl_errors(untl_dict, fix_errors=True)
+    assert error_dict == {'untl_dict': {'title': [{'content': 'Tres Actos',
+                                                   'qualifier': 'officialtitle'},
+                                                  {'content': 'Three Acts',
+                                                   'qualifier': 'alternatetitle'}],
+                                        'creator': [{'content': {'name': 'Barney, Dino',
+                                                     'type': 'per'}}],
+                                        'date': [{'content': '1944',
+                                                  'qualifier': 'creation'}]},
+                          'error_dict': {}}
