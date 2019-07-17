@@ -703,11 +703,12 @@ def find_untl_errors(untl_dict, **kwargs):
     for element_name in REQUIRES_QUALIFIER:
         # Loop through the existing elements that require qualifers.
         for element in untl_dict.get(element_name, []):
-            error_dict[element_name] = 'no_qualifier'
-            # If it should be fixed, set an empty qualifier
-            # if it doesn't have one.
-            if fix_errors:
-                element.setdefault('qualifier', '')
+            # If there is no qualifier, record the error.
+            if not element.get('qualifier', None):
+                error_dict[element_name] = 'no_qualifier'
+                # If it should be fixed, set an empty qualifier.
+                if fix_errors:
+                    element.setdefault('qualifier', '')
     # Combine the error dict and UNTL dict into a dict.
     found_data = {
         'untl_dict': untl_dict,
