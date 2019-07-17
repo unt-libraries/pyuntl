@@ -19,6 +19,38 @@ Python module for reading and writing UNTL metadata records.
   <title qualifier="officialtitle">This is the title for the record</title>
 </metadata>
 ```
+
+
+Requirements
+-------------
+
+* Python ~= 2.7
+
+
+Installation
+--------------
+
+This application can be installed by following the steps below:
+
+    $ git clone https://github.com/unt-libraries/pyuntl.git
+    
+    $ cd pyuntl
+
+    $ python setup.py install
+    
+
+Testing
+---------
+         
+Install tox on your system:
+
+    $ pip install tox
+    
+To run the development tests, use the following command:
+    
+    $ tox
+
+
 License
 -------
 
