@@ -102,6 +102,15 @@ def test_untlxml2pydict():
     assert untl_dict == UNTL_DICTIONARY
 
 
+def test_untlpy2dict():
+    title = us.Title(qualifier='serialtitle', content='The Bronco')
+    elements = us.Metadata()
+    elements.add_child(title)
+    untl_dict = untldoc.untlpy2dict(elements)
+    assert untl_dict == {'title': [{'qualifier': 'serialtitle',
+                                    'content': 'The Bronco'}]}
+
+
 def test_untlpydict2xml(tmpdir):
     xml_file = os.path.join(tmpdir, 'untl.xml')
     returned_value = untldoc.untlpydict2xml(xml_file, UNTL_DICTIONARY)
@@ -253,6 +262,19 @@ def test_untlpy2dcpy_resolve_values_retrieve_vocab(mock_vocab):
                                resolve_values=True)
     assert root.children[0].tag == 'language'
     assert root.children[0].content == 'Spanish'
+
+
+def test_untlpy2dcpy_resolve_urls():
+    verbose_vocab = {'languages': [{'url': 'http://example.com/languages/#spa',
+                                    'name': 'spa',
+                                    'label': 'Spanish'}]}
+    untl_dict = {'language': [{'content': 'spa'}]}
+    untl_elements = untldoc.untldict2py(untl_dict)
+    root = untldoc.untlpy2dcpy(untl_elements,
+                               resolve_urls=True,
+                               verbose_vocabularies=verbose_vocab)
+    assert root.children[0].tag == 'language'
+    assert root.children[0].content == 'http://example.com/languages/#spa'
 
 
 def test_untlpy2dcpy_add_permalink_and_ark():
