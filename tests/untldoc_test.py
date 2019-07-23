@@ -584,54 +584,6 @@ def test_add_empty_fields_allows_content_and_qualifier_has_children(mock_getattr
     assert untl_dict['subject'] == [{'content': {'fake child': ''}, 'qualifier': ''}]
 
 
-def test_add_empty_etd_ms_fields():
-    # Check all missing fields are added to etd_ms_dict.
-    # NOTE: pyuntl etd-ms stuff is currently unused and will be cut out
-    # in the near future.
-    metadata_dict = {'title': [{'qualifier': 'officialtitle',
-                                'content': 'A Good Dissertation'}],
-                     'degree': [{'content': {'grantor': 'UNT'}}],
-                     'contributor': [{'role': 'chair', 'content': 'Case, J.'}],
-                     'subject': [{'scheme': 'LC',
-                                  'content': 'dog'}],
-                     'type': [{'content': 'Thesis or Dissertation'}]}
-    etd_ms_dict = untldoc.add_empty_etd_ms_fields(metadata_dict)
-    assert etd_ms_dict == {'title': [{'qualifier': 'officialtitle',
-                           'content': 'A Good Dissertation'}],
-                           'degree': [{'content': {'grantor': 'UNT'}}],
-                           'contributor': [{'role': 'chair', 'content': 'Case, J.'}],
-                           'subject': [{'scheme': 'LC', 'content': 'dog'}],
-                           'type': [{'content': 'Thesis or Dissertation'}],
-                           'creator': [{'content': '', 'qualifier': ''}],
-                           'description': [{'content': {}, 'qualifier': ''}],
-                           'publisher': [{'content': '', 'qualifier': ''}],
-                           'date': [{'content': '', 'qualifier': ''}],
-                           'identifier': [{'content': '', 'qualifier': ''}],
-                           'language': [{'content': '', 'qualifier': ''}],
-                           'coverage': [{'content': '', 'qualifier': ''}],
-                           'rights': [{'content': '', 'qualifier': ''}]}
-
-
-@pytest.mark.xfail(reason=('`type` is in ETD_MS_ORDER but is not a key in'
-                           ' ETD_MS_CONVERSION_DISPATCH, so trying to fill'
-                           ' an empty field for `type` raises an exception.'
-                           ' Should this align with `resourceType`? If so,'
-                           ' the element tag may also be in question as that'
-                           ' is used to include ETD_MSType as an acceptable '
-                           ' child for the root "thesis" tag.'))
-def test_add_empty_etd_ms_fields_raises_PyuntlException():
-    metadata_dict = {'title': [{'qualifier': 'officialtitle',
-                                'content': 'A Good Dissertation'}],
-                     'degree': [{'content': {'grantor': 'UNT'}}],
-                     'contributor': [{'role': 'chair', 'content': 'Case, J.'}],
-                     'subject': [{'scheme': 'LC',
-                                  'content': 'dog'}]}
-    # Not having `type` in metadata_dict throws an exception.
-    with pytest.raises(untldoc.PyuntlException) as err:
-        untldoc.add_empty_etd_ms_fields(metadata_dict)
-    assert 'Could not add empty element field.' == err.value.args[0]
-
-
 def test_find_untl_errors():
     untl_dict = {'title': [{'content': 'Tres Actos'},
                            {'content': 'Three Acts',
