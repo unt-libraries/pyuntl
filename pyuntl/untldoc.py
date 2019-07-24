@@ -10,6 +10,7 @@
 import json
 import re
 import urllib.request
+from copy import deepcopy
 from lxml.etree import iterparse
 from rdflib import Namespace, Literal, URIRef, ConjunctiveGraph
 
@@ -43,9 +44,9 @@ class PyuntlException(Exception):
 def untlxml2py(untl_filename):
     """Parse a UNTL XML file object into a pyuntl element tree.
 
-    You can also pass this a string as file input like so:
-    import StringIO
-    untlxml2py(StringIO.StringIO(untl_string))
+    You can also pass input like so:
+    from io import BytesIO
+    untlxml2py(BytesIO(untl_xml_bytes))
     """
     # Create a stack to hold parents.
     parent_stack = []
@@ -88,9 +89,9 @@ def untlxml2py(untl_filename):
 def untlxml2pydict(untl_filename):
     """Convert a UNTL XML file to a Python dictionary.
 
-    You can also pass this a string as file input like so:
-    import StringIO
-    untlxml2pydict(StringIO.StringIO(untl_string))
+    You can also pass input like so:
+    from io import BytesIO
+    untlxml2pydict(BytesIO(untl_xml_bytes))
     """
     # Create a UNTL Python object from the XML file.
     untl_elements = untlxml2py(untl_filename)
@@ -159,9 +160,6 @@ def untldict2py(untl_dict):
                 untl_element = PYUNTL_DISPATCH[element_name](
                     content=content,
                 )
-            # Create element that only has children.
-            elif child_list:
-                untl_element = PYUNTL_DISPATCH[element_name]()
             # Add the UNTL element to the Python element list.
             untl_py_list.append(untl_element)
     # Add the UNTL elements to the root element.
@@ -409,7 +407,7 @@ def untlpy2highwirepy(untl_elements, **kwargs):
                 # Otherwise, add the element to the list if it has content.
                 elif highwire_element.content:
                     highwire_list.append(highwire_element)
-        # If the title was found, add it to the list.
+    # If the title was found, add it to the list.
     if title:
         highwire_list.append(title)
     return highwire_list
@@ -459,6 +457,8 @@ def formatted_dc_dict(dc_dict):
     with a list of values for each element.
     i.e. {'publisher': ['someone', 'someone else'], 'title': ['a title'],}
     """
+    # Don't modify the unformatted dictionary in place.
+    dc_dict = deepcopy(dc_dict)
     for key, element_list in dc_dict.items():
         new_element_list = []
         # Add the content for each element to the new element list.
@@ -703,11 +703,12 @@ def find_untl_errors(untl_dict, **kwargs):
     for element_name in REQUIRES_QUALIFIER:
         # Loop through the existing elements that require qualifers.
         for element in untl_dict.get(element_name, []):
-            error_dict[element_name] = 'no_qualifier'
-            # If it should be fixed, set an empty qualifier
-            # if it doesn't have one.
-            if fix_errors:
-                element.setdefault('qualifier', '')
+            # If there is no qualifier, record the error.
+            if not element.get('qualifier', None):
+                error_dict[element_name] = 'no_qualifier'
+                # If it should be fixed, set an empty qualifier.
+                if fix_errors:
+                    element.setdefault('qualifier', '')
     # Combine the error dict and UNTL dict into a dict.
     found_data = {
         'untl_dict': untl_dict,
@@ -826,7 +827,7 @@ def etd_ms_dict2xmlfile(filename, metadata_dict):
     """Create an ETD MS XML file."""
     try:
         f = open(filename, 'w')
-        f.write(generate_etd_ms_xml(metadata_dict))
+        f.write(generate_etd_ms_xml(metadata_dict).decode('utf-8'))
         f.close()
     except:
         raise MetadataGeneratorException(
