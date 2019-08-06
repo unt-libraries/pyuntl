@@ -17,7 +17,7 @@ class RecordTest(unittest.TestCase):
         field = PYUNTL_DISPATCH['title'](content=None)
         self.record.add_child(field)
         xml = self.record.create_xml_string()
-        self.assertTrue(xml.strip(), (b'<?xml version="1.0" encoding='
+        self.assertEqual(xml.strip(), (b'<?xml version="1.0" encoding='
                                       b'"UTF-8"?>\n<metadata>\n'
                                       b'  <title/>\n</metadata>').strip())
 
