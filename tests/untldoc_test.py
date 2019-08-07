@@ -4,6 +4,7 @@ from io import BytesIO
 from unittest.mock import patch
 
 import pytest
+from lxml.etree import fromstring
 from rdflib import ConjunctiveGraph
 
 from pyuntl import untldoc, untl_structure as us, dc_structure as dc
@@ -378,17 +379,24 @@ def test_formatted_dc_dict():
 
 def test_generate_dc_xml():
     xml = untldoc.generate_dc_xml(DC_DICTIONARY)
-    assert xml == (b'<?xml version="1.0" encoding="UTF-8"?>\n'
-                   b'<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"'
-                   b' xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"'
-                   b' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
-                   b' xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/'
-                   b' http://www.openarchives.org/OAI/2.0/oai_dc.xsd">\n'
-                   b'  <dc:title>Tres Actos</dc:title>\n'
-                   b'  <dc:creator>Enhorn, Blair</dc:creator>\n'
-                   b'  <dc:publisher>Fake Publishing</dc:publisher>\n'
-                   b'  <dc:date>1944</dc:date>\n'
-                   b'</oai_dc:dc>\n')
+    expected_xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+                    '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"'
+                    ' xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"'
+                    ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+                    ' xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/'
+                    ' http://www.openarchives.org/OAI/2.0/oai_dc.xsd">\n'
+                    '  <dc:title>Tres Actos</dc:title>\n'
+                    '  <dc:creator>Enhorn, Blair</dc:creator>\n'
+                    '  <dc:publisher>Fake Publishing</dc:publisher>\n'
+                    '  <dc:date>1944</dc:date>\n'
+                    '</oai_dc:dc>\n')
+    xml_lines = xml.decode().split('\n')
+    expected_xml_lines = expected_xml.split('\n')
+    # All but the second XML line should be in a specific order, so sort the
+    # text of the second line to check equality.
+    xml_lines[1] = sorted(xml_lines[1].split())
+    expected_xml_lines[1] = sorted(expected_xml_lines[1].split())
+    assert xml_lines == expected_xml_lines
 
 
 def test_generate_dc_json():
@@ -431,13 +439,26 @@ def test_generate_highwire_xml():
     untl_elements = untldoc.untldict2py(UNTL_DICTIONARY)
     highwire_list = untldoc.untlpy2highwirepy(untl_elements)
     xml = untldoc.generate_highwire_xml(highwire_list)
-    assert xml == (b'<?xml version="1.0" encoding="UTF-8"?>\n'
-                   b'<metadata>\n'
-                   b'  <meta content="Tres Actos" name="citation_title"/>\n'
-                   b'  <meta content="Last, Furston, 1807-1865." name="citation_author"/>\n'
-                   b'  <meta content="Fake Publishing" name="citation_publisher"/>\n'
-                   b'  <meta content="1944" name="citation_publication_date"/>\n'
-                   b'</metadata>\n')
+    expected_xml = (b'<?xml version="1.0" encoding="UTF-8"?>\n'
+                    b'<metadata>\n'
+                    b'  <meta content="Tres Actos" name="citation_title"/>\n'
+                    b'  <meta content="Last, Furston, 1807-1865." name="citation_author"/>\n'
+                    b'  <meta content="Fake Publishing" name="citation_publisher"/>\n'
+                    b'  <meta content="1944" name="citation_publication_date"/>\n'
+                    b'</metadata>\n')
+
+    # Get a sorted list of attributes for child elements in the generated and expected XML.
+    generated_tree = fromstring(xml)
+    generated_attribs = [child.attrib for child in generated_tree]
+    generated_attribs = sorted(generated_attribs, key=lambda i: (i['content'], i['name']))
+    expected_attribs = [child.attrib for child in fromstring(expected_xml)]
+    expected_attribs = sorted(expected_attribs, key=lambda i: (i['content'], i['name']))
+    assert expected_attribs == generated_attribs
+
+    # Our generated XML has a `metadata` element with all `meta` element children.
+    assert generated_tree.tag == 'metadata'
+    for child in generated_tree:
+        assert child.tag == 'meta'
 
 
 def test_generate_highwire_json():
