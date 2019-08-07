@@ -1,8 +1,7 @@
 import socket
-import urllib2
-
+import json
+import urllib.request
 from lxml.etree import Element, SubElement, tostring
-
 from pyuntl import UNTL_XML_ORDER, VOCABULARIES_URL
 from pyuntl.form_logic import UNTL_FORM_DISPATCH, UNTL_GROUP_DISPATCH
 from pyuntl.metadata_generator import py2dict
@@ -26,12 +25,9 @@ def create_untl_xml_subelement(parent, element, prefix=''):
         subelement.text = element.content
     if element.qualifier is not None:
         subelement.attrib["qualifier"] = element.qualifier
-    if element.children > 0:
+    if element.children:
         for child in element.children:
             SubElement(subelement, prefix + child.tag).text = child.content
-    else:
-        subelement.text = element.content
-
     return subelement
 
 
@@ -332,10 +328,10 @@ class FormGenerator(object):
         vocab_url = VOCABULARIES_URL.replace('all', 'all-verbose')
         # Request the vocabularies dictionary.
         try:
-            vocab_dict = eval(urllib2.urlopen(vocab_url).read())
+            vocab_data = json.loads(urllib.request.urlopen(vocab_url).read())
         except:
             raise UNTLStructureException('Could not retrieve the vocabularies')
-        return vocab_dict
+        return vocab_data
 
 
 # Element Definitions #
@@ -362,11 +358,12 @@ class Metadata(UNTLElement):
         untl_xml_string = metadata_root_object.create_xml_string()
         """
         root = self.create_xml()
-
-        xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
-            root, pretty_print=True
+        return b'<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
+            root,
+            encoding='UTF-8',
+            xml_declaration=False,
+            pretty_print=True
         )
-        return xml
 
     def create_xml(self, useNamespace=False):
         """Create an ElementTree representation of the object."""
@@ -411,7 +408,7 @@ class Metadata(UNTLElement):
                 for child in element.children:
                     if child.content is not None:
                         child_dict[child.tag] = child.content
-                # Set the element's content as the dictionary
+                # Set the elementtostring's content as the dictionary
                 # of children elements.
                 element_dict['content'] = child_dict
             # The element has content, but no children.
@@ -428,12 +425,12 @@ class Metadata(UNTLElement):
         Writes file to supplied file path.
         """
         try:
-            f = open(untl_filename, 'w')
-            f.write(self.create_xml_string().encode('utf-8'))
+            f = open(untl_filename, 'w', encoding='utf-8')
+            f.write(self.create_xml_string().decode('utf-8'))
             f.close()
         except:
             raise UNTLStructureException(
-                'Failed to create UNTL XML file. File: %s' % (untl_filename)
+                'Failed to create UNTL XML file. File: %s' % untl_filename
             )
 
     def sort_untl(self, sort_structure):

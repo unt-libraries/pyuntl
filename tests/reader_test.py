@@ -1,7 +1,7 @@
 import unittest
 from pyuntl.untldoc import untldict2py, untlxml2py
 from tests import UNTL_DICT
-import StringIO
+from io import BytesIO
 import os
 from pyuntl.untl_structure import Metadata
 
@@ -25,10 +25,9 @@ class ReaderTest(unittest.TestCase):
 
     def test_create_pyuntl_from_xml_string(self):
         self.root_element = untlxml2py(
-            StringIO.StringIO(
+            BytesIO(
                 open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                  'metadc_complete.untl.xml'),
-                     'r').read()
+                                  'metadc_complete.untl.xml'), 'rb').read()
             )
         )
         self.assertTrue(isinstance(self.root_element, Metadata))

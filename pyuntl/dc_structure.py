@@ -1,5 +1,3 @@
-import string
-
 from pyuntl import DC_ORDER
 
 
@@ -266,7 +264,7 @@ def identifier_director(**kwargs):
         content = permalink_url
     else:
         if qualifier:
-            content = '%s: %s' % (string.lower(qualifier), content)
+            content = '%s: %s' % (qualifier.lower(), content)
     return DCIdentifier(content=content)
 
 

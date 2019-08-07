@@ -1,6 +1,7 @@
 *.pyc
 *.egg-info
-
-.coverage/
+.coverage
 .tox/
 dist/
+*.bak
+.idea/

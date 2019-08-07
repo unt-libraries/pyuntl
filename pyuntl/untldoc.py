@@ -7,11 +7,10 @@
     publisher_element.add_child(PYUNTL_DISPATCH['name'](content=content))
     root_element.add_child(publisher_element)
 """
-
 import json
 import re
-import urllib2
-
+import urllib.request
+from copy import deepcopy
 from lxml.etree import iterparse
 from rdflib import Namespace, Literal, URIRef, ConjunctiveGraph
 
@@ -45,9 +44,9 @@ class PyuntlException(Exception):
 def untlxml2py(untl_filename):
     """Parse a UNTL XML file object into a pyuntl element tree.
 
-    You can also pass this a string as file input like so:
-    import StringIO
-    untlxml2py(StringIO.StringIO(untl_string))
+    You can also pass input like so:
+    from io import BytesIO
+    untlxml2py(BytesIO(untl_xml_bytes))
     """
     # Create a stack to hold parents.
     parent_stack = []
@@ -90,9 +89,9 @@ def untlxml2py(untl_filename):
 def untlxml2pydict(untl_filename):
     """Convert a UNTL XML file to a Python dictionary.
 
-    You can also pass this a string as file input like so:
-    import StringIO
-    untlxml2pydict(StringIO.StringIO(untl_string))
+    You can also pass input like so:
+    from io import BytesIO
+    untlxml2pydict(BytesIO(untl_xml_bytes))
     """
     # Create a UNTL Python object from the XML file.
     untl_elements = untlxml2py(untl_filename)
@@ -161,9 +160,6 @@ def untldict2py(untl_dict):
                 untl_element = PYUNTL_DISPATCH[element_name](
                     content=content,
                 )
-            # Create element that only has children.
-            elif len(child_list) > 0:
-                untl_element = PYUNTL_DISPATCH[element_name]()
             # Add the UNTL element to the Python element list.
             untl_py_list.append(untl_element)
     # Add the UNTL elements to the root element.
@@ -212,7 +208,7 @@ def post2pydict(post, ignore_list):
             # current attribute/content value.
             for j in range(0, attribute_count):
                 if attribute_tuple[j][0] == 'content':
-                    content = unicode(attribute_tuple[j][1][i])
+                    content = attribute_tuple[j][1][i]
                 elif attribute_tuple[j][0] == 'qualifier':
                     qualifier = attribute_tuple[j][1][i]
                 # Create a child UNTL element from the data.
@@ -242,7 +238,7 @@ def post2pydict(post, ignore_list):
             elif len(child_list) > 0:
                 untl_element = PYUNTL_DISPATCH[element_tag]()
             # If the element has children, add them.
-            if len(child_list) > 0 and untl_element is not None:
+            if child_list and untl_element:
                 for child in child_list:
                     untl_element.add_child(child)
             # Add the UNTL element to the root element.
@@ -411,7 +407,7 @@ def untlpy2highwirepy(untl_elements, **kwargs):
                 # Otherwise, add the element to the list if it has content.
                 elif highwire_element.content:
                     highwire_list.append(highwire_element)
-        # If the title was found, add it to the list.
+    # If the title was found, add it to the list.
     if title:
         highwire_list.append(title)
     return highwire_list
@@ -461,6 +457,8 @@ def formatted_dc_dict(dc_dict):
     with a list of values for each element.
     i.e. {'publisher': ['someone', 'someone else'], 'title': ['a title'],}
     """
+    # Don't modify the unformatted dictionary in place.
+    dc_dict = deepcopy(dc_dict)
     for key, element_list in dc_dict.items():
         new_element_list = []
         # Add the content for each element to the new element list.
@@ -566,7 +564,7 @@ def dcdict2rdfpy(dc_dict):
         # Add the values to the RDF object.
         for element_value in element_value_list:
             # Handle URL values differently.
-            if ('http' in element_value['content'] and ' ' not in element_value['content']):
+            if 'http' in element_value['content'] and ' ' not in element_value['content']:
                 rdf_py.add((
                     uri,
                     DC[element_name],
@@ -598,7 +596,8 @@ def retrieve_vocab():
     """
     url = VOCABULARIES_URL.replace('all', 'all-verbose')
     try:
-        return eval(urllib2.urlopen(url).read())
+        vocab_data = urllib.request.urlopen(url).read()
+        return json.loads(vocab_data)
     except:
         return None
 
@@ -704,11 +703,12 @@ def find_untl_errors(untl_dict, **kwargs):
     for element_name in REQUIRES_QUALIFIER:
         # Loop through the existing elements that require qualifers.
         for element in untl_dict.get(element_name, []):
-            error_dict[element_name] = 'no_qualifier'
-            # If it should be fixed, set an empty qualifier
-            # if it doesn't have one.
-            if fix_errors:
-                element.setdefault('qualifier', '')
+            # If there is no qualifier, record the error.
+            if not element.get('qualifier', None):
+                error_dict[element_name] = 'no_qualifier'
+                # If it should be fixed, set an empty qualifier.
+                if fix_errors:
+                    element.setdefault('qualifier', '')
     # Combine the error dict and UNTL dict into a dict.
     found_data = {
         'untl_dict': untl_dict,
@@ -800,7 +800,7 @@ def untlpy2etd_ms(untl_elements, **kwargs):
         # When we have all the elements stored, add the children to the
         # degree node.
         degree_child_element = None
-        for k, v in degree_children.iteritems():
+        for k, v in degree_children.items():
             # Create the individual classes for degrees.
             degree_child_element = ETD_MS_DEGREE_DISPATCH[k](
                 content=v,
@@ -827,9 +827,9 @@ def etd_ms_dict2xmlfile(filename, metadata_dict):
     """Create an ETD MS XML file."""
     try:
         f = open(filename, 'w')
-        f.write(generate_etd_ms_xml(metadata_dict).encode("utf-8"))
+        f.write(generate_etd_ms_xml(metadata_dict).decode('utf-8'))
         f.close()
     except:
         raise MetadataGeneratorException(
-            'Failed to create an XML file. Filename: %s' % (filename)
+            'Failed to create an XML file. Filename: %s' % filename
         )

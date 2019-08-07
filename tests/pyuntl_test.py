@@ -1,6 +1,6 @@
-import cPickle
+import pickle
 import os
-import StringIO
+from io import BytesIO
 import unittest
 
 from pyuntl import UNTL_XML_ORDER
@@ -22,7 +22,7 @@ class TestUNTLDictionaryToPythonObject(unittest.TestCase):
         rff = open(os.path.join(os.path.dirname(os.path.realpath(__file__)),
                                 'post.pkl'),
                    'rb')
-        post = cPickle.load(rff)
+        post = pickle.load(rff)
         rff.close()
         untl_dict = post2pydict(post, IGNORE_POST_LIST)
         self.assertEqual(untl_dict, EXPECTED_POST_TO_PYDICT)
@@ -60,85 +60,85 @@ class TestUNTLDictionaryToPythonObject(unittest.TestCase):
         """Test description with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'description' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesLanguage(self):
         """Test language element with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'language' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesResourceType(self):
         """Test ResourceType element with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'resourceType' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesFormat(self):
         """Test format element with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'format' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesTitle(self):
         """Test title element with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'title' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesCollection(self):
         """Test collection element with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'collection' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesNote(self):
         """Test note element with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'note' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesMeta(self):
         """Test meta element with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'meta' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesCoverage(self):
         """Test coverage element with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'coverage' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesDate(self):
         """Test date element with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'date' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesIdentifier(self):
         """Test identifier element with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'identifier' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesPrimarySource(self):
         """Test primarySource element with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'primarySource' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesInstitution(self):
         """Test institution element with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'institution' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesSubject(self):
         """Test subject element with content and not children."""
         for element in self.root_element.children:
             if element.tag == 'subject' and len(element.children) == 0:
-                self.assertNotEqual((element.content), None)
+                self.assertNotEqual(element.content, None)
 
     def testCreatesCreator(self):
         """Test creator element with content and not children."""
@@ -148,7 +148,7 @@ class TestUNTLDictionaryToPythonObject(unittest.TestCase):
 
     def testCircularEquality(self):
         self.assertEqual(
-            py2dict(untlxml2py(StringIO.StringIO(
+            py2dict(untlxml2py(BytesIO(
                     pydict2xmlstring(UNTL_DICT)))), UNTL_DICT)
 
 

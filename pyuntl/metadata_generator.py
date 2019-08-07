@@ -38,7 +38,7 @@ def py2dict(elements):
             element_dict['qualifier'] = element.qualifier
         # Set the element's content as a dictionary
         # of children elements.
-        if len(element.children) > 0:
+        if element.children:
             child_dict = {}
             for child in element.children:
                 if child.content is not None:
@@ -100,12 +100,12 @@ def pydict2xml(filename, metadata_dict, **kwargs):
     and a metadata dictionary.
     """
     try:
-        f = open(filename, 'w')
-        f.write(pydict2xmlstring(metadata_dict, **kwargs).encode('utf-8'))
+        f = open(filename, 'w', encoding='utf-8')
+        f.write(pydict2xmlstring(metadata_dict, **kwargs).decode('utf-8'))
         f.close()
     except:
         raise MetadataGeneratorException(
-            'Failed to create an XML file. Filename: %s' % (filename)
+            'Failed to create an XML file. Filename: %s' % filename
         )
 
 
@@ -164,8 +164,10 @@ def pydict2xmlstring(metadata_dict, **kwargs):
                         namespace=elements_namespace,
                     )
     # Create the XML tree.
-    return '<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
+    return b'<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
         root,
+        encoding='UTF-8',
+        xml_declaration=False,
         pretty_print=True
     )
 
@@ -210,16 +212,27 @@ def highwiredict2xmlstring(highwire_elements, ordering=HIGHWIRE_ORDER):
         attribs = {'name': element.name, 'content': element.content}
         SubElement(root, 'meta', attribs)
     # Create the XML tree.
-    return '<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
+    return b'<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(
         root,
+        encoding='UTF-8',
+        xml_declaration=False,
         pretty_print=True
     )
 
 
 def breakString(string, width=79, firstLineOffset=0):
+    """Break up a string into multiple lines.
+
+    Lines should each be of length no greater than width.
+    If externally additional text will be added to the first line,
+    such as an ANVL key, use firstLineOffset to reduce the allowed
+    width we have available for the line.
+    """
     originalWidth = width
+    # Use firstLineOffset to adjust width allowed for this line.
     width = width - firstLineOffset
     if len(string) < width + 1:
+        # string all fits on one line, so return it as is.
         return string
     index = width
     while index > 0:
@@ -234,6 +247,8 @@ def breakString(string, width=79, firstLineOffset=0):
                 )
 
         index = index - 1
+    # There was insufficient whitespace to break the string in a way that keeps
+    # all lines under the desired width. Exceed the width.
     return string
 
 

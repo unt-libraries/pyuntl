@@ -13,7 +13,7 @@ Python module for reading and writing UNTL metadata records.
 >>> title.set_qualifier("officialtitle")
 >>> title.set_content("This is the title for the record")
 >>> record.add_child(title)
->>> print untlpydict2xmlstring(untlpy2dict(record))
+>>> print(untlpydict2xmlstring(untlpy2dict(record)))
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <title qualifier="officialtitle">This is the title for the record</title>
@@ -39,5 +39,9 @@ Brandon Fredericks
 [Lauren Ko](https://github.com/ldko)  
 
 [Mark Phillips](https://github.com/vphill)  
+
+[Madhulika Bayyavarapu](https://github.com/madhulika95b)  
+
+[Gio Gottardi](https://github.com/somexpert)  
 
 If you have questions about the project feel free to contact Mark Phillips at mark.phillips@unt.edu.

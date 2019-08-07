@@ -17,13 +17,13 @@ class RecordTest(unittest.TestCase):
         field = PYUNTL_DISPATCH['title'](content=None)
         self.record.add_child(field)
         xml = self.record.create_xml_string()
-        self.assertTrue(xml.strip() == ('<?xml version="1.0" encoding='
-                                        '"UTF-8"?>\n<metadata>\n'
-                                        '  <title/>\n</metadata>\n').strip())
+        self.assertEqual(xml.strip(), (b'<?xml version="1.0" encoding='
+                                       b'"UTF-8"?>\n<metadata>\n'
+                                       b'  <title/>\n</metadata>').strip())
 
     def test_field_not_found(self):
         """Test there are no children if there are no fields."""
-        self.assertEquals(len(self.record.children), 0)
+        self.assertEqual(len(self.record.children), 0)
 
     def test_create_xml(self):
         """Test the XML created from a pyuntl object is of
@@ -126,17 +126,17 @@ class RecordTest(unittest.TestCase):
     def test_completeness(self):
         field = PYUNTL_DISPATCH['title'](content=None)
         self.record.add_child(field)
-        self.assertEquals(self.record.completeness, 0.0)
+        self.assertEqual(self.record.completeness, 0.0)
 
     def test_record_length(self):
         field = PYUNTL_DISPATCH['title'](content=None)
         self.record.add_child(field)
-        self.assertEquals(self.record.record_length, 13)
+        self.assertEqual(self.record.record_length, 13)
 
     def test_record_content_length(self):
         field = PYUNTL_DISPATCH['title'](content='fake title')
         self.record.add_child(field)
-        self.assertEquals(self.record.record_content_length, 38)
+        self.assertEqual(self.record.record_content_length, 38)
 
     def test_create_element_dict(self):
         field = PYUNTL_DISPATCH['title'](content='fake title')

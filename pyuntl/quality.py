@@ -64,7 +64,7 @@ def determine_completeness(py_untl):
                     else:
                         completeness_dict['%s' % i.tag]['present'] = True
     # Get total score of the pyuntl object.
-    for k, v in completeness_dict.iteritems():
+    for k, v in completeness_dict.items():
         # If presence was toggled true, adjust score based on weight.
         if v['present']:
             py_untl_object_score += completeness_dict[k]['weight']
@@ -83,5 +83,5 @@ if __name__ == '__main__':
     for infile in glob.glob(os.path.join(path, '../tests/*.untl.xml')):
         py_untl = untldoc.untlxml2py(infile)
         completeness = determine_completeness(py_untl)
-        print '|||||| %s' % infile.split('/')[-1]
-        print 'completeness score: %s\n' % completeness
+        print('|||||| %s' % infile.split('/')[-1])
+        print('completeness score: %s\n' % completeness)

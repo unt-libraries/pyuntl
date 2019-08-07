@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <title qualifier="officialtitle">Estebanillo: zarzuela en tres actos, en verso</title>
+  <title qualifier="seriestitle">El teatro: colecci&#243;n de obras dram&#225;ticas y l&#237;ricas</title>
+  <creator qualifier="lbt">
+    <info>"Letra de D. Ventura de la Vega."</info>
+    <type>per</type>
+    <name>Vega, Ventura de la, 1807-1865.</name>
+  </creator>
+  <contributor qualifier="cmp">
+    <type>per</type>
+    <name>Gaztambide y Garbayo, Joaqu&#237;n Romualdo, 1822-1870.</name>
+  </contributor>
+  <contributor qualifier="cmp">
+    <type>per</type>
+    <name>Oudrid, C. (Crist&#243;bal), 1825-1877.</name>
+  </contributor>
+  <publisher>
+    <info>Imprenta de Jos&#233; Rodr&#237;guez, calle del Factor, n&#250;m. 9.</info>
+    <name>J. Rodr&#237;guez</name>
+    <location>Madrid, Spain</location>
+  </publisher>
+  <date qualifier="creation">1855</date>
+  <language>spa</language>
+  <description qualifier="content">Libretto for adaptation of the ca. 1634 Spanish comedy, "Fortuna te d&#233; Dios, hijo" (May God give you good luck, son), by the playwright Tirso de Molina's.</description>
+  <description qualifier="physical">71 p. ; 20 cm.</description>
+  <subject qualifier="LCSH">Zarzuelas -- Librettos.</subject>
+  <subject qualifier="KWD">dramas</subject>
+  <primarySource>1</primarySource>
+  <collection>VRBR</collection>
+  <institution>UNTML</institution>
+  <resourceType>text_book</resourceType>
+  <format>image</format>
+  <identifier qualifier="UNTCAT">b1658669</identifier>
+  <identifier qualifier="OCLC">13191350</identifier>
+  <identifier qualifier="CALL-NO">ML50.G29 E7 1855</identifier>
+  <note qualifier="digitalPreservation">creationAppName: Omniscan
+creationAppVersion: 11
+creationHardware: Zeutschel OS 10000</note>
+  <meta qualifier="meta-id">metadc39257</meta>
+  <meta qualifier="system">DC</meta>
+  <meta qualifier="ark">ark:/67531/metadc39257</meta>
+  <meta qualifier="metadataCreationDate">2011-08-01, 10:42:51</meta>
+  <meta qualifier="metadataCreator">acpmaker</meta>
+</metadata>

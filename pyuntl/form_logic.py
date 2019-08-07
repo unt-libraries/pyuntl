@@ -1,5 +1,4 @@
 import json
-
 from pyuntl import UNTL_USAGE_LINK
 
 
