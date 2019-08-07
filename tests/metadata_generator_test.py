@@ -2,7 +2,7 @@ import os
 from unittest.mock import patch
 
 import pytest
-from lxml.etree import Element, tostring
+from lxml.etree import Element, tostring, fromstring
 
 from pyuntl import (metadata_generator as mg, untl_structure as us,
                     etd_ms_structure as es, highwire_structure as hs)
@@ -220,12 +220,24 @@ def test_highwiredict2xmlstring():
     elements = [issue, title]
     xml = mg.highwiredict2xmlstring(elements, ordering=['citation_title',
                                                         'citation_issue'])
-    assert xml.decode('utf-8') == ('<?xml version="1.0" encoding="UTF-8"?>\n'
-                                   '<metadata>\n'
-                                   '  <meta content="Important paper"'
-                                   ' name="citation_title"/>\n'
-                                   '  <meta content="1" name="citation_issue"/>\n'
-                                   '</metadata>\n')
+    expected_xml = (b'<?xml version="1.0" encoding="UTF-8"?>\n'
+                    b'<metadata>\n'
+                    b'  <meta content="Important paper" name="citation_title"/>\n'
+                    b'  <meta content="1" name="citation_issue"/>\n'
+                    b'</metadata>\n')
+
+    # Get a sorted list of attributes for child elements in the generated and expected XML.
+    generated_tree = fromstring(xml)
+    generated_attribs = [child.attrib for child in generated_tree]
+    generated_attribs = sorted(generated_attribs, key=lambda i: (i['content'], i['name']))
+    expected_attribs = [child.attrib for child in fromstring(expected_xml)]
+    expected_attribs = sorted(expected_attribs, key=lambda i: (i['content'], i['name']))
+    assert expected_attribs == generated_attribs
+
+    # Our generated XML has a `metadata` element with all `meta` element children.
+    assert generated_tree.tag == 'metadata'
+    for child in generated_tree:
+        assert child.tag == 'meta'
 
 
 def test_breakString_shorter_than_width_with_offset():
