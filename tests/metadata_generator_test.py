@@ -83,7 +83,7 @@ def test_pydict2xml_raises_MetadataGeneratorException(mock_open):
         mg.pydict2xml(path, {'not': [{'gonna': 'use'}]})
     msg = 'Failed to create an XML file. Filename: {}'.format(path)
     assert err.value.args[0] == msg
-    mock_open.assert_called_once_with(path, 'w', encoding='utf-8')
+    mock_open.assert_called_once_with(path, 'wb')
 
 
 def test_pydict2xmlstring_no_root_namespace_no_nsmap():
