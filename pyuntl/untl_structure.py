@@ -425,8 +425,8 @@ class Metadata(UNTLElement):
         Writes file to supplied file path.
         """
         try:
-            f = open(untl_filename, 'w', encoding='utf-8')
-            f.write(self.create_xml_string().decode('utf-8'))
+            f = open(untl_filename, 'wb')
+            f.write(self.create_xml_string())
             f.close()
         except:
             raise UNTLStructureException(

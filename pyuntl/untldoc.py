@@ -826,8 +826,8 @@ def generate_etd_ms_xml(etd_ms_dict):
 def etd_ms_dict2xmlfile(filename, metadata_dict):
     """Create an ETD MS XML file."""
     try:
-        f = open(filename, 'w')
-        f.write(generate_etd_ms_xml(metadata_dict).decode('utf-8'))
+        f = open(filename, 'wb')
+        f.write(generate_etd_ms_xml(metadata_dict))
         f.close()
     except:
         raise MetadataGeneratorException(
