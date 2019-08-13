@@ -71,22 +71,6 @@ DC_ORDER = [
     'identifier',
 ]
 
-ETD_MS_ORDER = [
-    'title',
-    'creator',
-    'subject',
-    'description',
-    'publisher',
-    'contributor',
-    'date',
-    'type',
-    'identifier',
-    'language',
-    'coverage',
-    'rights',
-    'degree',
-]
-
 HIGHWIRE_ORDER = [
     'citation_title',
     'citation_author',
