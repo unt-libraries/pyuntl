@@ -1,7 +1,6 @@
 from lxml.etree import Element, SubElement, tostring
 
 from pyuntl import UNTL_XML_ORDER, HIGHWIRE_ORDER
-from pyuntl.etd_ms_structure import DEGREE_ORDER
 
 
 XSI = 'http://www.w3.org/2001/XMLSchema-instance'
@@ -35,43 +34,6 @@ def py2dict(elements):
             metadata_dict[element.tag] = []
         element_dict = {}
         if hasattr(element, 'qualifier') and element.qualifier is not None:
-            element_dict['qualifier'] = element.qualifier
-        # Set the element's content as a dictionary
-        # of children elements.
-        if element.children:
-            child_dict = {}
-            for child in element.children:
-                if child.content is not None:
-                    child_dict[child.tag] = child.content
-            element_dict['content'] = child_dict
-        # Set element content that is not children.
-        elif element.content is not None:
-            if element.content.strip() != '':
-                element_dict['content'] = element.content
-        # Append the dictionary to the element list
-        # if the element has content or children.
-        if element_dict.get('content', False):
-            metadata_dict[element.tag].append(element_dict)
-
-    return metadata_dict
-
-
-def etd_ms_py2dict(elements):
-    """Convert a Python object into a Python dictionary."""
-    metadata_dict = {}
-    # Loop through all elements in the Python object.
-    for element in elements.children:
-        # Start an empty element list if an entry for the element
-        # list hasn't been made in the dictionary.
-        if element.tag not in metadata_dict:
-            metadata_dict[element.tag] = []
-        element_dict = {}
-        if hasattr(element, 'role'):
-            element_dict['role'] = element.role
-        elif hasattr(element, 'scheme'):
-            element_dict['scheme'] = element.scheme
-        elif hasattr(element, 'qualifier') and element.qualifier is not None \
-                and element.tag == 'title':
             element_dict['qualifier'] = element.qualifier
         # Set the element's content as a dictionary
         # of children elements.
@@ -176,7 +138,6 @@ def create_dict_subelement(root, subelement, content, **kwargs):
     """Create a XML subelement from a Python dictionary."""
     attribs = kwargs.get('attribs', None)
     namespace = kwargs.get('namespace', None)
-    key = subelement
 
     # Add subelement's namespace and attributes.
     if namespace and attribs:
@@ -190,13 +151,6 @@ def create_dict_subelement(root, subelement, content, **kwargs):
         subelement = SubElement(root, subelement)
     if not isinstance(content, dict):
         subelement.text = content
-    # Do special case ordering for degree children on etd_ms.
-    elif key == 'degree':
-        for degree_order_key in DEGREE_ORDER:
-            for descriptor, value in content.items():
-                if descriptor == degree_order_key:
-                    sub_descriptors = SubElement(subelement, descriptor)
-                    sub_descriptors.text = value
     else:
         for descriptor, value in content.items():
             sub_descriptors = SubElement(subelement, descriptor)

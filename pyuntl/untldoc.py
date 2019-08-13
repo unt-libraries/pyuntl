@@ -14,17 +14,13 @@ from copy import deepcopy
 from lxml.etree import iterparse
 from rdflib import Namespace, Literal, URIRef, ConjunctiveGraph
 
-from pyuntl import (UNTL_XML_ORDER, DC_ORDER, ETD_MS_ORDER,
+from pyuntl import (UNTL_XML_ORDER, DC_ORDER,
                     VOCABULARIES_URL, HIGHWIRE_ORDER)
 from pyuntl.dc_structure import DC_CONVERSION_DISPATCH, DC_NAMESPACES, XSI
-from pyuntl.etd_ms_structure import (ETD_MS_CONVERSION_DISPATCH,
-                                     ETD_MS_DEGREE_DISPATCH,
-                                     ETD_MS_NAMESPACES)
 from pyuntl.form_logic import REQUIRES_QUALIFIER
 from pyuntl.highwire_structure import HIGHWIRE_CONVERSION_DISPATCH
 from pyuntl.metadata_generator import (py2dict, pydict2xml, pydict2xmlstring,
-                                       writeANVLString, highwiredict2xmlstring,
-                                       MetadataGeneratorException)
+                                       writeANVLString, highwiredict2xmlstring)
 from pyuntl.untl_structure import PYUNTL_DISPATCH, PARENT_FORM
 
 
@@ -647,54 +643,6 @@ def add_empty_fields(untl_dict):
     return untl_dict
 
 
-def add_empty_etd_ms_fields(etd_ms_dict):
-    """Add empty values for ETD_MS fields that don't have values."""
-    # Determine which ETD MS elements are missing from the etd_ms_dict.
-    for element in ETD_MS_ORDER:
-        if element not in etd_ms_dict:
-            # Try to create an element with content and qualifier.
-            try:
-                py_object = ETD_MS_CONVERSION_DISPATCH[element](
-                    content='',
-                    qualifier='',
-                )
-            except:
-                # Try to create an element with content.
-                try:
-                    py_object = ETD_MS_CONVERSION_DISPATCH[element](content='')
-                except:
-                    # Try to create an element without content.
-                    try:
-                        py_object = ETD_MS_CONVERSION_DISPATCH[element]()
-                    except:
-                        raise PyuntlException(
-                            'Could not add empty element field.'
-                        )
-                    else:
-                        etd_ms_dict[element] = [{'content': {}}]
-                else:
-                    # Handle element without children.
-                    if not py_object.contained_children:
-                        etd_ms_dict[element] = [{'content': ''}]
-                    else:
-                        etd_ms_dict[element] = [{'content': {}}]
-            else:
-                # Handle element without children.
-                if py_object:
-                    if not py_object.contained_children:
-                        etd_ms_dict[element] = [{'content': '',
-                                                 'qualifier': ''}]
-                else:
-                    etd_ms_dict[element] = [{'content': {},
-                                             'qualifier': ''}]
-            # Add empty contained children.
-            if py_object:
-                for child in py_object.contained_children:
-                    etd_ms_dict[element][0].setdefault('content', {})
-                    etd_ms_dict[element][0]['content'][child] = ''
-    return etd_ms_dict
-
-
 def find_untl_errors(untl_dict, **kwargs):
     """Add empty required qualifiers to create valid UNTL."""
     fix_errors = kwargs.get('fix_errors', False)
@@ -715,121 +663,3 @@ def find_untl_errors(untl_dict, **kwargs):
         'error_dict': error_dict,
     }
     return found_data
-
-
-def untlpy2etd_ms(untl_elements, **kwargs):
-    """Convert the UNTL elements structure into an ETD_MS structure.
-
-    kwargs can be passed to the function for certain effects.
-    """
-    degree_children = {}
-    date_exists = False
-    seen_creation = False
-    # Make the root element.
-    etd_ms_root = ETD_MS_CONVERSION_DISPATCH['thesis']()
-    for element in untl_elements.children:
-        etd_ms_element = None
-        # Convert the UNTL element to etd_ms where applicable.
-        if element.tag in ETD_MS_CONVERSION_DISPATCH:
-            # Create the etd_ms_element if the element's content
-            # is stored in children nodes.
-            if element.children:
-                etd_ms_element = ETD_MS_CONVERSION_DISPATCH[element.tag](
-                    qualifier=element.qualifier,
-                    children=element.children,
-                )
-            # If we hit a degree element, make just that one.
-            elif element.tag == 'degree':
-                # Make a dict of the degree children information.
-                if element.qualifier in ['name',
-                                         'level',
-                                         'discipline',
-                                         'grantor']:
-                    degree_children[element.qualifier] = element.content
-            # For date elements, limit to first instance of creation date.
-            elif element.tag == 'date':
-                if element.qualifier == 'creation':
-                    # If the root already has a date, delete the child.
-                    for child in etd_ms_root.children:
-                        if child.tag == 'date':
-                            del child
-                            if not seen_creation:
-                                date_exists = False
-                    seen_creation = True
-                    if not date_exists:
-                        # Create the etd_ms element.
-                        etd_ms_element = ETD_MS_CONVERSION_DISPATCH[element.tag](
-                            qualifier=element.qualifier,
-                            content=element.content,
-                        )
-                        date_exists = True
-            # It is a normal element.
-            elif element.tag not in ['date', 'degree']:
-                # Create the etd_ms_element.
-                etd_ms_element = ETD_MS_CONVERSION_DISPATCH[element.tag](
-                    qualifier=element.qualifier,
-                    content=element.content,
-                )
-            # Add the element to the structure if the element exists.
-            if etd_ms_element:
-                etd_ms_root.add_child(etd_ms_element)
-        if element.tag == 'meta':
-            # Initialize ark to False because it may not exist yet.
-            ark = False
-            # Iterate through children and look for ark.
-            for i in etd_ms_root.children:
-                if i.tag == 'identifier' and i.content.startswith(
-                    'http://digital.library.unt.edu/'
-                ):
-                    ark = True
-            # If the ark doesn't yet exist, try and create it.
-            if not ark:
-                # Reset for future tests.
-                ark = False
-                if element.qualifier == 'ark':
-                    ark = element.content
-                if ark is not None:
-                    # Create the ark identifier element and add it.
-                    ark_identifier = ETD_MS_CONVERSION_DISPATCH['identifier'](
-                        ark=ark,
-                    )
-                    etd_ms_root.add_child(ark_identifier)
-    # If children exist for the degree, make a degree element.
-    if degree_children:
-        degree_element = ETD_MS_CONVERSION_DISPATCH['degree']()
-        # When we have all the elements stored, add the children to the
-        # degree node.
-        degree_child_element = None
-        for k, v in degree_children.items():
-            # Create the individual classes for degrees.
-            degree_child_element = ETD_MS_DEGREE_DISPATCH[k](
-                content=v,
-            )
-            # If the keys in degree_children are valid,
-            # add it to the child.
-            if degree_child_element:
-                degree_element.add_child(degree_child_element)
-        etd_ms_root.add_child(degree_element)
-    return etd_ms_root
-
-
-def generate_etd_ms_xml(etd_ms_dict):
-    """Generate an ETD MS XML string."""
-    return pydict2xmlstring(
-        etd_ms_dict,
-        ordering=ETD_MS_ORDER,
-        root_label='thesis',
-        namespace_map=ETD_MS_NAMESPACES,
-    )
-
-
-def etd_ms_dict2xmlfile(filename, metadata_dict):
-    """Create an ETD MS XML file."""
-    try:
-        f = open(filename, 'wb')
-        f.write(generate_etd_ms_xml(metadata_dict))
-        f.close()
-    except:
-        raise MetadataGeneratorException(
-            'Failed to create an XML file. Filename: %s' % filename
-        )

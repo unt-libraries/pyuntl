@@ -5,7 +5,7 @@ import pytest
 from lxml.etree import Element, tostring, fromstring
 
 from pyuntl import (metadata_generator as mg, untl_structure as us,
-                    etd_ms_structure as es, highwire_structure as hs)
+                    highwire_structure as hs)
 
 
 def test_MetadataGeneratorException():
@@ -30,30 +30,6 @@ def test_py2dict():
                                         'content': 'The Bronco'}],
                              'creator': [{'qualifier': 'aut',
                                           'content': {'name': 'Case, J.'}}]}
-
-
-def test_etd_ms_py2dict():
-    """Test ETD MS elements are converted to a dictionary."""
-    title = es.ETD_MSTitle(qualifier='officialtitle',
-                           content='A Good Dissertation')
-    grantor = es.ETD_MSDegreeGrantor(content='UNT')
-    degree = es.ETD_MSDegree()
-    degree.add_child(grantor)
-    name = es.ETD_MSDegreeName(content='Case, J.')
-    contributor = es.ETD_MSContributor(role='chair', children=[name])
-    subject = es.ETD_MSSubject(content='dog', scheme='LC')
-    elements = es.ETD_MS()
-    elements.add_child(title)
-    elements.add_child(degree)
-    elements.add_child(contributor)
-    elements.add_child(subject)
-    metadata_dict = mg.etd_ms_py2dict(elements)
-    assert metadata_dict == {'title': [{'qualifier': 'officialtitle',
-                                        'content': 'A Good Dissertation'}],
-                             'degree': [{'content': {'grantor': 'UNT'}}],
-                             'contributor': [{'role': 'chair', 'content': 'Case, J.'}],
-                             'subject': [{'scheme': 'LC',
-                                          'content': 'dog'}]}
 
 
 def test_pydict2xml(tmpdir):
@@ -180,26 +156,6 @@ def test_create_dict_subelement_no_extra_data():
     xml = tostring(root, pretty_print=True)
     assert xml.decode('utf-8') == ('<root>\n'
                                    '  <dog>Harold</dog>\n'
-                                   '</root>\n')
-
-
-def test_create_dict_subelement_degree_order_handling():
-    # Order should be name, level, discipline, grantor.
-    root = Element('root')
-    mg.create_dict_subelement(root,
-                              'degree',
-                              content={'discipline': 'Chemistry',
-                                       'level': 'Masters',
-                                       'grantor': 'UNT',
-                                       'name': 'foo'})
-    xml = tostring(root, pretty_print=True)
-    assert xml.decode('utf-8') == ('<root>\n'
-                                   '  <degree>\n'
-                                   '    <name>foo</name>\n'
-                                   '    <level>Masters</level>\n'
-                                   '    <discipline>Chemistry</discipline>\n'
-                                   '    <grantor>UNT</grantor>\n'
-                                   '  </degree>\n'
                                    '</root>\n')
 
 
