@@ -165,7 +165,7 @@ def test_create_dict_subelement_content_dict_not_degree():
     mg.create_dict_subelement(root, 'stuff', content=content)
     # Check the content keys are children of the stuff element.
     assert root[0].tag == 'stuff'
-    assert len(list(root[0])) == 2
+    assert len(root[0]) == 2
     for key, value in content.items():
         assert root[0].find(key).text == value
 
