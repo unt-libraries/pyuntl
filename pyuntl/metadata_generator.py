@@ -174,7 +174,7 @@ def highwiredict2xmlstring(highwire_elements, ordering=HIGHWIRE_ORDER):
     )
 
 
-def breakString(str, width=79, firstLineOffset=0):
+def breakString(text, width=79, firstLineOffset=0):
     """Break up a string into multiple lines.
 
     Lines should each be of length no greater than width.
@@ -185,15 +185,15 @@ def breakString(str, width=79, firstLineOffset=0):
     originalWidth = width
     # Use firstLineOffset to adjust width allowed for this line.
     width = width - firstLineOffset
-    if len(str) < width + 1:
+    if len(text) < width + 1:
         # string all fits on one line, so return it as is.
-        return str
+        return text
     index = width
     while index > 0:
-        if ' ' == str[index]:
-            if not str[index + 1].isspace() and not str[index - 1].isspace():
-                stringPart1 = str[0:index]
-                stringPart2 = str[index:]
+        if ' ' == text[index]:
+            if not text[index + 1].isspace() and not text[index - 1].isspace():
+                stringPart1 = text[0:index]
+                stringPart2 = text[index:]
                 # Do not pass firstLineOffset.
                 return stringPart1 + '\n' + breakString(
                     stringPart2,
@@ -203,7 +203,7 @@ def breakString(str, width=79, firstLineOffset=0):
         index = index - 1
     # There was insufficient whitespace to break the string in a way that keeps
     # all lines under the desired width. Exceed the width.
-    return str
+    return text
 
 
 def writeANVLString(ANVLDict, ordering=UNTL_XML_ORDER):
