@@ -7,12 +7,6 @@ def normalize_LCSH(subject):
     # rejoin after stripping parts.
     subject_parts = subject.strip().split('--')
     joined_subject = ' -- '.join([part.strip() for part in subject_parts])
-
-    # Check if there is punctuation at the end of the string,
-    # and if not, add a trailing period.
-    if re.search(r'[^a-zA-Z0-9]$', joined_subject) is None:
-        joined_subject = joined_subject + '.'
-
     return joined_subject
 
 
