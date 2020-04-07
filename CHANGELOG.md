@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+x.x.x
+-----
+
+* Remove automatic addition of trailing period for LCSH. [#39](https://github.com/unt-libraries/pyuntl/issues/39)
 
 1.0.2
 -----
@@ -12,7 +16,7 @@ Change Log
 1.0.1
 -----
 
-* Fixed hardcoding of http scheme in permalinks by dc_structure.identifier_director. [#11] (https://github.com/unt-libraries/pyuntl/issues/11)
+* Fixed hardcoding of http scheme in permalinks by dc_structure.identifier_director. [#11](https://github.com/unt-libraries/pyuntl/issues/11)
 
 
 1.0.0
