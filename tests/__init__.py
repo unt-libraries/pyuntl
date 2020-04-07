@@ -128,8 +128,8 @@ UNNORMALIZED_DICT = {
 # UNTL dict with proper normalization
 NORMALIZED_DICT = {
     'subject': [
-        {'content': 'Simmons College (Abilene, Tex.) -- Students -- Yearbooks.', 'qualifier': 'LCSH'},
-        {'content': 'Simmons University (Abilene, Tex.) -- Students -- Yearbooks.', 'qualifier': 'LCSH'},
+        {'content': 'Simmons College (Abilene, Tex.) -- Students -- Yearbooks', 'qualifier': 'LCSH'},
+        {'content': 'Simmons University (Abilene, Tex.) -- Students -- Yearbooks', 'qualifier': 'LCSH'},
         {'content': 'Hardin-Simmons University -- Students -- Yearbooks.', 'qualifier': 'LCSH'},
         {'content': 'World War, 1939-1945 -- Texas.', 'qualifier': 'LCSH'},
         {'content': 'World War, 1939-1945 -- Food supply -- United States.', 'qualifier': 'LCSH'},
@@ -148,7 +148,7 @@ UNNORMALIZED_LCSH = 'Guitar music--History and criticism'
 NORMALIZED_UNTLBS = 'Business, Economics and Finance - Journalism'
 
 # A normalized lcsh string
-NORMALIZED_LCSH = 'Guitar music -- History and criticism.'
+NORMALIZED_LCSH = 'Guitar music -- History and criticism'
 
 # Defined for testing post2pydict
 IGNORE_POST_LIST = [
