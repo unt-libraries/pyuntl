@@ -1,10 +1,13 @@
 Change Log
 ==========
 
-x.x.x
+2.0.0
 -----
 
-* Remove automatic addition of trailing period for LCSH. [#39](https://github.com/unt-libraries/pyuntl/issues/39)
+* Upgraded to python3.
+* Removed automatic addition of trailing period for LCSH. [#39](https://github.com/unt-libraries/pyuntl/issues/39)
+* Removed etd_ms support which is not used by pyuntl.
+
 
 1.0.2
 -----

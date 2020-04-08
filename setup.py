@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='pyuntl',
-    version='1.0.2',
+    version='2.0.0',
     author='Mark Phillips',
     author_email='mark.phillips@unt.edu',
     url='https://github.com/unt-libraries/pyuntl',
