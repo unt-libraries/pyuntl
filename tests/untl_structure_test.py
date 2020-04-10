@@ -3,7 +3,7 @@
 
 import pytest
 import json
-from mock import patch
+from unittest.mock import patch
 from lxml.etree import Element
 from pyuntl import untl_structure as us, UNTL_PTH_ORDER
 from pyuntl.form_logic import FormGroup, HiddenGroup, FormElement
