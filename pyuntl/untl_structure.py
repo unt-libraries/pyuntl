@@ -457,6 +457,40 @@ class Metadata(UNTLElement):
         # Create the form object.
         return FormGenerator(**kwargs)
 
+    def make_hidden(self):
+        """Make an unhidden UNTL element into a hidden element."""
+        for element in self.children:
+            if element.tag == 'meta' and element.qualifier == 'hidden':
+                # Make the element hidden.
+                if element.content == 'False':
+                    element.content = 'True'
+
+    def make_unhidden(self):
+        """Make a hidden UNTL element into an unhidden element."""
+        for element in self.children:
+            if element.tag == 'meta' and element.qualifier == 'hidden':
+                # Make the element unhidden.
+                if element.content == 'True':
+                    element.content = 'False'
+
+    @property
+    def is_hidden(self):
+        """Return if a UNTL element is hidden."""
+        for element in self.children:
+            if element.tag == 'meta' and element.qualifier == 'hidden':
+                if element.content == 'True':
+                    return True
+        return False
+
+    @property
+    def is_unhidden(self):
+        """Return if a UNTL element is not hidden."""
+        for element in self.children:
+            if element.tag == 'meta' and element.qualifier == 'hidden':
+                if element.content == 'False':
+                    return True
+        return False
+
 
 class Title(UNTLElement):
     def __init__(self, **kwargs):
