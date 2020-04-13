@@ -475,7 +475,7 @@ class Metadata(UNTLElement):
 
     @property
     def is_hidden(self):
-        """Return if a UNTL element is hidden."""
+        """Return True if a UNTL element is hidden."""
         for element in self.children:
             if element.tag == 'meta' and element.qualifier == 'hidden':
                 if element.content == 'True':
@@ -484,7 +484,7 @@ class Metadata(UNTLElement):
 
     @property
     def is_unhidden(self):
-        """Return if a UNTL element is not hidden."""
+        """Return True if a UNTL element is not hidden."""
         for element in self.children:
             if element.tag == 'meta' and element.qualifier == 'hidden':
                 if element.content == 'False':
