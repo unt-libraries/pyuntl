@@ -589,22 +589,24 @@ def test_generate_form_data(_):
     assert len(metadata.children) == len(metadata.contained_children)
 
 
-def test_Metadata_is_hidden():
-    """Check if a UNTL element is unhidden."""
+@pytest.mark.parametrize('test_input_content, test_output', [('True', True), ('False', False)])
+def test_Metadata_is_hidden(test_input_content, test_output):
+    """Check if a UNTL element is hidden."""
     metadata = us.Metadata()
     system = us.Meta(content='DC', qualifier='system')
-    hidden = us.Meta(content='True', qualifier='hidden')
+    hidden = us.Meta(content=test_input_content, qualifier='hidden')
     metadata.children = [system, hidden]
-    assert metadata.is_hidden is True
+    assert metadata.is_hidden is test_output
 
 
-def test_Metadata_is_unhidden():
+@pytest.mark.parametrize('test_input_content, test_output', [('True', False), ('False', True)])
+def test_Metadata_is_unhidden(test_input_content, test_output):
     """Check if a UNTL element is unhidden."""
     metadata = us.Metadata()
     system = us.Meta(content='DC', qualifier='system')
-    unhidden = us.Meta(content='False', qualifier='hidden')
-    metadata.children = [system, unhidden]
-    assert metadata.is_unhidden is True
+    hidden = us.Meta(content=test_input_content, qualifier='hidden')
+    metadata.children = [system, hidden]
+    assert metadata.is_unhidden is test_output
 
 
 def test_Metadata_make_hidden():
