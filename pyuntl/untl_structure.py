@@ -459,11 +459,16 @@ class Metadata(UNTLElement):
 
     def make_hidden(self):
         """Make an unhidden UNTL element into a hidden element."""
+        meta_hidden = False
         for element in self.children:
             if element.tag == 'meta' and element.qualifier == 'hidden':
+                meta_hidden = True
                 # Make the element hidden.
                 if element.content == 'False':
                     element.content = 'True'
+        if not meta_hidden:
+            hidden_element = PYUNTL_DISPATCH['meta'](qualifier='hidden', content='True')
+            self.children.append(hidden_element)
 
     def make_unhidden(self):
         """Make a hidden UNTL element into an unhidden element."""
@@ -485,11 +490,7 @@ class Metadata(UNTLElement):
     @property
     def is_unhidden(self):
         """Return True if a UNTL element is not hidden."""
-        for element in self.children:
-            if element.tag == 'meta' and element.qualifier == 'hidden':
-                if element.content == 'False':
-                    return True
-        return False
+        return not self.is_hidden
 
 
 class Title(UNTLElement):
