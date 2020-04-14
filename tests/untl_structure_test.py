@@ -609,21 +609,33 @@ def test_Metadata_is_unhidden(test_input_content, test_output):
     assert metadata.is_unhidden is test_output
 
 
-def test_Metadata_make_hidden():
+@pytest.mark.parametrize('test_input_elements, test_output',
+                         [
+                             ([us.Meta(content='DC', qualifier='system'),
+                               us.Meta(content='True', qualifier='hidden')],
+                              True),
+                             ([us.Meta(content='DC', qualifier='system'),
+                               us.Meta(content='False', qualifier='hidden')],
+                              False),
+                             ([us.Meta(content='DC', qualifier='system')],
+                              False)
+                         ])
+def test_Metadata_make_hidden(test_input_elements, test_output):
     """Test if a UNTL unhidden element is altered to hidden."""
     metadata = us.Metadata()
-    system = us.Meta(content='DC', qualifier='system')
-    unhidden = us.Meta(content='False', qualifier='hidden')
-    metadata.children = [system, unhidden]
+    metadata.children = test_input_elements
+    assert metadata.is_hidden is test_output
     metadata.make_hidden()
     assert metadata.is_hidden is True
 
 
-def test_Metadata_make_unhidden():
+@pytest.mark.parametrize('test_input_content, test_output', [('True', False), ('False', True)])
+def test_Metadata_make_unhidden(test_input_content, test_output):
     """Test if a UNTL hidden element is altered to unhidden."""
     metadata = us.Metadata()
     system = us.Meta(content='DC', qualifier='system')
-    hidden = us.Meta(content='True', qualifier='hidden')
+    hidden = us.Meta(content=test_input_content, qualifier='hidden')
     metadata.children = [system, hidden]
+    assert metadata.is_unhidden is test_output
     metadata.make_unhidden()
     assert metadata.is_unhidden is True
