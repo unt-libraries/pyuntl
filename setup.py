@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='pyuntl',
-    version='1.0.2',
+    version='2.0.0',
     author='Mark Phillips',
     author_email='mark.phillips@unt.edu',
     url='https://github.com/unt-libraries/pyuntl',
@@ -20,6 +20,7 @@ setup(
     classifiers=[
         'Natural Language :: English',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
     keywords=['untl', 'metadata', 'digital libraries', 'records'],
