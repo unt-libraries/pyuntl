@@ -1,5 +1,6 @@
 import socket
 import json
+import sys
 import urllib.request
 from lxml.etree import Element, SubElement, tostring
 from pyuntl import UNTL_XML_ORDER, VOCABULARIES_URL
@@ -466,31 +467,38 @@ class Metadata(UNTLElement):
                 # Make the element hidden.
                 if element.content == 'False':
                     element.content = 'True'
+        # Create a hidden  meta element if it doesn't exist.
         if not meta_hidden:
-            hidden_element = PYUNTL_DISPATCH['meta'](qualifier='hidden', content='True')
+            hidden_element = PYUNTL_DISPATCH['meta'](qualifier='hidden', content='False')
             self.children.append(hidden_element)
 
     def make_unhidden(self):
         """Make a hidden UNTL element into an unhidden element."""
+        meta_hidden = False
         for element in self.children:
             if element.tag == 'meta' and element.qualifier == 'hidden':
+                meta_hidden = True
                 # Make the element unhidden.
                 if element.content == 'True':
                     element.content = 'False'
+        # Create a hidden  meta element if it doesn't exist.
+        if not meta_hidden:
+            hidden_element = PYUNTL_DISPATCH['meta'](qualifier='hidden', content='False')
+            self.children.append(hidden_element)
 
     @property
     def is_hidden(self):
         """Return True if a UNTL element is hidden."""
+        meta_hidden = False
         for element in self.children:
             if element.tag == 'meta' and element.qualifier == 'hidden':
+                meta_hidden = True
                 if element.content == 'True':
                     return True
-        return False
-
-    @property
-    def is_unhidden(self):
-        """Return True if a UNTL element is not hidden."""
-        return not self.is_hidden
+        if not meta_hidden:
+            sys.stderr.write('A hidden meta element does not exist.')
+        else:
+            return False
 
 
 class Title(UNTLElement):
