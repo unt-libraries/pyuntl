@@ -243,6 +243,12 @@ def post2pydict(post, ignore_list):
     return root_element.create_element_dict()
 
 
+def generate_untl_json(untl_elements, json_indent=4):
+    """Convert UNTL elements into a JSON structure."""
+    untl_dict = untlpy2dict(untl_elements)
+    return json.dumps(untl_dict, sort_keys=True, indent=json_indent)
+
+
 def untlpy2dcpy(untl_elements, **kwargs):
     """Convert the UNTL elements structure into a DC structure.
 

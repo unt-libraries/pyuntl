@@ -112,6 +112,21 @@ def test_untlpy2dict():
                                     'content': 'The Bronco'}]}
 
 
+def test_generate_untl_json():
+    title = us.Title(qualifier='serialtitle', content='The Bronco')
+    elements = us.Metadata()
+    elements.add_child(title)
+    untl_json = untldoc.generate_untl_json(elements)
+    assert untl_json == ('{\n'
+                         '    "title": [\n'
+                         '        {\n'
+                         '            "content": "The Bronco",\n'
+                         '            "qualifier": "serialtitle"\n'
+                         '        }\n'
+                         '    ]\n'
+                         '}')
+
+
 def test_untlpydict2xml(tmpdir):
     xml_file = os.path.join(tmpdir, 'untl.xml')
     returned_value = untldoc.untlpydict2xml(xml_file, UNTL_DICTIONARY)
