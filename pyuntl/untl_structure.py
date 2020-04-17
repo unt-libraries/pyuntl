@@ -459,46 +459,40 @@ class Metadata(UNTLElement):
         return FormGenerator(**kwargs)
 
     def make_hidden(self):
-        """Make an unhidden UNTL element into a hidden element."""
-        meta_hidden = False
+        """Make an unhidden record hidden."""
         for element in self.children:
             if element.tag == 'meta' and element.qualifier == 'hidden':
-                meta_hidden = True
                 # Make the element hidden.
                 if element.content == 'False':
                     element.content = 'True'
+                    return None
         # Create a hidden  meta element if it doesn't exist.
-        if not meta_hidden:
-            hidden_element = PYUNTL_DISPATCH['meta'](qualifier='hidden', content='False')
-            self.children.append(hidden_element)
+        hidden_element = PYUNTL_DISPATCH['meta'](qualifier='hidden', content='True')
+        self.children.append(hidden_element)
 
     def make_unhidden(self):
-        """Make a hidden UNTL element into an unhidden element."""
-        meta_hidden = False
+        """Make a hidden record unhidden."""
         for element in self.children:
             if element.tag == 'meta' and element.qualifier == 'hidden':
-                meta_hidden = True
                 # Make the element unhidden.
                 if element.content == 'True':
                     element.content = 'False'
+                    return None
         # Create a hidden  meta element if it doesn't exist.
-        if not meta_hidden:
-            hidden_element = PYUNTL_DISPATCH['meta'](qualifier='hidden', content='False')
-            self.children.append(hidden_element)
+        hidden_element = PYUNTL_DISPATCH['meta'](qualifier='hidden', content='False')
+        self.children.append(hidden_element)
 
     @property
     def is_hidden(self):
         """Return True if a UNTL element is hidden."""
-        meta_hidden = False
         for element in self.children:
             if element.tag == 'meta' and element.qualifier == 'hidden':
-                meta_hidden = True
                 if element.content == 'True':
                     return True
-        if not meta_hidden:
-            sys.stderr.write('A hidden meta element does not exist.')
-        else:
-            return False
+                else:
+                    return False
+        sys.stderr.write('A hidden meta element does not exist.')
+        return False
 
 
 class Title(UNTLElement):
