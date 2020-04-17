@@ -466,7 +466,7 @@ class Metadata(UNTLElement):
                 if element.content == 'False':
                     element.content = 'True'
                     return None
-        # Create a hidden  meta element if it doesn't exist.
+        # Create a hidden meta record if it doesn't exist.
         hidden_element = PYUNTL_DISPATCH['meta'](qualifier='hidden', content='True')
         self.children.append(hidden_element)
 
@@ -478,7 +478,7 @@ class Metadata(UNTLElement):
                 if element.content == 'True':
                     element.content = 'False'
                     return None
-        # Create a hidden  meta element if it doesn't exist.
+        # Create a hidden meta record if it doesn't exist.
         hidden_element = PYUNTL_DISPATCH['meta'](qualifier='hidden', content='False')
         self.children.append(hidden_element)
 
