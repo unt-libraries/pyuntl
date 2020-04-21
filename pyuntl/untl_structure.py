@@ -1,5 +1,6 @@
 import socket
 import json
+import sys
 import urllib.request
 from lxml.etree import Element, SubElement, tostring
 from pyuntl import UNTL_XML_ORDER, VOCABULARIES_URL
@@ -456,6 +457,42 @@ class Metadata(UNTLElement):
         kwargs['children'] = self.children
         # Create the form object.
         return FormGenerator(**kwargs)
+
+    def make_hidden(self):
+        """Make an unhidden record hidden."""
+        for element in self.children:
+            if element.tag == 'meta' and element.qualifier == 'hidden':
+                # Make the element hidden.
+                if element.content == 'False':
+                    element.content = 'True'
+                return None
+        # Create a hidden meta element if it doesn't exist.
+        hidden_element = PYUNTL_DISPATCH['meta'](qualifier='hidden', content='True')
+        self.children.append(hidden_element)
+
+    def make_unhidden(self):
+        """Make a hidden record unhidden."""
+        for element in self.children:
+            if element.tag == 'meta' and element.qualifier == 'hidden':
+                # Make the element unhidden.
+                if element.content == 'True':
+                    element.content = 'False'
+                return None
+        # Create a hidden meta element if it doesn't exist.
+        hidden_element = PYUNTL_DISPATCH['meta'](qualifier='hidden', content='False')
+        self.children.append(hidden_element)
+
+    @property
+    def is_hidden(self):
+        """Return True if a UNTL element is hidden."""
+        for element in self.children:
+            if element.tag == 'meta' and element.qualifier == 'hidden':
+                if element.content == 'True':
+                    return True
+                else:
+                    return False
+        sys.stderr.write('A hidden meta element does not exist.')
+        return False
 
 
 class Title(UNTLElement):

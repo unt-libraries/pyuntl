@@ -587,3 +587,67 @@ def test_generate_form_data(_):
     assert isinstance(fg, us.FormGenerator)
     # Check missing children were added.
     assert len(metadata.children) == len(metadata.contained_children)
+
+
+@pytest.mark.parametrize('test_input_content, test_output',
+                         [
+                             ([us.Meta(content='DC', qualifier='system'),
+                               us.Meta(content='True', qualifier='hidden')],
+                              True),
+                             ([us.Meta(content='DC', qualifier='system'),
+                               us.Meta(content='False', qualifier='hidden')],
+                              False),
+                         ])
+def test_Metadata_is_hidden(test_input_content, test_output):
+    """Check if a UNTL element is hidden."""
+    metadata = us.Metadata()
+    metadata.children = test_input_content
+    assert metadata.is_hidden is test_output
+
+
+def test_Metadata_is_hidden_with_no_meta_hidden_element(capsys):
+    metadata = us.Metadata()
+    metadata.children = [us.Meta(content='DC', qualifier='system')]
+    assert metadata.is_hidden is False
+    captured = capsys.readouterr()
+    assert captured.err == 'A hidden meta element does not exist.'
+
+
+@pytest.mark.parametrize('test_input_elements, test_input_content',
+                         [
+                             ([us.Meta(content='DC', qualifier='system'),
+                               us.Meta(content='True', qualifier='hidden')],
+                              True),
+                             ([us.Meta(content='DC', qualifier='system'),
+                               us.Meta(content='False', qualifier='hidden')],
+                              False),
+                             ([us.Meta(content='DC', qualifier='system')],
+                              False)
+                         ])
+def test_Metadata_make_hidden(test_input_elements, test_input_content):
+    """Test if a UNTL unhidden element is altered to hidden."""
+    metadata = us.Metadata()
+    metadata.children = test_input_elements
+    assert metadata.is_hidden is test_input_content
+    metadata.make_hidden()
+    assert metadata.is_hidden is True
+
+
+@pytest.mark.parametrize('test_input_elements, test_input_content',
+                         [
+                             ([us.Meta(content='DC', qualifier='system'),
+                               us.Meta(content='True', qualifier='hidden')],
+                              True),
+                             ([us.Meta(content='DC', qualifier='system'),
+                               us.Meta(content='False', qualifier='hidden')],
+                              False),
+                             ([us.Meta(content='DC', qualifier='system')],
+                              False)
+                         ])
+def test_Metadata_make_unhidden(test_input_elements, test_input_content):
+    """Test if a UNTL hidden element is altered to unhidden."""
+    metadata = us.Metadata()
+    metadata.children = test_input_elements
+    assert metadata.is_hidden is test_input_content
+    metadata.make_unhidden()
+    assert metadata.is_hidden is False
