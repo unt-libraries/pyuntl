@@ -136,7 +136,6 @@ def test_generate_untl_json(input_indent, json_output):
     elements = us.Metadata()
     elements.add_child(title)
     untl_json = untldoc.generate_untl_json(elements, input_indent)
-    print('LHS: ', untl_json)
     assert untl_json == json_output
 
 
