@@ -122,14 +122,8 @@ def test_untlpy2dict():
                                   '        }\n'
                                   '    ]\n'
                                   '}')),
-                             (2, ('{\n'
-                                  '  "title": [\n'
-                                  '    {\n'
-                                  '      "content": "The Bronco",\n'
-                                  '      "qualifier": "serialtitle"\n'
-                                  '    }\n'
-                                  '  ]\n'
-                                  '}'))
+                             (None,
+                              '{"title": [{"content": "The Bronco", "qualifier": "serialtitle"}]}')
                          ])
 def test_generate_untl_json(input_indent, json_output):
     title = us.Title(qualifier='serialtitle', content='The Bronco')
