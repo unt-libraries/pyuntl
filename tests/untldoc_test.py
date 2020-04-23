@@ -112,6 +112,27 @@ def test_untlpy2dict():
                                     'content': 'The Bronco'}]}
 
 
+@pytest.mark.parametrize('input_indent, json_output',
+                         [
+                             (4, ('{\n'
+                                  '    "title": [\n'
+                                  '        {\n'
+                                  '            "content": "The Bronco",\n'
+                                  '            "qualifier": "serialtitle"\n'
+                                  '        }\n'
+                                  '    ]\n'
+                                  '}')),
+                             (None,
+                              '{"title": [{"content": "The Bronco", "qualifier": "serialtitle"}]}')
+                         ])
+def test_generate_untl_json(input_indent, json_output):
+    title = us.Title(qualifier='serialtitle', content='The Bronco')
+    elements = us.Metadata()
+    elements.add_child(title)
+    untl_json = untldoc.generate_untl_json(elements, input_indent)
+    assert untl_json == json_output
+
+
 def test_untlpydict2xml(tmpdir):
     xml_file = os.path.join(tmpdir, 'untl.xml')
     returned_value = untldoc.untlpydict2xml(xml_file, UNTL_DICTIONARY)
