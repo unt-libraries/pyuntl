@@ -7,6 +7,8 @@ Change Log
 * Upgraded to Python 3. [#18](https://github.com/unt-libraries/pyuntl/issues/18)
 * Removed automatic addition of trailing period for LCSH. [#39](https://github.com/unt-libraries/pyuntl/issues/39)
 * Removed etd_ms support which is not used by pyuntl. [#29](https://github.com/unt-libraries/pyuntl/issues/29)
+* Added make_hidden, make_unhidden, is_hidden methods. [#37](https://github.com/unt-libraries/pyuntl/issues/37)
+* Added support for JSON serializations. [#38](https://github.com/unt-libraries/pyuntl/issues/38)
 
 
 1.0.2
