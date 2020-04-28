@@ -139,6 +139,7 @@ def test_untljson2py():
     assert untl_py.children[0].tag == 'title'
     assert untl_py.children[0].content == 'The Bronco'
     assert untl_py.children[0].qualifier == 'serialtitle'
+    assert untl_py.tag == 'metadata'
 
 
 def test_untlpydict2xml(tmpdir):
