@@ -133,6 +133,14 @@ def test_generate_untl_json(input_indent, json_output):
     assert untl_json == json_output
 
 
+def test_untljson2py():
+    untl_py = untldoc.untljson2py(
+        '{"title": [{"content": "The Bronco", "qualifier": "serialtitle"}]}')
+    assert untl_py.children[0].tag == 'title'
+    assert untl_py.children[0].content == 'The Bronco'
+    assert untl_py.children[0].qualifier == 'serialtitle'
+
+
 def test_untlpydict2xml(tmpdir):
     xml_file = os.path.join(tmpdir, 'untl.xml')
     returned_value = untldoc.untlpydict2xml(xml_file, UNTL_DICTIONARY)
