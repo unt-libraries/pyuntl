@@ -249,6 +249,12 @@ def generate_untl_json(untl_elements, json_indent=4):
     return json.dumps(untl_dict, sort_keys=True, indent=json_indent)
 
 
+def untljson2py(untl_json):
+    """Convert UNTL JSON into a Python object."""
+    untl_dict = json.loads(untl_json)
+    return untldict2py(untl_dict)
+
+
 def untlpy2dcpy(untl_elements, **kwargs):
     """Convert the UNTL elements structure into a DC structure.
 
