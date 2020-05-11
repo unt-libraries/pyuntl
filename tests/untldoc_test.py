@@ -712,3 +712,19 @@ def test_find_untl_errors_fix_errors_no_errors():
                                         'date': [{'content': '1944',
                                                   'qualifier': 'creation'}]},
                           'error_dict': {}}
+
+
+def test_untl_to_hash_dict():
+    title = us.Title(qualifier='serialtitle', content='The Bronco')
+    meta_modifier = us.Meta(qualifier='metadataModifier', content='Daniel')
+    meta_creation = us.Meta(qualifier='metadataModificationDate', content='2007-09-20, 13:46:15')
+    meta_object = us.Meta(qualifier='objectType', content='simple')
+    elements = us.Metadata()
+    elements.add_child(title)
+    elements.add_child(meta_modifier)
+    elements.add_child(meta_creation)
+    elements.add_child(meta_object)
+    hash_dict = untldoc.untl_to_hash_dict(elements)
+    assert 'title' in hash_dict
+    assert 'meta' in hash_dict
+    assert len(hash_dict) == 2

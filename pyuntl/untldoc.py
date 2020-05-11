@@ -10,6 +10,7 @@
 import json
 import re
 import urllib.request
+import hashlib
 from copy import deepcopy
 from lxml.etree import iterparse
 from rdflib import Namespace, Literal, URIRef, ConjunctiveGraph
@@ -675,3 +676,36 @@ def find_untl_errors(untl_dict, **kwargs):
         'error_dict': error_dict,
     }
     return found_data
+
+
+def untl_to_hash_dict(untl_elements, meaningfulMeta=True):
+    if meaningfulMeta:
+        for element in untl_elements.children:
+            if (
+                element.tag == 'meta'
+                and (element.qualifier == 'metadataModificationDate'
+                     or element.qualifier == 'metadataModifier')
+            ):
+                del element
+    untl_dict = untlpy2dict(untl_elements)
+    sorted_untl_dict = untl_dict_sort(untl_dict)
+    return generate_hash(sorted_untl_dict)
+
+
+def untl_dict_sort(untl_dict):
+    sorted_untl_dict = {}
+    for elem in untl_dict:
+        for i, v in enumerate(untl_dict[elem]):
+            if isinstance(untl_dict[elem][i]['content'], dict):
+                untl_dict[elem][i]['content'] = [v for v in untl_dict[elem][i]['content'].items()]
+                untl_dict[elem][i]['content'].sort()
+            untl_dict[elem][i] = [v for v in untl_dict[elem][i].items()]
+        sorted_untl_dict[elem] = untl_dict[elem]
+    return sorted_untl_dict
+
+
+def generate_hash(sorted_untl_dict):
+    hash_dict = {}
+    for elem in sorted_untl_dict:
+        hash_dict[elem] = hashlib.md5(repr(sorted_untl_dict[elem]).encode()).hexdigest()
+    return hash_dict
