@@ -678,7 +678,26 @@ def find_untl_errors(untl_dict, **kwargs):
     return found_data
 
 
+def untl_dict_to_tuple(untl_dict):
+    """Convert values of untl dict to tuple form which will be later used for hashing."""
+    untl_tuple = {}
+    for elem in untl_dict:
+        for i, v in enumerate(untl_dict[elem]):
+            if isinstance(untl_dict[elem][i]['content'], dict):
+                untl_dict[elem][i]['content'] = [v for v in untl_dict[elem][i]['content'].items()]
+                untl_dict[elem][i]['content'].sort()
+            untl_dict[elem][i] = [v for v in untl_dict[elem][i].items()]
+        untl_tuple[elem] = untl_dict[elem]
+    return untl_tuple
+
+
+def generate_hash(input):
+    """Return an md5 hash of the output of untl_to_tuple_form."""
+    return hashlib.md5(repr(input).encode()).hexdigest()
+
+
 def untl_to_hash_dict(untl_elements, meaningfulMeta=True):
+    """Convert untl element to hashed untl dictionary."""
     if meaningfulMeta:
         for element in untl_elements.children:
             if (
@@ -688,24 +707,8 @@ def untl_to_hash_dict(untl_elements, meaningfulMeta=True):
             ):
                 del element
     untl_dict = untlpy2dict(untl_elements)
-    sorted_untl_dict = untl_dict_sort(untl_dict)
-    return generate_hash(sorted_untl_dict)
-
-
-def untl_dict_sort(untl_dict):
-    sorted_untl_dict = {}
-    for elem in untl_dict:
-        for i, v in enumerate(untl_dict[elem]):
-            if isinstance(untl_dict[elem][i]['content'], dict):
-                untl_dict[elem][i]['content'] = [v for v in untl_dict[elem][i]['content'].items()]
-                untl_dict[elem][i]['content'].sort()
-            untl_dict[elem][i] = [v for v in untl_dict[elem][i].items()]
-        sorted_untl_dict[elem] = untl_dict[elem]
-    return sorted_untl_dict
-
-
-def generate_hash(sorted_untl_dict):
+    untl_tuple = untl_dict_to_tuple(untl_dict)
     hash_dict = {}
-    for elem in sorted_untl_dict:
-        hash_dict[elem] = hashlib.md5(repr(sorted_untl_dict[elem]).encode()).hexdigest()
+    for tup in untl_tuple:
+        hash_dict[tup] = generate_hash(untl_tuple[tup])
     return hash_dict

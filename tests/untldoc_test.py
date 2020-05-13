@@ -714,7 +714,9 @@ def test_find_untl_errors_fix_errors_no_errors():
                           'error_dict': {}}
 
 
-def test_untl_to_hash_dict():
+@patch('hashlib.md5')
+def test_untl_to_hash_dict(mock_md5):
+    mock_md5.return_value.hexdigest.side_effect = ['hashtitle12345', 'hashmeta12345']
     title = us.Title(qualifier='serialtitle', content='The Bronco')
     meta_modifier = us.Meta(qualifier='metadataModifier', content='Daniel')
     meta_creation = us.Meta(qualifier='metadataModificationDate', content='2007-09-20, 13:46:15')
@@ -725,6 +727,18 @@ def test_untl_to_hash_dict():
     elements.add_child(meta_creation)
     elements.add_child(meta_object)
     hash_dict = untldoc.untl_to_hash_dict(elements)
-    assert 'title' in hash_dict
-    assert 'meta' in hash_dict
-    assert len(hash_dict) == 2
+    assert hash_dict == {'title': 'hashtitle12345', 'meta': 'hashmeta12345'}
+
+
+def test_untl_dict_to_tuple():
+    untl_dict = {'title': [{'qualifier': 'serialtitle',
+                            'content': 'The Bronco'}]}
+    untl_tuple = untldoc.untl_dict_to_tuple(untl_dict)
+    assert untl_tuple == {'title': [[('qualifier', 'serialtitle'), ('content', 'The Bronco')]]}
+
+
+@patch('hashlib.md5')
+def test_generate_hash(mock_md5):
+    mock_md5.return_value.hexdigest.return_value = 'hash12345'
+    hash_val = untldoc.generate_hash('test_input')
+    assert hash_val == 'hash12345'
