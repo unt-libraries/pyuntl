@@ -699,10 +699,16 @@ def generate_hash(input):
 def untl_to_hash_dict(untl_elements, meaningfulMeta=True):
     """Convert untl element to hashed untl dictionary."""
     if meaningfulMeta:
+        remove_elements = []
         for element in untl_elements.children:
-            if element.tag == 'meta':
-                if element.qualifier == 'metadataModificationDate' or  element.qualifier == 'metadataModifier':
-                    untl_elements.remove_child(element)
+            if (
+                element.tag == 'meta'
+                and (element.qualifier == 'metadataModificationDate'
+                     or element.qualifier == 'metadataModifier')
+            ):
+                remove_elements.append(element)
+        for elem in remove_elements:
+            untl_elements.remove_child(elem)
     untl_dict = untlpy2dict(untl_elements)
     untl_tuple = untl_dict_to_tuple(untl_dict)
     hash_dict = {}
