@@ -700,15 +700,12 @@ def untl_to_hash_dict(untl_elements, meaningfulMeta=True):
     """Convert untl element to hashed untl dictionary."""
     if meaningfulMeta:
         for element in untl_elements.children:
-            if (
-                element.tag == 'meta'
-                and (element.qualifier == 'metadataModificationDate'
-                     or element.qualifier == 'metadataModifier')
-            ):
-                del element
+            if element.tag == 'meta':
+                if element.qualifier == 'metadataModificationDate' or  element.qualifier == 'metadataModifier':
+                    untl_elements.remove_child(element)
     untl_dict = untlpy2dict(untl_elements)
     untl_tuple = untl_dict_to_tuple(untl_dict)
     hash_dict = {}
     for tup in untl_tuple:
         hash_dict[tup] = generate_hash(untl_tuple[tup])
-    return hash_dict
+    return untl_tuple, hash_dict

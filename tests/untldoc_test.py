@@ -719,14 +719,16 @@ def test_untl_to_hash_dict(mock_md5):
     mock_md5.return_value.hexdigest.side_effect = ['hashtitle12345', 'hashmeta12345']
     title = us.Title(qualifier='serialtitle', content='The Bronco')
     meta_modifier = us.Meta(qualifier='metadataModifier', content='Daniel')
-    meta_creation = us.Meta(qualifier='metadataModificationDate', content='2007-09-20, 13:46:15')
+    meta_modification = us.Meta(qualifier='metadataModificationDate', content='2007-09-20, 13:46:15')
     meta_object = us.Meta(qualifier='objectType', content='simple')
     elements = us.Metadata()
     elements.add_child(title)
+    elements.add_child(meta_modification)
     elements.add_child(meta_modifier)
-    elements.add_child(meta_creation)
     elements.add_child(meta_object)
-    hash_dict = untldoc.untl_to_hash_dict(elements)
+    untl_tuple, hash_dict = untldoc.untl_to_hash_dict(elements)
+    assert untl_tuple == {'title': [[('qualifier', 'serialtitle'), ('content', 'The Bronco')]],
+                          'meta': [[('qualifier', 'objectType'), ('content', 'simple')]]}
     assert hash_dict == {'title': 'hashtitle12345', 'meta': 'hashmeta12345'}
 
 

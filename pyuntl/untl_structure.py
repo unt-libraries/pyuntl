@@ -108,6 +108,21 @@ class UNTLElement(object):
                 )
             )
 
+    def remove_child(self, child):
+        """Remove a child object to the current one.
+        Checks the contained_children list to make sure that the object
+        is allowable, and throws an exception if not.
+        """
+        if child.tag in self.contained_children:
+            self.children.remove(child)
+        else:
+            raise UNTLStructureException(
+                'Invalid child "%s" for parent "%s"' % (
+                    child.tag,
+                    self.tag
+                )
+            )
+
     def set_content(self, content):
         """Set textual content for the object/node.
 
