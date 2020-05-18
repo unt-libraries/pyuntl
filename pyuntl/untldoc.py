@@ -714,4 +714,4 @@ def untl_to_hash_dict(untl_elements, meaningfulMeta=True):
     hash_dict = {}
     for tup in untl_tuple:
         hash_dict[tup] = generate_hash(untl_tuple[tup])
-    return untl_tuple, hash_dict
+    return hash_dict

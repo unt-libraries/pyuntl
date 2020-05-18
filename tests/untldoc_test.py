@@ -727,9 +727,7 @@ def test_untl_to_hash_dict(mock_md5):
     elements.add_child(meta_modification)
     elements.add_child(meta_modifier)
     elements.add_child(meta_object)
-    untl_tuple, hash_dict = untldoc.untl_to_hash_dict(elements)
-    assert untl_tuple == {'title': [[('qualifier', 'serialtitle'), ('content', 'The Bronco')]],
-                          'meta': [[('qualifier', 'objectType'), ('content', 'simple')]]}
+    hash_dict = untldoc.untl_to_hash_dict(elements)
     assert hash_dict == {'title': 'hashtitle12345', 'meta': 'hashmeta12345'}
     assert mock_md5.call_count == 2
 
