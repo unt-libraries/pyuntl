@@ -133,28 +133,15 @@ def untldict2py(untl_dict):
                     )
                 # Create the UNTL element that will have children elements
                 # added to it.
-                if qualifier is not None:
-                    untl_element = PYUNTL_DISPATCH[element_name](
-                        qualifier=qualifier
-                    )
-                else:
-                    untl_element = PYUNTL_DISPATCH[element_name]()
+                untl_element = PYUNTL_DISPATCH[element_name](qualifier=qualifier)
                 # Add the element's children to the element.
                 for child in child_list:
                     untl_element.add_child(child)
             # If not child element, create the element and
             # add qualifier and content as available.
-            elif content is not None and qualifier is not None:
+            else:
                 untl_element = PYUNTL_DISPATCH[element_name](
                     qualifier=qualifier,
-                    content=content,
-                )
-            elif qualifier is not None:
-                untl_element = PYUNTL_DISPATCH[element_name](
-                    qualifier=qualifier,
-                )
-            elif content is not None:
-                untl_element = PYUNTL_DISPATCH[element_name](
                     content=content,
                 )
             # Add the UNTL element to the Python element list.
