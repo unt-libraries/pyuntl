@@ -12,6 +12,7 @@ def test_compare_elements():
                   'creator': '1513f10cb05d869823951dcc50ae2e45',
                   'publisher': '5eb7bb172012ebb7347f40d7b4f28482',
                   'collection': '8ca05b391a1b1cf502366f6dea811115',
-                  'date': '8221c0e5dcc2e441a532f36d9afb296e'}
+                  'meta': '8ca05b391a1b1c3951dcc50ae2e45'}
     changes = compare.compare_elements(hash_dict1, hash_dict2)
-    assert changes == {'title': 'changed', 'publisher': 'changed'}
+    assert changes == {'title': 'changed', 'publisher': 'changed',
+                       'meta': 'added', 'date': 'deleted'}

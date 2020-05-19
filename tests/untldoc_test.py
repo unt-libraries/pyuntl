@@ -714,9 +714,7 @@ def test_find_untl_errors_fix_errors_no_errors():
                           'error_dict': {}}
 
 
-@patch('hashlib.md5')
-def test_untl_to_hash_dict(mock_md5):
-    mock_md5.return_value.hexdigest.side_effect = ['hashtitle12345', 'hashmeta12345']
+def test_untl_to_hash_dict():
     title = us.Title(qualifier='serialtitle', content='The Bronco')
     meta_modifier = us.Meta(qualifier='metadataModifier', content='Daniel')
     meta_modification = us.Meta(qualifier='metadataModificationDate',
@@ -728,19 +726,20 @@ def test_untl_to_hash_dict(mock_md5):
     elements.add_child(meta_modifier)
     elements.add_child(meta_object)
     hash_dict = untldoc.untl_to_hash_dict(elements)
-    assert hash_dict == {'title': 'hashtitle12345', 'meta': 'hashmeta12345'}
-    assert mock_md5.call_count == 2
+    assert hash_dict == {'title': '9eff715f7ee7da9d5c2efdf075d07225',
+                         'meta': 'f66a40a765dbfa230bd1b250a465ff6d'}
 
 
 def test_untl_dict_to_tuple():
     untl_dict = {'title': [{'qualifier': 'serialtitle',
-                            'content': 'The Bronco'}]}
+                            'content': {'type': 'per', 'name': 'Moore, Francis, Jr.'}}]}
     untl_tuple = untldoc.untl_dict_to_tuple(untl_dict)
-    assert untl_tuple == {'title': [[('qualifier', 'serialtitle'), ('content', 'The Bronco')]]}
+    assert untl_tuple == {'title': [[('qualifier', 'serialtitle'),
+                                     ('content', [('name', 'Moore, Francis, Jr.'),
+                                                  ('type', 'per')])]]}
 
 
-@patch('hashlib.md5')
-def test_generate_hash(mock_md5):
-    mock_md5.return_value.hexdigest.return_value = 'hash12345'
-    hash_val = untldoc.generate_hash('test_input')
-    assert hash_val == 'hash12345'
+def test_generate_hash():
+    test_input = [[('qualifier', 'serialtitle'), ('content', 'The Bronco')]]
+    hash_val = untldoc.generate_hash(test_input)
+    assert hash_val == '9eff715f7ee7da9d5c2efdf075d07225'
