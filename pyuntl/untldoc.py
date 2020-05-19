@@ -679,10 +679,12 @@ def find_untl_errors(untl_dict, **kwargs):
 
 
 def untl_dict_to_tuple(untl_dict):
-    """Convert values of untl dict to tuple form which will be later used for hashing."""
+    """Convert untl_dict values to list of lists of tuples."""
     untl_tuple = {}
     for elem in untl_dict:
         for i, v in enumerate(untl_dict[elem]):
+            # We are trying to get a consistent ordering of values
+            # so reordering doesn't count as a change.
             if isinstance(untl_dict[elem][i]['content'], dict):
                 untl_dict[elem][i]['content'] = [v for v in untl_dict[elem][i]['content'].items()]
                 untl_dict[elem][i]['content'].sort()
@@ -692,26 +694,25 @@ def untl_dict_to_tuple(untl_dict):
 
 
 def generate_hash(input):
-    """Return an md5 hash of the output of untl_to_tuple_form."""
+    """Return an md5 hash of an object by first converting it to bytes."""
     return hashlib.md5(repr(input).encode()).hexdigest()
 
 
 def untl_to_hash_dict(untl_elements, meaningfulMeta=True):
-    """Convert untl element to hashed untl dictionary."""
+    """Convert untl element to a dictionary of hashed values."""
+    untl_dict = untlpy2dict(untl_elements)
     if meaningfulMeta:
         remove_elements = []
-        for element in untl_elements.children:
+        for element in untl_dict['meta']:
             if (
-                element.tag == 'meta'
-                and (element.qualifier == 'metadataModificationDate'
-                     or element.qualifier == 'metadataModifier')
+                element['qualifier'] == 'metadataModificationDate'
+                or element['qualifier'] == 'metadataModifier'
             ):
                 remove_elements.append(element)
-        for elem in remove_elements:
-            untl_elements.remove_child(elem)
-    untl_dict = untlpy2dict(untl_elements)
+        for element in remove_elements:
+            untl_dict['meta'].remove(element)
     untl_tuple = untl_dict_to_tuple(untl_dict)
     hash_dict = {}
-    for tup in untl_tuple:
-        hash_dict[tup] = generate_hash(untl_tuple[tup])
+    for key, value in untl_tuple.items():
+        hash_dict[key] = generate_hash(value)
     return hash_dict
