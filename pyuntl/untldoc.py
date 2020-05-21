@@ -681,15 +681,15 @@ def find_untl_errors(untl_dict, **kwargs):
 def untl_dict_to_tuple(untl_dict):
     """Convert untl_dict values to list of lists of tuples."""
     untl_tuple = {}
-    for elem in untl_dict:
-        for i, v in enumerate(untl_dict[elem]):
+    for elem, value in untl_dict.items():
+        for i, v in enumerate(value):
             # We are trying to get a consistent ordering of values
             # so reordering doesn't count as a change.
-            if isinstance(untl_dict[elem][i]['content'], dict):
-                untl_dict[elem][i]['content'] = [v for v in untl_dict[elem][i]['content'].items()]
-                untl_dict[elem][i]['content'].sort()
-            untl_dict[elem][i] = [v for v in untl_dict[elem][i].items()]
-        untl_tuple[elem] = untl_dict[elem]
+            if isinstance(value[i]['content'], dict):
+                value[i]['content'] = [v for v in value[i]['content'].items()]
+                value[i]['content'].sort()
+            value[i] = [v for v in value[i].items()]
+        untl_tuple[elem] = value
     return untl_tuple
 
 
@@ -699,20 +699,16 @@ def generate_hash(input):
 
 
 def untl_to_hash_dict(untl_elements, meaningfulMeta=True):
-    """Convert untl element to a dictionary of hashed values."""
+    """Produce a dictionary of hashed values for untl elements.
+
+    Converts untl elements into a dictionary of elements where
+    the value is a hash of the sorted list of tuples of the elements'
+    values. If meaningfulMeta is True, ignore metadata fields that
+    show no meaningful change to metadata records.
+    """
     untl_dict = untlpy2dict(untl_elements)
     if meaningfulMeta:
-        remove_elements = []
-        for element in untl_dict['meta']:
-            if (
-                element['qualifier'] == 'metadataModificationDate'
-                or element['qualifier'] == 'metadataModifier'
-            ):
-                remove_elements.append(element)
-        for element in remove_elements:
-            untl_dict['meta'].remove(element)
+        unmeaningful = ('metadataModificationDate', 'metadataModifier')
+        untl_dict['meta'] = [e for e in untl_dict['meta'] if e['qualifier'] not in unmeaningful]
     untl_tuple = untl_dict_to_tuple(untl_dict)
-    hash_dict = {}
-    for key, value in untl_tuple.items():
-        hash_dict[key] = generate_hash(value)
-    return hash_dict
+    return {k: generate_hash(v) for k, v in untl_tuple.items()}
