@@ -727,18 +727,18 @@ def test_untl_to_hash_dict():
     elements.add_child(meta_modifier)
     elements.add_child(meta_object)
     hash_dict = untldoc.untl_to_hash_dict(elements)
-    assert hash_dict == {'title': '9eff715f7ee7da9d5c2efdf075d07225',
-                         'meta': 'f66a40a765dbfa230bd1b250a465ff6d'}
+    assert hash_dict == {'title': '928a799f4fadfd4564033e0088264630',
+                         'meta': '7f373c1488d79a362e11ae0b1775fb2d'}
 
 
 def test_untl_dict_to_tuple():
     untl_dict = deepcopy(UNTL_DICTIONARY)
     untl_tuple = untldoc.untl_dict_to_tuple(untl_dict)
-    assert untl_tuple == {'title': [[('qualifier', 'officialtitle'),
-                                     ('content', 'Tres Actos')]],
-                          'creator': [[('qualifier', 'aut'),
-                                       ('content', [('name', 'Last, Furston, 1807-1865.'),
-                                                    ('type', 'per')])]],
+    assert untl_tuple == {'title': [[('content', 'Tres Actos'),
+                                     ('qualifier', 'officialtitle')]],
+                          'creator': [[('content', [('name', 'Last, Furston, 1807-1865.'),
+                                                    ('type', 'per')]),
+                                       ('qualifier', 'aut')]],
                           'publisher': [[('content', [('name', 'Fake Publishing')])]],
                           'collection': [[('content', 'UNT')]],
                           'date': [[('content', '1944'), ('qualifier', 'creation')]]}

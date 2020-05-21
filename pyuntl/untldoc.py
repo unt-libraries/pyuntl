@@ -686,9 +686,8 @@ def untl_dict_to_tuple(untl_dict):
             # We are trying to get a consistent ordering of values
             # so reordering doesn't count as a change.
             if isinstance(value[i]['content'], dict):
-                value[i]['content'] = [v for v in value[i]['content'].items()]
-                value[i]['content'].sort()
-            value[i] = [v for v in value[i].items()]
+                value[i]['content'] = sorted(list(value[i]['content'].items()))
+            value[i] = sorted(list(value[i].items()))
         untl_tuple[elem] = value
     return untl_tuple
 
