@@ -584,7 +584,8 @@ def test_retrieve_vocab_getting_data_errors(mock_urlopen):
 
 def test_add_empty_fields():
     """Check empty fields are added if not supplied in the dictionary."""
-    untl_dict = untldoc.add_empty_fields(UNTL_DICTIONARY)
+    untl_dict = deepcopy(UNTL_DICTIONARY)
+    untl_dict = untldoc.add_empty_fields(untl_dict)
     assert untl_dict == {'title': [{'qualifier': 'officialtitle', 'content': 'Tres Actos'}],
                          'creator': [{'qualifier': 'aut',
                                       'content': {'name': 'Last, Furston, 1807-1865.',
@@ -731,12 +732,16 @@ def test_untl_to_hash_dict():
 
 
 def test_untl_dict_to_tuple():
-    untl_dict = {'title': [{'qualifier': 'serialtitle',
-                            'content': {'type': 'per', 'name': 'Moore, Francis, Jr.'}}]}
+    untl_dict = deepcopy(UNTL_DICTIONARY)
     untl_tuple = untldoc.untl_dict_to_tuple(untl_dict)
-    assert untl_tuple == {'title': [[('qualifier', 'serialtitle'),
-                                     ('content', [('name', 'Moore, Francis, Jr.'),
-                                                  ('type', 'per')])]]}
+    assert untl_tuple == {'title': [[('qualifier', 'officialtitle'),
+                                     ('content', 'Tres Actos')]],
+                          'creator': [[('qualifier', 'aut'),
+                                       ('content', [('name', 'Last, Furston, 1807-1865.'),
+                                                    ('type', 'per')])]],
+                          'publisher': [[('content', [('name', 'Fake Publishing')])]],
+                          'collection': [[('content', 'UNT')]],
+                          'date': [[('content', '1944'), ('qualifier', 'creation')]]}
 
 
 def test_generate_hash():
