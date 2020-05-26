@@ -715,7 +715,15 @@ def test_find_untl_errors_fix_errors_no_errors():
                           'error_dict': {}}
 
 
-def test_untl_to_hash_dict():
+@pytest.mark.parametrize('test_input_flag, test_output',
+                         [
+                             (True, {'title': '928a799f4fadfd4564033e0088264630',
+                                     'meta': '7f373c1488d79a362e11ae0b1775fb2d'}),
+
+                             (False, {'title': '928a799f4fadfd4564033e0088264630',
+                                      'meta': '9e7f0dd334d06aa60175fd79732e6b1f'})
+                         ])
+def test_untl_to_hash_dict(test_input_flag, test_output):
     title = us.Title(qualifier='serialtitle', content='The Bronco')
     meta_modifier = us.Meta(qualifier='metadataModifier', content='Daniel')
     meta_modification = us.Meta(qualifier='metadataModificationDate',
@@ -726,14 +734,12 @@ def test_untl_to_hash_dict():
     elements.add_child(meta_modification)
     elements.add_child(meta_modifier)
     elements.add_child(meta_object)
-    hash_dict = untldoc.untl_to_hash_dict(elements)
-    assert hash_dict == {'title': '928a799f4fadfd4564033e0088264630',
-                         'meta': '7f373c1488d79a362e11ae0b1775fb2d'}
+    hash_dict = untldoc.untl_to_hash_dict(elements, test_input_flag)
+    assert hash_dict == test_output
 
 
 def test_untl_dict_to_tuple():
-    untl_dict = deepcopy(UNTL_DICTIONARY)
-    untl_tuple = untldoc.untl_dict_to_tuple(untl_dict)
+    untl_tuple = untldoc.untl_dict_to_tuple(UNTL_DICTIONARY)
     assert untl_tuple == {'title': [[('content', 'Tres Actos'),
                                      ('qualifier', 'officialtitle')]],
                           'creator': [[('content', [('name', 'Last, Furston, 1807-1865.'),

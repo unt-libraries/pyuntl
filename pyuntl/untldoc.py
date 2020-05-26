@@ -680,6 +680,7 @@ def find_untl_errors(untl_dict, **kwargs):
 
 def untl_dict_to_tuple(untl_dict):
     """Convert untl_dict values to list of lists of tuples."""
+    untl_dict = deepcopy(untl_dict)
     untl_tuple = {}
     for elem, value in untl_dict.items():
         for i, v in enumerate(value):
