@@ -584,7 +584,8 @@ def test_retrieve_vocab_getting_data_errors(mock_urlopen):
 
 def test_add_empty_fields():
     """Check empty fields are added if not supplied in the dictionary."""
-    untl_dict = untldoc.add_empty_fields(UNTL_DICTIONARY)
+    untl_dict = deepcopy(UNTL_DICTIONARY)
+    untl_dict = untldoc.add_empty_fields(untl_dict)
     assert untl_dict == {'title': [{'qualifier': 'officialtitle', 'content': 'Tres Actos'}],
                          'creator': [{'qualifier': 'aut',
                                       'content': {'name': 'Last, Furston, 1807-1865.',
@@ -712,3 +713,44 @@ def test_find_untl_errors_fix_errors_no_errors():
                                         'date': [{'content': '1944',
                                                   'qualifier': 'creation'}]},
                           'error_dict': {}}
+
+
+@pytest.mark.parametrize('meaningful_meta, expected_hash_dict',
+                         [
+                             (True, {'title': '928a799f4fadfd4564033e0088264630',
+                                     'meta': '7f373c1488d79a362e11ae0b1775fb2d'}),
+
+                             (False, {'title': '928a799f4fadfd4564033e0088264630',
+                                      'meta': '9e7f0dd334d06aa60175fd79732e6b1f'})
+                         ])
+def test_untl_to_hash_dict(meaningful_meta, expected_hash_dict):
+    title = us.Title(qualifier='serialtitle', content='The Bronco')
+    meta_modifier = us.Meta(qualifier='metadataModifier', content='Daniel')
+    meta_modification = us.Meta(qualifier='metadataModificationDate',
+                                content='2007-09-20, 13:46:15')
+    meta_object = us.Meta(qualifier='objectType', content='simple')
+    elements = us.Metadata()
+    elements.add_child(title)
+    elements.add_child(meta_modification)
+    elements.add_child(meta_modifier)
+    elements.add_child(meta_object)
+    hash_dict = untldoc.untl_to_hash_dict(elements, meaningful_meta)
+    assert hash_dict == expected_hash_dict
+
+
+def test_untl_dict_to_tuple():
+    untl_tuple = untldoc.untl_dict_to_tuple(UNTL_DICTIONARY)
+    assert untl_tuple == {'title': [[('content', 'Tres Actos'),
+                                     ('qualifier', 'officialtitle')]],
+                          'creator': [[('content', [('name', 'Last, Furston, 1807-1865.'),
+                                                    ('type', 'per')]),
+                                       ('qualifier', 'aut')]],
+                          'publisher': [[('content', [('name', 'Fake Publishing')])]],
+                          'collection': [[('content', 'UNT')]],
+                          'date': [[('content', '1944'), ('qualifier', 'creation')]]}
+
+
+def test_generate_hash():
+    test_input = [[('qualifier', 'serialtitle'), ('content', 'The Bronco')]]
+    hash_val = untldoc.generate_hash(test_input)
+    assert hash_val == '9eff715f7ee7da9d5c2efdf075d07225'

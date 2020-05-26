@@ -10,6 +10,7 @@
 import json
 import re
 import urllib.request
+import hashlib
 from copy import deepcopy
 from lxml.etree import iterparse
 from rdflib import Namespace, Literal, URIRef, ConjunctiveGraph
@@ -675,3 +676,39 @@ def find_untl_errors(untl_dict, **kwargs):
         'error_dict': error_dict,
     }
     return found_data
+
+
+def untl_dict_to_tuple(untl_dict):
+    """Convert untl_dict values to list of lists of tuples."""
+    untl_dict = deepcopy(untl_dict)
+    untl_tuple = {}
+    for elem, value in untl_dict.items():
+        for i, v in enumerate(value):
+            # We are trying to get a consistent ordering of values
+            # so reordering doesn't count as a change.
+            if isinstance(value[i]['content'], dict):
+                value[i]['content'] = sorted(list(value[i]['content'].items()))
+            value[i] = sorted(list(value[i].items()))
+        untl_tuple[elem] = value
+    return untl_tuple
+
+
+def generate_hash(input):
+    """Return an md5 hash of an object by first converting it to bytes."""
+    return hashlib.md5(repr(input).encode()).hexdigest()
+
+
+def untl_to_hash_dict(untl_elements, meaningfulMeta=True):
+    """Produce a dictionary of hashed values for untl elements.
+
+    Converts untl elements into a dictionary of elements where
+    the value is a hash of the sorted list of tuples of the elements'
+    values. If meaningfulMeta is True, ignore metadata fields that
+    show no meaningful change to metadata records.
+    """
+    untl_dict = untlpy2dict(untl_elements)
+    if meaningfulMeta:
+        unmeaningful = ('metadataModificationDate', 'metadataModifier')
+        untl_dict['meta'] = [e for e in untl_dict['meta'] if e['qualifier'] not in unmeaningful]
+    untl_tuple = untl_dict_to_tuple(untl_dict)
+    return {k: generate_hash(v) for k, v in untl_tuple.items()}
