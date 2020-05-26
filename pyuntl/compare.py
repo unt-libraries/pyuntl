@@ -1,6 +1,9 @@
 def compare_elements(prev_hash_dict, current_hash_dict):
-    """Compare elements that have changed between hash_dict1 and hash_dict2.
-    Check if any elements have been added, removed or modified."""
+    """Compare elements that have changed between prev_hash_dict and current_hash_dict.
+
+    Check if any elements have been added, removed or modified.
+    """
+
     changed = {}
     for key in prev_hash_dict:
         elem = current_hash_dict.get(key, '')
