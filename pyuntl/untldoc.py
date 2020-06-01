@@ -211,16 +211,15 @@ def post2pydict(post, ignore_list):
                                 )
                             )
             # Create the UNTL element.
-            if content != '' and qualifier != '':
-                untl_element = PYUNTL_DISPATCH[element_tag](content=content,
-                                                            qualifier=qualifier)
-            elif content != '':
-                untl_element = PYUNTL_DISPATCH[element_tag](content=content)
-            elif qualifier != '':
-                untl_element = PYUNTL_DISPATCH[element_tag](qualifier=qualifier)
-            # This element only has children elements.
-            elif len(child_list) > 0:
-                untl_element = PYUNTL_DISPATCH[element_tag]()
+            if content == '':
+                content = None
+            if qualifier == '':
+                qualifier = None
+            # Ignore empty elements with no children elements.
+            if content is None and qualifier is None and len(child_list) <= 0:
+                pass
+            else:
+                untl_element = PYUNTL_DISPATCH[element_tag](content=content, qualifier=qualifier)
             # If the element has children, add them.
             if child_list and untl_element:
                 for child in child_list:
