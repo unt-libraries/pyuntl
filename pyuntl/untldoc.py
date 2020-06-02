@@ -133,28 +133,15 @@ def untldict2py(untl_dict):
                     )
                 # Create the UNTL element that will have children elements
                 # added to it.
-                if qualifier is not None:
-                    untl_element = PYUNTL_DISPATCH[element_name](
-                        qualifier=qualifier
-                    )
-                else:
-                    untl_element = PYUNTL_DISPATCH[element_name]()
+                untl_element = PYUNTL_DISPATCH[element_name](qualifier=qualifier)
                 # Add the element's children to the element.
                 for child in child_list:
                     untl_element.add_child(child)
             # If not child element, create the element and
             # add qualifier and content as available.
-            elif content is not None and qualifier is not None:
+            else:
                 untl_element = PYUNTL_DISPATCH[element_name](
                     qualifier=qualifier,
-                    content=content,
-                )
-            elif qualifier is not None:
-                untl_element = PYUNTL_DISPATCH[element_name](
-                    qualifier=qualifier,
-                )
-            elif content is not None:
-                untl_element = PYUNTL_DISPATCH[element_name](
                     content=content,
                 )
             # Add the UNTL element to the Python element list.
@@ -224,16 +211,12 @@ def post2pydict(post, ignore_list):
                                 )
                             )
             # Create the UNTL element.
-            if content != '' and qualifier != '':
-                untl_element = PYUNTL_DISPATCH[element_tag](content=content,
-                                                            qualifier=qualifier)
-            elif content != '':
-                untl_element = PYUNTL_DISPATCH[element_tag](content=content)
-            elif qualifier != '':
-                untl_element = PYUNTL_DISPATCH[element_tag](qualifier=qualifier)
-            # This element only has children elements.
-            elif len(child_list) > 0:
-                untl_element = PYUNTL_DISPATCH[element_tag]()
+            if content == '':
+                content = None
+            if qualifier == '':
+                qualifier = None
+            if content or qualifier or child_list:
+                untl_element = PYUNTL_DISPATCH[element_tag](content=content, qualifier=qualifier)
             # If the element has children, add them.
             if child_list and untl_element:
                 for child in child_list:
