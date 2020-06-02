@@ -215,10 +215,7 @@ def post2pydict(post, ignore_list):
                 content = None
             if qualifier == '':
                 qualifier = None
-            # Ignore empty elements with no children elements.
-            if content is None and qualifier is None and len(child_list) <= 0:
-                pass
-            else:
+            if content or qualifier or child_list:
                 untl_element = PYUNTL_DISPATCH[element_tag](content=content, qualifier=qualifier)
             # If the element has children, add them.
             if child_list and untl_element:
