@@ -690,7 +690,7 @@ def untl_to_hash_dict(untl_elements, meaningfulMeta=True):
     show no meaningful change to metadata records.
     """
     untl_dict = untlpy2dict(untl_elements)
-    if meaningfulMeta and untl_dict.get('meta'):
+    if meaningfulMeta and untl_dict.get('meta') is not None:
         unmeaningful = ('metadataModificationDate', 'metadataModifier')
         untl_dict['meta'] = [e for e in untl_dict['meta'] if e['qualifier'] not in unmeaningful]
     untl_tuple = untl_dict_to_tuple(untl_dict)
