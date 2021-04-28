@@ -98,6 +98,13 @@ class TestHighwire(unittest.TestCase):
         highwire_text = generate_highwire_text(highwire_elements)
         self.assertEqual(highwire_text, HIGHWIRE_TEXT)
 
+    def testTextEscape(self):
+        """Test highwire elements are converted to ANVL text."""
+        untlpy = untldict2py(UNTL_DICT)
+        highwire_elements = untlpy2highwirepy(untlpy, escape=True)
+        highwire_text = generate_highwire_text(highwire_elements)
+        self.assertEqual(highwire_text, HIGHWIRE_TEXT)
+
     def testUNTL2HIGHWIRE(self):
         """Test conversion from UNTL to Highwire."""
         untlpy = untldict2py(UNTL_DICT)

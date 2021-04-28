@@ -30,7 +30,7 @@ class HighwireElement(object):
             self.content = cgi.escape(
                 self.content,
                 1
-            ).encode('ascii', 'xmlcharrefreplace')
+            ).encode('ascii', 'xmlcharrefreplace').decode()
 
 
 class CitationTitle(HighwireElement):
