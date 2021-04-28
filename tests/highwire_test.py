@@ -99,7 +99,7 @@ class TestHighwire(unittest.TestCase):
         self.assertEqual(highwire_text, HIGHWIRE_TEXT)
 
     def testTextEscape(self):
-        """Test highwire elements are converted to ANVL text."""
+        """Test highwire elements are converted to ANVL text when escaped."""
         small_untl_dict = {'title': [{'content': 'Clifford & Lassie',
                                       'qualifier': 'officialtitle'}],
                            'meta': [{'content': 'ark:/67531/metapth38622',
