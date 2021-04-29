@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+2.X.X
+-----
+
+* Fixed issue of highwire elements storing escaped `content` as `bytes`. [#50](https://github.com/unt-libraries/pyuntl/pull/50)
+* Replaced deprecated `cgi.escape` with `html.escape`. [#50](https://github.com/unt-libraries/pyuntl/pull/50)
+
 2.0.0
 -----
 
