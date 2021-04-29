@@ -98,6 +98,21 @@ class TestHighwire(unittest.TestCase):
         highwire_text = generate_highwire_text(highwire_elements)
         self.assertEqual(highwire_text, HIGHWIRE_TEXT)
 
+    def testTextEscape(self):
+        """Test highwire elements are converted to ANVL text when escaped."""
+        small_untl_dict = {'title': [{'content': 'Clifford & Lassie',
+                                      'qualifier': 'officialtitle'}],
+                           'meta': [{'content': 'ark:/67531/metapth38622',
+                                     'qualifier': 'ark'},
+                                    {'content': '2008-06-29, 00:31:14',
+                                     'qualifier': 'metadataCreationDate'}]}
+        untlpy = untldict2py(small_untl_dict)
+        highwire_elements = untlpy2highwirepy(untlpy, escape=True)
+        highwire_text = generate_highwire_text(highwire_elements)
+        expected = ('citation_title: Clifford &amp; Lassie\n'
+                    'citation_online_date: 06/29/2008')
+        self.assertEqual(highwire_text, expected)
+
     def testUNTL2HIGHWIRE(self):
         """Test conversion from UNTL to Highwire."""
         untlpy = untldict2py(UNTL_DICT)

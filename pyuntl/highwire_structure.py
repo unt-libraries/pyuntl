@@ -1,4 +1,4 @@
-import cgi
+import html
 import datetime
 
 from pyuntl import (CREATION_DATE_REGEX, CREATION_MONTH_REGEX,
@@ -27,10 +27,10 @@ class HighwireElement(object):
         escape = kwargs.get('escape', False)
         # Escape the content if needed.
         if escape and self.content:
-            self.content = cgi.escape(
+            self.content = html.escape(
                 self.content,
                 1
-            ).encode('ascii', 'xmlcharrefreplace')
+            ).encode('ascii', 'xmlcharrefreplace').decode()
 
 
 class CitationTitle(HighwireElement):
