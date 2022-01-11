@@ -324,11 +324,9 @@ class FormGenerator(object):
         element_list.sort(key=lambda obj: sort_order.index(obj.group_name))
         return element_list
 
+
 def get_vocabularies():
     """Get the vocabularies to pull the qualifiers from."""
-    # Timeout in seconds.
-    timeout = 5
-    socket.setdefaulttimeout(timeout)
     # Create the ordered vocabulary URL.
     vocab_url = VOCABULARIES_URL.replace('all', 'all-verbose')
     # Try to get the cached vocabs, only hitting the live vocabs when needed
@@ -337,7 +335,8 @@ def get_vocabularies():
         attempt = 0
         while True:
             try:
-                VOCAB_CACHE[vocab_url] =  json.loads(urllib.request.urlopen(vocab_url).read())
+                VOCAB_CACHE[vocab_url] =  json.loads(
+                    urllib.request.urlopen(vocab_url, timeout=5).read())
             except Exception as e:
                 print('Exception caught while trying to retrieve vocabs: {}'.format(e))
                 if attempt < 3:
