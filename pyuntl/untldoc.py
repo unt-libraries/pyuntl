@@ -16,13 +16,14 @@ from lxml.etree import iterparse
 from rdflib import Namespace, Literal, URIRef, ConjunctiveGraph
 
 from pyuntl import (UNTL_XML_ORDER, DC_ORDER,
-                    VOCABULARIES_URL, HIGHWIRE_ORDER)
+                    HIGHWIRE_ORDER)
 from pyuntl.dc_structure import DC_CONVERSION_DISPATCH, DC_NAMESPACES, XSI
 from pyuntl.form_logic import REQUIRES_QUALIFIER
 from pyuntl.highwire_structure import HIGHWIRE_CONVERSION_DISPATCH
 from pyuntl.metadata_generator import (py2dict, pydict2xml, pydict2xmlstring,
                                        writeANVLString, highwiredict2xmlstring)
-from pyuntl.untl_structure import PYUNTL_DISPATCH, PARENT_FORM
+from pyuntl.untl_structure import (PYUNTL_DISPATCH, PARENT_FORM, get_vocabularies,
+                                   UNTLStructureException)
 
 
 NAMESPACE_REGEX = re.compile(r'^{[^}]+}(.*)')
@@ -586,11 +587,9 @@ def retrieve_vocab():
 
     Retrieves and returns the vocabulary. Upon failure, returns None.
     """
-    url = VOCABULARIES_URL.replace('all', 'all-verbose')
     try:
-        vocab_data = urllib.request.urlopen(url).read()
-        return json.loads(vocab_data)
-    except:
+        return get_vocabularies()
+    except UNTLStructureException:
         return None
 
 

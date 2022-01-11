@@ -1,12 +1,16 @@
 import socket
 import json
 import sys
+import time
 import urllib.request
 from lxml.etree import Element, SubElement, tostring
 from pyuntl import UNTL_XML_ORDER, VOCABULARIES_URL
 from pyuntl.form_logic import UNTL_FORM_DISPATCH, UNTL_GROUP_DISPATCH
 from pyuntl.metadata_generator import py2dict
 from pyuntl.quality import determine_completeness
+
+
+VOCAB_CACHE = dict()
 
 
 class UNTLStructureException(Exception):
@@ -218,7 +222,7 @@ class FormGenerator(object):
         solr_response = kwargs.get('solr_response', None)
         superuser = kwargs.get('superuser', False)
         # Get the vocabularies to pull the qualifiers from.
-        vocabularies = self.get_vocabularies()
+        vocabularies = get_vocabularies()
         # Loop through all UNTL elements in the Python object.
         for element in children:
             # Add children that are missing from the form.
@@ -320,19 +324,30 @@ class FormGenerator(object):
         element_list.sort(key=lambda obj: sort_order.index(obj.group_name))
         return element_list
 
-    def get_vocabularies(self):
-        """Get the vocabularies to pull the qualifiers from."""
-        # Timeout in seconds.
-        timeout = 15
-        socket.setdefaulttimeout(timeout)
-        # Create the ordered vocabulary URL.
-        vocab_url = VOCABULARIES_URL.replace('all', 'all-verbose')
-        # Request the vocabularies dictionary.
-        try:
-            vocab_data = json.loads(urllib.request.urlopen(vocab_url).read())
-        except:
-            raise UNTLStructureException('Could not retrieve the vocabularies')
-        return vocab_data
+def get_vocabularies():
+    """Get the vocabularies to pull the qualifiers from."""
+    # Timeout in seconds.
+    timeout = 5
+    socket.setdefaulttimeout(timeout)
+    # Create the ordered vocabulary URL.
+    vocab_url = VOCABULARIES_URL.replace('all', 'all-verbose')
+    # Try to get the cached vocabs, only hitting the live vocabs when needed
+    if vocab_url not in VOCAB_CACHE:
+        # Try to retrieve the fresh vocabs up to 3 times in case there are availability issues
+        attempt = 0
+        while True:
+            try:
+                VOCAB_CACHE[vocab_url] =  json.loads(urllib.request.urlopen(vocab_url).read())
+            except Exception as e:
+                print('Exception caught while trying to retrieve vocabs: {}'.format(e))
+                if attempt < 3:
+                    attempt += 1
+                    time.sleep(3)
+                else:
+                    raise UNTLStructureException('Could not retrieve the vocabularies')
+            else:
+                break
+    return VOCAB_CACHE[vocab_url]
 
 
 # Element Definitions #
