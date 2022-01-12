@@ -571,6 +571,7 @@ def test_generate_rdf_xml():
 
 @patch('urllib.request.urlopen')
 def test_retrieve_vocab(mock_urlopen):
+    us.VOCAB_CACHE = {}
     mock_urlopen.return_value.read.return_value = '{"some": "data"}'
     vocab = untldoc.retrieve_vocab()
     assert vocab == {'some': 'data'}
@@ -578,6 +579,7 @@ def test_retrieve_vocab(mock_urlopen):
 
 @patch('urllib.request.urlopen', side_effect=Exception)
 def test_retrieve_vocab_getting_data_errors(mock_urlopen):
+    us.VOCAB_CACHE = {}
     vocab = untldoc.retrieve_vocab()
     assert vocab is None
 

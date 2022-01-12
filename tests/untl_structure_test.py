@@ -372,13 +372,12 @@ def test_FormGenerator_adjustable_items(_):
     assert 'access' in fg.adjustable_items
 
 
-@patch('urllib.request.urlopen')
-def test_FormGenerator_get_vocabularies(mock_urlopen):
-    """Tests the vocabularies are returned."""
-    mock_urlopen.return_value.read.return_value = json.dumps(VOCAB)
+@patch('pyuntl.untl_structure.get_vocabularies', return_value=VOCAB)
+def test_FormGenerator_get_vocabularies(mock_get_vocabularies):
+    """Tests the get_vocabularies method just uses the get_vocabularies function."""
     vocabularies = us.FormGenerator(children=[], sort_order=['hidden'])
     vocabularies == VOCAB
-    mock_urlopen.assert_called_once()
+    mock_get_vocabularies.assert_called_once()
 
 
 @patch('urllib.request.urlopen', side_effect=Exception)
@@ -388,10 +387,11 @@ def test_FormGenerator_fails_without_vocab_service(mock_urlopen):
     With urlopen patched, the vocabularies can't be reached, so trying
     to generate the form elements will raise an exception.
     """
+    us.VOCAB_CACHE = {}
     with pytest.raises(us.UNTLStructureException):
         us.FormGenerator(children=[],
                          sort_order=[])
-    mock_urlopen.assert_called_once()
+    assert mock_urlopen.call_count == 4
 
 
 def test_Metadata_create_xml_string():
@@ -578,7 +578,7 @@ def test_Metadata_validate():
     assert metadata.validate() is None
 
 
-@patch('pyuntl.untl_structure.FormGenerator.get_vocabularies', return_value=VOCAB)
+@patch('pyuntl.untl_structure.get_vocabularies', return_value=VOCAB)
 def test_generate_form_data(_):
     """Test this returns a FormGenerator object."""
     metadata = us.Metadata()

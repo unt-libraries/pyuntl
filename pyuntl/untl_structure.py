@@ -221,7 +221,7 @@ class FormGenerator(object):
         solr_response = kwargs.get('solr_response', None)
         superuser = kwargs.get('superuser', False)
         # Get the vocabularies to pull the qualifiers from.
-        vocabularies = get_vocabularies()
+        vocabularies = self.get_vocabularies()
         # Loop through all UNTL elements in the Python object.
         for element in children:
             # Add children that are missing from the form.
@@ -322,6 +322,10 @@ class FormGenerator(object):
         # Sort the elements by the index of sort_order pre-ordered list.
         element_list.sort(key=lambda obj: sort_order.index(obj.group_name))
         return element_list
+
+    def get_vocabularies(self):
+        """Deprecated! This is here only to keep legacy calls working. Use get_vocabularies()."""
+        return get_vocabularies()
 
 
 def get_vocabularies():
