@@ -575,6 +575,7 @@ def test_retrieve_vocab(mock_urlopen):
     mock_urlopen.return_value.read.return_value = '{"some": "data"}'
     vocab = untldoc.retrieve_vocab()
     assert vocab == {'some': 'data'}
+    assert mock_urlopen.called_once()
 
 
 @patch('urllib.request.urlopen', side_effect=Exception)
@@ -582,6 +583,7 @@ def test_retrieve_vocab_getting_data_errors(mock_urlopen):
     us.VOCAB_CACHE = {}
     vocab = untldoc.retrieve_vocab()
     assert vocab is None
+    assert mock_urlopen.call_count == 4
 
 
 def test_add_empty_fields():

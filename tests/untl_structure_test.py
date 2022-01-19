@@ -375,8 +375,7 @@ def test_FormGenerator_adjustable_items(_):
 @patch('pyuntl.untl_structure.get_vocabularies', return_value=VOCAB)
 def test_FormGenerator_get_vocabularies(mock_get_vocabularies):
     """Tests the get_vocabularies method just uses the get_vocabularies function."""
-    vocabularies = us.FormGenerator(children=[], sort_order=['hidden'])
-    vocabularies == VOCAB
+    us.FormGenerator(children=[], sort_order=['hidden'])
     mock_get_vocabularies.assert_called_once()
 
 
@@ -392,6 +391,26 @@ def test_FormGenerator_fails_without_vocab_service(mock_urlopen):
         us.FormGenerator(children=[],
                          sort_order=[])
     assert mock_urlopen.call_count == 4
+
+
+@patch('urllib.request.urlopen')
+def test_get_vocabularies(mock_urlopen):
+    """Test that get_vocabularies uses VOCAB_CACHE."""
+    us.VOCAB_CACHE = {'https://digital2.library.unt.edu/vocabularies/all-verbose.json': 'name'}
+    vocabularies = us.get_vocabularies()
+    assert mock_urlopen.call_count == 0
+    assert vocabularies == 'name'
+
+
+@patch('urllib.request.urlopen', side_effect=Exception)
+def test_get_vocabularies_attempts(mock_urlopen, capsys):
+    """Test the number of attempts before raising exception"""
+    output = 'Exception caught while trying to retrieve vocabs: '
+    us.VOCAB_CACHE = {}
+    with pytest.raises(us.UNTLStructureException):
+        us.get_vocabularies()
+    assert mock_urlopen.call_count == 4
+    assert output in capsys.readouterr().out
 
 
 def test_Metadata_create_xml_string():
