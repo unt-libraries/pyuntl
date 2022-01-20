@@ -579,7 +579,7 @@ def generate_rdf_xml(dc_dict):
     Returns in XML serialized format.
     """
     rdf_py = dcdict2rdfpy(dc_dict)
-    return rdf_py.serialize(format='pretty-xml')
+    return rdf_py.serialize(format='pretty-xml', encoding='utf-8')
 
 
 def retrieve_vocab():
