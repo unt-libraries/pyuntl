@@ -9,7 +9,6 @@
 """
 import json
 import re
-import urllib.request
 import hashlib
 from copy import deepcopy
 from lxml.etree import iterparse

@@ -338,7 +338,7 @@ def get_vocabularies():
         attempt = 0
         while True:
             try:
-                VOCAB_CACHE[vocab_url] =  json.loads(
+                VOCAB_CACHE[vocab_url] = json.loads(
                     urllib.request.urlopen(vocab_url, timeout=15).read())
             except Exception as e:
                 print('Exception caught while trying to retrieve vocabs: {}'.format(e))

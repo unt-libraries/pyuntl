@@ -2,6 +2,7 @@
 """Unit tests for untl_structure."""
 
 import pytest
+import io
 import json
 from unittest.mock import patch
 from lxml.etree import Element
@@ -379,18 +380,13 @@ def test_FormGenerator_get_vocabularies(mock_get_vocabularies):
     mock_get_vocabularies.assert_called_once()
 
 
-@patch('urllib.request.urlopen', side_effect=Exception)
-def test_FormGenerator_fails_without_vocab_service(mock_urlopen):
-    """If vocabularies URL can't be reached, exception is raised.
-
-    With urlopen patched, the vocabularies can't be reached, so trying
-    to generate the form elements will raise an exception.
-    """
-    us.VOCAB_CACHE = {}
+@patch('pyuntl.untl_structure.get_vocabularies', side_effect=us.UNTLStructureException('fail'))
+def test_FormGenerator_fails_without_vocab_service(mock_get_vocabularies):
+    """If vocabularies URL can't be reached, the form elements will raise an exception."""
     with pytest.raises(us.UNTLStructureException):
         us.FormGenerator(children=[],
                          sort_order=[])
-    assert mock_urlopen.call_count == 4
+    mock_get_vocabularies.assert_called_once()
 
 
 @patch('urllib.request.urlopen')
@@ -402,15 +398,15 @@ def test_get_vocabularies(mock_urlopen):
     assert vocabularies == 'name'
 
 
-@patch('urllib.request.urlopen', side_effect=Exception)
-def test_get_vocabularies_attempts(mock_urlopen, capsys):
-    """Test the number of attempts before raising exception"""
+@patch('urllib.request.urlopen', side_effect=[Exception, io.StringIO(json.dumps(VOCAB))])
+def test_get_vocabularies_multiple_attempts_succeeds(mock_urlopen, capsys):
+    """Test vocabularies are fetched when not in cache."""
     output = 'Exception caught while trying to retrieve vocabs: '
     us.VOCAB_CACHE = {}
-    with pytest.raises(us.UNTLStructureException):
-        us.get_vocabularies()
-    assert mock_urlopen.call_count == 4
+    vocabulaires = us.get_vocabularies()
+    assert mock_urlopen.call_count == 2
     assert output in capsys.readouterr().out
+    assert vocabulaires == VOCAB
 
 
 def test_Metadata_create_xml_string():

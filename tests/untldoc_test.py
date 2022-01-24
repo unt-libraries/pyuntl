@@ -569,21 +569,19 @@ def test_generate_rdf_xml():
                                 '</rdf:RDF>\n').split())
 
 
-@patch('urllib.request.urlopen')
-def test_retrieve_vocab(mock_urlopen):
-    us.VOCAB_CACHE = {}
-    mock_urlopen.return_value.read.return_value = '{"some": "data"}'
+@patch('pyuntl.untldoc.get_vocabularies')
+def test_retrieve_vocab(mock_get_vocabularies):
+    mock_get_vocabularies.return_value = {"some": "data"}
     vocab = untldoc.retrieve_vocab()
     assert vocab == {'some': 'data'}
-    assert mock_urlopen.called_once()
+    assert mock_get_vocabularies.called_once()
 
 
-@patch('urllib.request.urlopen', side_effect=Exception)
-def test_retrieve_vocab_getting_data_errors(mock_urlopen):
-    us.VOCAB_CACHE = {}
+@patch('pyuntl.untldoc.get_vocabularies', return_value=None)
+def test_retrieve_vocab_getting_data_errors(mock_get_vocabularies):
     vocab = untldoc.retrieve_vocab()
     assert vocab is None
-    assert mock_urlopen.call_count == 4
+    mock_get_vocabularies.assert_called_once()
 
 
 def test_add_empty_fields():
