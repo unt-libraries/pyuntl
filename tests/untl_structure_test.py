@@ -2,10 +2,11 @@
 """Unit tests for untl_structure."""
 
 import pytest
+import io
 import json
 from unittest.mock import patch
 from lxml.etree import Element
-from pyuntl import untl_structure as us, UNTL_PTH_ORDER
+from pyuntl import untl_structure as us, UNTL_PTH_ORDER, VOCABULARIES_URL
 from pyuntl.form_logic import FormGroup, HiddenGroup, FormElement
 from tests import VOCAB
 
@@ -372,26 +373,42 @@ def test_FormGenerator_adjustable_items(_):
     assert 'access' in fg.adjustable_items
 
 
-@patch('urllib.request.urlopen')
-def test_FormGenerator_get_vocabularies(mock_urlopen):
-    """Tests the vocabularies are returned."""
-    mock_urlopen.return_value.read.return_value = json.dumps(VOCAB)
-    vocabularies = us.FormGenerator(children=[], sort_order=['hidden'])
-    vocabularies == VOCAB
-    mock_urlopen.assert_called_once()
+@patch('pyuntl.untl_structure.get_vocabularies', return_value=VOCAB)
+def test_FormGenerator_get_vocabularies(mock_get_vocabularies):
+    """Tests the get_vocabularies method just uses the get_vocabularies function."""
+    us.FormGenerator(children=[], sort_order=['hidden'])
+    mock_get_vocabularies.assert_called_once()
 
 
-@patch('urllib.request.urlopen', side_effect=Exception)
-def test_FormGenerator_fails_without_vocab_service(mock_urlopen):
-    """If vocabularies URL can't be reached, exception is raised.
-
-    With urlopen patched, the vocabularies can't be reached, so trying
-    to generate the form elements will raise an exception.
-    """
+@patch('pyuntl.untl_structure.get_vocabularies', side_effect=us.UNTLStructureException('fail'))
+def test_FormGenerator_fails_without_vocab_service(mock_get_vocabularies):
+    """If vocabularies URL can't be reached, the form elements will raise an exception."""
     with pytest.raises(us.UNTLStructureException):
         us.FormGenerator(children=[],
                          sort_order=[])
-    mock_urlopen.assert_called_once()
+    mock_get_vocabularies.assert_called_once()
+
+
+@patch('urllib.request.urlopen')
+def test_get_vocabularies(mock_urlopen):
+    """Test that get_vocabularies uses VOCAB_CACHE."""
+    us.VOCAB_CACHE = {'https://digital2.library.unt.edu/vocabularies/all-verbose.json': 'name'}
+    vocabularies = us.get_vocabularies()
+    assert mock_urlopen.call_count == 0
+    assert vocabularies == 'name'
+
+
+@patch('urllib.request.urlopen', side_effect=[Exception, io.StringIO(json.dumps(VOCAB))])
+def test_get_vocabularies_multiple_attempts_succeeds(mock_urlopen, capsys):
+    """Test vocabularies are fetched when not in cache."""
+    output = 'Exception caught while trying to retrieve vocabs: '
+    vocab_url = VOCABULARIES_URL.replace('all', 'all-verbose')
+    us.VOCAB_CACHE = {}
+    vocabularies = us.get_vocabularies()
+    assert mock_urlopen.call_count == 2
+    assert output in capsys.readouterr().out
+    assert vocabularies == VOCAB
+    assert us.VOCAB_CACHE == {vocab_url: VOCAB}
 
 
 def test_Metadata_create_xml_string():
@@ -578,7 +595,7 @@ def test_Metadata_validate():
     assert metadata.validate() is None
 
 
-@patch('pyuntl.untl_structure.FormGenerator.get_vocabularies', return_value=VOCAB)
+@patch('pyuntl.untl_structure.get_vocabularies', return_value=VOCAB)
 def test_generate_form_data(_):
     """Test this returns a FormGenerator object."""
     metadata = us.Metadata()
