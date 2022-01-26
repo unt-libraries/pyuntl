@@ -403,10 +403,10 @@ def test_get_vocabularies_multiple_attempts_succeeds(mock_urlopen, capsys):
     """Test vocabularies are fetched when not in cache."""
     output = 'Exception caught while trying to retrieve vocabs: '
     us.VOCAB_CACHE = {}
-    vocabulaires = us.get_vocabularies()
+    vocabularies = us.get_vocabularies()
     assert mock_urlopen.call_count == 2
     assert output in capsys.readouterr().out
-    assert vocabulaires == VOCAB
+    assert vocabularies == VOCAB
 
 
 def test_Metadata_create_xml_string():
