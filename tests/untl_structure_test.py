@@ -6,7 +6,7 @@ import io
 import json
 from unittest.mock import patch
 from lxml.etree import Element
-from pyuntl import untl_structure as us, UNTL_PTH_ORDER
+from pyuntl import untl_structure as us, UNTL_PTH_ORDER, VOCABULARIES_URL
 from pyuntl.form_logic import FormGroup, HiddenGroup, FormElement
 from tests import VOCAB
 
@@ -402,7 +402,7 @@ def test_get_vocabularies(mock_urlopen):
 def test_get_vocabularies_multiple_attempts_succeeds(mock_urlopen, capsys):
     """Test vocabularies are fetched when not in cache."""
     output = 'Exception caught while trying to retrieve vocabs: '
-    vocab_url = 'https://digital2.library.unt.edu/vocabularies/all-verbose.json'
+    vocab_url = VOCABULARIES_URL.replace('all', 'all-verbose')
     us.VOCAB_CACHE = {}
     vocabularies = us.get_vocabularies()
     assert mock_urlopen.call_count == 2
