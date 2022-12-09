@@ -623,6 +623,9 @@ class Coverage(FormElement):
             self.vocabularies,
             self.qualifier_vocab
         )
+        if self.untl_object.qualifier == 'eDate' or self.untl_object.qualifier == 'sDate':
+            self.editable = False
+            self.editable_qualifiers = False
 
 
 class ResourceType(FormElement):
