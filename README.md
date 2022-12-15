@@ -76,4 +76,6 @@ Brandon Fredericks
 
 [Gio Gottardi](https://github.com/somexpert)  
 
+[Gracie Flores-Hays](https://github.com/gracieflores)
+
 If you have questions about the project feel free to contact Mark Phillips at mark.phillips@unt.edu.
