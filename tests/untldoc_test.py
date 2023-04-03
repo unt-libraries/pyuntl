@@ -761,5 +761,6 @@ def test_generate_hash():
 def test_hash_dict_to_hash_version():
     xml_file = open('tests/metadc_complete.untl.xml', 'rb')
     untl_object = BytesIO(xml_file.read())
-    version_hash = untldoc.hash_dict_to_hash_version(untl_object)
+    untl_elements = untldoc.untlxml2py(untl_object)
+    version_hash = untldoc.hash_dict_to_hash_version(untl_elements)
     assert version_hash == 'ac83772c3b4ecb0bc925dca4f7793a0f'
