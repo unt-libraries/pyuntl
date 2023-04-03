@@ -756,3 +756,10 @@ def test_generate_hash():
     test_input = [[('qualifier', 'serialtitle'), ('content', 'The Bronco')]]
     hash_val = untldoc.generate_hash(test_input)
     assert hash_val == '9eff715f7ee7da9d5c2efdf075d07225'
+
+
+def test_hash_dict_to_hash_version():
+    xml_file = open('tests/metadc_complete.untl.xml', 'rb')
+    untl_object = BytesIO(xml_file.read())
+    version_hash = untldoc.hash_dict_to_hash_version(untl_object)
+    assert version_hash == 'ac83772c3b4ecb0bc925dca4f7793a0f'

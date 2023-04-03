@@ -695,3 +695,10 @@ def untl_to_hash_dict(untl_elements, meaningfulMeta=True):
         ]
     untl_tuple = untl_dict_to_tuple(untl_dict)
     return {k: generate_hash(v) for k, v in untl_tuple.items()}
+
+
+def hash_dict_to_hash_version(untl_object):
+    """Produce a version hash from the hashed untl dictionary."""
+    pyuntl_element = untlxml2py(untl_object)
+    hash_results = untl_to_hash_dict(pyuntl_element, True)
+    return generate_hash(hash_results)
