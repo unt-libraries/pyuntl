@@ -697,7 +697,7 @@ def untl_to_hash_dict(untl_elements, meaningfulMeta=True):
     return {k: generate_hash(v) for k, v in untl_tuple.items()}
 
 
-def hash_dict_to_hash_version(untl_elements):
-    """Produce a version hash from the hashed untl dictionary."""
+def get_record_version(untl_elements):
+    """Produce a version hash from the hashed UNTL dictionary."""
     hash_results = untl_to_hash_dict(untl_elements, True)
     return generate_hash(hash_results)
