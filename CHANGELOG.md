@@ -10,6 +10,7 @@ Change Log
   FormGenerator.get_vocabularies method and by retrieve_vocab.
 * Modified new get_vocabularies function to use retries when retrieving the vocabularies, as well as caching them
   locally.
+* Added new method, get_record_version, to create a hash of the UNTL metadata of a record.
 
 2.0.0
 -----
