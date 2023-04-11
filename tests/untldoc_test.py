@@ -756,3 +756,34 @@ def test_generate_hash():
     test_input = [[('qualifier', 'serialtitle'), ('content', 'The Bronco')]]
     hash_val = untldoc.generate_hash(test_input)
     assert hash_val == '9eff715f7ee7da9d5c2efdf075d07225'
+
+
+def test_get_record_version():
+    untl_elements = untldoc.untlxml2py('tests/metadc_complete.untl.xml')
+    version_hash = untldoc.get_record_version(untl_elements)
+    assert version_hash == 'ac83772c3b4ecb0bc925dca4f7793a0f'
+
+
+def test_record_version_changed():
+    untl_elements = untldoc.untlxml2py('tests/metadc_complete.untl.xml')
+    original_record_version = untldoc.get_record_version(untl_elements)
+    # Convert UNTL element to python dictionary and change the title
+    untl_dict = untldoc.untlpy2dict(untl_elements)
+    untl_dict['title'][0]['content'] = 'What Spins Far Away'
+    # Convert the dictionary back into a UNTL element and get the record version
+    new_untl_element = untldoc.untldict2py(untl_dict)
+    new_record_version = untldoc.get_record_version(new_untl_element)
+    assert new_record_version != original_record_version
+
+
+def test_record_version_did_not_change():
+    untl_elements = untldoc.untlxml2py('tests/metadc_complete.untl.xml')
+    original_record_version = untldoc.get_record_version(untl_elements)
+    # Convert UNTL element to python dictionary and change unmeaningful metadata
+    untl_dict = untldoc.untlpy2dict(untl_elements)
+    # Unmeaningful metadata being changed here is the metadataModifier
+    untl_dict['meta'][8]['content'] = 'John'
+    # Convert the dictionary back into a UNTL element and get the record version
+    new_untl_element = untldoc.untldict2py(untl_dict)
+    new_record_version = untldoc.get_record_version(new_untl_element)
+    assert new_record_version == original_record_version
