@@ -781,6 +781,7 @@ def test_record_version_did_not_change():
     original_record_version = untldoc.get_record_version(untl_elements)
     # Convert UNTL element to python dictionary and change unmeaningful metadata
     untl_dict = untldoc.untlpy2dict(untl_elements)
+    # Unmeaningful metadata being changed here is the metadataModifier
     untl_dict['meta'][8]['content'] = 'John'
     # Convert the dictionary back into a UNTL element and get the record version
     new_untl_element = untldoc.untldict2py(untl_dict)
