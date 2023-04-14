@@ -11,6 +11,8 @@ Change Log
 * Modified new get_vocabularies function to use retries when retrieving the vocabularies, as well as caching them
   locally.
 * Added new function, get_record_version, to create a hash of the UNTL metadata of a record.
+* Replaced Travis with GitHub Actions.
+* Added support for Python 3.8 and 3.9.
 
 2.0.0
 -----
