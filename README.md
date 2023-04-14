@@ -22,13 +22,13 @@ Python module for reading and writing UNTL metadata records.
 
 
 Requirements
--------------
+------------
 
 * Python 3.6 - 3.9
 
 
 Installation
---------------
+------------
 
 This application can be installed by following the steps below:
 
@@ -40,7 +40,7 @@ This application can be installed by following the steps below:
     
 
 Testing
----------
+-------
          
 Install tox on your system:
 
