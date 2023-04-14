@@ -1,7 +1,7 @@
 pyuntl
 =========
 
-[![Build Status](https://travis-ci.org/unt-libraries/pyuntl.svg?branch=master)](https://travis-ci.org/unt-libraries/pyuntl)
+[![Build Status](https://github.com/unt-libraries/pyuntl/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/unt-libraries/pyuntl/actions)
 
 Python module for reading and writing UNTL metadata records.
 
@@ -24,7 +24,7 @@ Python module for reading and writing UNTL metadata records.
 Requirements
 -------------
 
-* Python 3.6 - 3.7
+* Python 3.6 - 3.9
 
 
 Installation
